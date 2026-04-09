@@ -17,12 +17,10 @@ const SoundSelector: React.FC = () => {
   };
   
   const handlePreviewAccent = () => {
-    // 预览首拍音
     audioUtils.playAccent(state.soundType, state.volume.accent);
   };
   
   const handlePreviewNormal = () => {
-    // 预览普通拍音
     audioUtils.playNormal(state.soundType, state.volume.normal);
   };
   

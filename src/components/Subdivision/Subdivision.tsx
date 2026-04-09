@@ -20,7 +20,7 @@ const Subdivision: React.FC = () => {
           <button
             key={sub.value}
             onClick={() => dispatch({ type: 'SET_SUBDIVISION', payload: sub.value })}
-            className={`py-3 rounded-lg font-semibold transition-all duration-200 ${state.subdivision === sub.value ? 'bg-primary-500 text-white shadow-md scale-105' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
+            className={`py-3 rounded-lg font-semibold transition-all duration-200 ${state.subdivision === sub.value ? 'bg-blue-500 text-white shadow-md scale-105' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
           >
             {sub.label}等分
           </button>

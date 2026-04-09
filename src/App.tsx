@@ -31,6 +31,40 @@ const saveSettings = (settings: any) => {
   }
 };
 
+const SettingsPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+  const { settings } = useSystemSettings();
+  
+  return (
+    <div className={`min-h-screen ${settings.darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'} p-4 animate-fadeIn`}>
+      <div className="max-w-md mx-auto">
+        {/* 返回按钮 */}
+        <button
+          onClick={onBack}
+          className={`w-full py-3 font-semibold rounded-lg shadow-sm mb-6 hover-lift ripple ${settings.darkMode ? 'bg-gray-800 text-gray-200' : 'bg-gray-200 text-gray-800'}`}
+        >
+          返回主界面
+        </button>
+        
+        {/* 页面标题 */}
+        <div className="text-center mb-6 animate-bounceSoft">
+          <h2 className="text-2xl font-bold text-blue-600">参数设置</h2>
+        </div>
+        
+        {/* 交互式控制面板 */}
+        <InteractiveControlPanel />
+        
+        {/* 声音设置 */}
+        <SoundSelector />
+        
+        {/* 页尾 */}
+        <div className={`text-center text-xs mt-8 mb-4 ${settings.darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          <p>© 2026 节拍器应用</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const MainPage: React.FC = () => {
   useMetronomePlayback();
   const { state, dispatch } = useMetronome();
@@ -187,39 +221,7 @@ const MainPage: React.FC = () => {
   );
 };
 
-const SettingsPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-  const { settings } = useSystemSettings();
-  
-  return (
-    <div className={`min-h-screen ${settings.darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'} p-4 animate-fadeIn`}>
-      <div className="max-w-md mx-auto">
-        {/* 返回按钮 */}
-        <button
-          onClick={onBack}
-          className={`w-full py-3 font-semibold rounded-lg shadow-sm mb-6 hover-lift ripple ${settings.darkMode ? 'bg-gray-800 text-gray-200' : 'bg-gray-200 text-gray-800'}`}
-        >
-          返回主界面
-        </button>
-        
-        {/* 页面标题 */}
-        <div className="text-center mb-6 animate-bounceSoft">
-          <h2 className="text-2xl font-bold text-blue-600">参数设置</h2>
-        </div>
-        
-        {/* 交互式控制面板 */}
-        <InteractiveControlPanel />
-        
-        {/* 声音设置 */}
-        <SoundSelector />
-        
-        {/* 页尾 */}
-        <div className={`text-center text-xs mt-8 mb-4 ${settings.darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-          <p>© 2026 节拍器应用</p>
-        </div>
-      </div>
-    </div>
-  );
-};
+
 
 const App: React.FC = () => {
   return (

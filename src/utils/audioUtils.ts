@@ -35,30 +35,90 @@ class AudioUtils {
     },
   };
 
-  private getAudioContext(): AudioContext {
-    if (!this.audioContext) {
-      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+  private getAudioContext(): AudioContext | null {
+    try {
+      if (!this.audioContext) {
+        const AudioContextConstructor = window.AudioContext || (window as { webkitAudioContext?: new () => AudioContext }).webkitAudioContext;
+        if (AudioContextConstructor) {
+          this.audioContext = new AudioContextConstructor();
+        } else {
+          console.warn('Web Audio API is not supported in this browser');
+          return null;
+        }
+      }
+      
+      // 确保音频上下文处于运行状态
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume().catch(err => {
+          console.warn('Failed to resume audio context:', err);
+        });
+      }
+      
+      return this.audioContext;
+    } catch (error) {
+      console.warn('Error creating audio context:', error);
+      return null;
     }
-    return this.audioContext;
   }
 
   private playTone(frequency: number, volume: number, duration: number, type: OscillatorType = 'sine'): void {
     const audioContext = this.getAudioContext();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    if (!audioContext) {
+      return;
+    }
 
-    oscillator.type = type;
-    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+    try {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
 
-    const normalizedVolume = Math.min(volume / 100, 0.8);
-    gainNode.gain.setValueAtTime(normalizedVolume, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+      // 兼容旧浏览器的振荡器类型
+      const supportedTypes = ['sine', 'square', 'sawtooth', 'triangle'];
+      if (!supportedTypes.includes(type)) {
+        type = 'sine';
+      }
+      oscillator.type = type;
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+      // 兼容旧浏览器的频率设置
+      if (oscillator.frequency.setValueAtTime) {
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      } else {
+        (oscillator.frequency as AudioParam & { value: number }).value = frequency;
+      }
 
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + duration);
+      const normalizedVolume = Math.min(volume / 100, 0.8);
+      
+      // 兼容旧浏览器的增益设置
+      if (gainNode.gain.setValueAtTime) {
+        gainNode.gain.setValueAtTime(normalizedVolume, audioContext.currentTime);
+        if (gainNode.gain.exponentialRampToValueAtTime) {
+          gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+        } else {
+          // 降级方案：直接设置值
+          setTimeout(() => {
+            (gainNode.gain as AudioParam & { value: number }).value = 0.001;
+          }, duration * 1000);
+        }
+      } else {
+        (gainNode.gain as AudioParam & { value: number }).value = normalizedVolume;
+        setTimeout(() => {
+          (gainNode.gain as AudioParam & { value: number }).value = 0.001;
+        }, duration * 1000);
+      }
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // 兼容旧浏览器的启动和停止方法
+      if (oscillator.start) {
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+      } else {
+        (oscillator as OscillatorNode & { noteOn: (time: number) => void }).noteOn(audioContext.currentTime);
+        (oscillator as OscillatorNode & { noteOff: (time: number) => void }).noteOff(audioContext.currentTime + duration);
+      }
+    } catch (error) {
+      console.warn('Error playing tone:', error);
+    }
   }
 
   public playAccent(soundType: SoundType, volume: number): void {
@@ -77,17 +137,25 @@ class AudioUtils {
   }
 
   public playSound(soundType: SoundType, isAccent: boolean, isSecondary: boolean, volume: number): void {
-    if (isAccent) {
-      this.playAccent(soundType, volume);
-    } else if (isSecondary) {
-      this.playSecondary(soundType, volume);
-    } else {
-      this.playNormal(soundType, volume);
+    try {
+      if (isAccent) {
+        this.playAccent(soundType, volume);
+      } else if (isSecondary) {
+        this.playSecondary(soundType, volume);
+      } else {
+        this.playNormal(soundType, volume);
+      }
+    } catch (error) {
+      console.warn('Error playing sound:', error);
     }
   }
 
   public preload(): void {
     this.getAudioContext();
+  }
+
+  public isSupported(): boolean {
+    return !!(window.AudioContext || (window as { webkitAudioContext?: new () => AudioContext }).webkitAudioContext);
   }
 }
 

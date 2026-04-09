@@ -15,13 +15,13 @@ const ControlPanel: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center mb-8">
       {/* 播放状态指示器 */}
-      <div className={`mb-6 flex items-center justify-center w-16 h-16 rounded-full transition-all duration-300 ${state.isPlaying ? 'bg-green-500 animate-pulse shadow-lg shadow-green-500/50' : 'bg-gray-300'}`}>
+      <div className={`mb-4 sm:mb-6 flex items-center justify-center w-14 sm:w-16 h-14 sm:h-16 rounded-full transition-all duration-300 ${state.isPlaying ? 'bg-green-500 animate-pulse shadow-lg shadow-green-500/50' : 'bg-gray-300'}`}>
         {state.isPlaying && (
-          <div className="w-5 h-5 bg-white rounded-full animate-beat" />
+          <div className="w-4 sm:w-5 h-4 sm:h-5 bg-white rounded-full animate-beat" />
         )}
       </div>
       
-      {/* 大型播放/停止按钮 - 120x120px */}
+      {/* 大型播放/停止按钮 - 响应式大小 */}
       <button
         onClick={handleTogglePlay}
         onMouseDown={handleMouseDown}
@@ -29,15 +29,15 @@ const ControlPanel: React.FC = () => {
         onMouseLeave={handleMouseUp}
         onTouchStart={handleMouseDown}
         onTouchEnd={handleMouseUp}
-        className={`w-32 h-32 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-2xl transition-all duration-200 active:scale-95 ${state.isPlaying ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800' : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'} ${isPressed ? 'scale-95' : 'scale-100'}`}
+        className={`w-28 sm:w-32 h-28 sm:h-32 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-2xl transition-all duration-200 active:scale-95 ${state.isPlaying ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800' : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'} ${isPressed ? 'scale-95' : 'scale-100'}`}
       >
         {state.isPlaying ? (
           <div className="flex flex-col items-center">
-            <span className="text-5xl mb-1">⏸</span>
+            <span className="text-4xl sm:text-5xl mb-1">⏸</span>
           </div>
         ) : (
           <div className="flex flex-col items-center">
-            <span className="text-5xl mb-1">▶</span>
+            <span className="text-4xl sm:text-5xl mb-1">▶</span>
           </div>
         )}
       </button>
@@ -45,4 +45,4 @@ const ControlPanel: React.FC = () => {
   );
 };
 
-export default ControlPanel;
+export default React.memo(ControlPanel);

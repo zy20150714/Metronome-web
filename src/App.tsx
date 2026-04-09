@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { MetronomeProvider, useMetronome } from './contexts/MetronomeContext';
 import { useMetronomePlayback } from './hooks/useMetronomePlayback';
 import BeatDisplay from './components/BeatDisplay/BeatDisplay';
@@ -11,43 +11,27 @@ import About from './components/About/About';
 
 const SETTINGS_KEY = 'metronome-settings';
 
-const loadSettings = () => {
-  try {
-    const saved = localStorage.getItem(SETTINGS_KEY);
-    if (saved) {
-      return JSON.parse(saved);
-    }
-  } catch (e) {
-    console.error('Failed to load settings:', e);
-  }
-  return null;
-};
-
-const saveSettings = (settings: any) => {
-  try {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  } catch (e) {
-    console.error('Failed to save settings:', e);
-  }
-};
-
 const SettingsPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const { settings } = useSystemSettings();
   
   return (
-    <div className={`min-h-screen ${settings.darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'} p-4 animate-fadeIn`}>
-      <div className="max-w-md mx-auto">
+    <div className={`min-h-screen min-w-full ${settings.darkMode ? 'bg-gradient-to-br from-gray-900 to-gray-800 text-white' : 'bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800'} p-4 animate-fadeIn`}>
+      <div className="max-w-md mx-auto w-full">
         {/* 返回按钮 */}
         <button
           onClick={onBack}
-          className={`w-full py-3 font-semibold rounded-lg shadow-sm mb-6 hover-lift ripple ${settings.darkMode ? 'bg-gray-800 text-gray-200' : 'bg-gray-200 text-gray-800'}`}
+          className={`w-full py-4 font-semibold rounded-xl shadow-lg mb-8 hover-lift ripple transition-all duration-300 ${settings.darkMode ? 'bg-gradient-to-r from-gray-800 to-gray-700 text-gray-200 hover:from-gray-700 hover:to-gray-600' : 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 hover:from-gray-300 hover:to-gray-400'}`}
         >
-          返回主界面
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-xl">⬅️</span>
+            <span className="text-lg">返回主界面</span>
+          </div>
         </button>
         
         {/* 页面标题 */}
-        <div className="text-center mb-6 animate-bounceSoft">
-          <h2 className="text-2xl font-bold text-blue-600">参数设置</h2>
+        <div className="text-center mb-8 animate-bounceSoft">
+          <h2 className={`text-3xl font-bold ${settings.darkMode ? 'text-blue-400' : 'text-blue-600'} tracking-tight`}>参数设置</h2>
+          <p className={`mt-2 ${settings.darkMode ? 'text-gray-300' : 'text-gray-600'}`}>调整节拍器的各项参数</p>
         </div>
         
         {/* 交互式控制面板 */}
@@ -57,8 +41,9 @@ const SettingsPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <SoundSelector />
         
         {/* 页尾 */}
-        <div className={`text-center text-xs mt-8 mb-4 ${settings.darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+        <div className={`text-center text-sm mt-12 mb-6 ${settings.darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
           <p>© 2026 节拍器应用</p>
+          <p className="mt-1">专业、精准、可靠</p>
         </div>
       </div>
     </div>
@@ -75,6 +60,36 @@ const MainPage: React.FC = () => {
   const [backButtonAlert, setBackButtonAlert] = useState(false);
   const [lastBackPressed, setLastBackPressed] = useState(0);
 
+  const loadSettings = useCallback(() => {
+    try {
+      // 检查localStorage是否可用
+      if (typeof localStorage !== 'undefined') {
+        const saved = localStorage.getItem(SETTINGS_KEY);
+        if (saved) {
+          return JSON.parse(saved);
+        }
+      } else {
+        console.warn('localStorage is not available in this browser');
+      }
+    } catch (e) {
+      console.error('Failed to load settings:', e);
+    }
+    return null;
+  }, []);
+
+  const saveSettings = useCallback((settings: { bpm: number; timeSignature: string; noteValue: string; soundType: string; volume: { accent: number; normal: number }; subdivision: number }) => {
+    try {
+      // 检查localStorage是否可用
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      } else {
+        console.warn('localStorage is not available in this browser');
+      }
+    } catch (e) {
+      console.error('Failed to save settings:', e);
+    }
+  }, []);
+
   useEffect(() => {
     const saved = loadSettings();
     if (saved) {
@@ -85,54 +100,57 @@ const MainPage: React.FC = () => {
       dispatch({ type: 'SET_VOLUME', payload: saved.volume });
       dispatch({ type: 'SET_SUBDIVISION', payload: saved.subdivision });
     }
-  }, [dispatch]);
+  }, [dispatch, loadSettings]);
 
   useEffect(() => {
-    saveSettings({
-      bpm: state.bpm,
-      timeSignature: state.timeSignature,
-      noteValue: state.noteValue,
-      soundType: state.soundType,
-      volume: state.volume,
-      subdivision: state.subdivision,
-    });
-  }, [state]);
+    // 只在非运行状态或设置实际变化时保存，避免节拍变化时频繁写入
+    if (!state.isPlaying) {
+      saveSettings({
+        bpm: state.bpm,
+        timeSignature: state.timeSignature,
+        noteValue: state.noteValue,
+        soundType: state.soundType,
+        volume: state.volume,
+        subdivision: state.subdivision,
+      });
+    }
+  }, [state.bpm, state.timeSignature, state.noteValue, state.soundType, state.volume, state.subdivision, state.isPlaying, saveSettings]);
 
-  useEffect(() => {
-    const handleBackButton = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' || event.key === 'Backspace') {
-        event.preventDefault();
-        
-        if (showAbout || showSystemSettings || showSettings) {
-          if (showAbout) {
-            setShowAbout(false);
-          } else if (showSystemSettings) {
-            setShowSystemSettings(false);
-          } else if (showSettings) {
-            setShowSettings(false);
-          }
-          return;
+  const handleBackButton = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Escape' || event.key === 'Backspace') {
+      event.preventDefault();
+      
+      if (showAbout || showSystemSettings || showSettings) {
+        if (showAbout) {
+          setShowAbout(false);
+        } else if (showSystemSettings) {
+          setShowSystemSettings(false);
+        } else if (showSettings) {
+          setShowSettings(false);
         }
-
-        const currentTime = Date.now();
-        if (currentTime - lastBackPressed < 2000) {
-          setBackButtonAlert(false);
-        } else {
-          setBackButtonAlert(true);
-          setLastBackPressed(currentTime);
-          setTimeout(() => {
-            setBackButtonAlert(false);
-          }, 2000);
-        }
+        return;
       }
-    };
 
+      const currentTime = Date.now();
+      if (currentTime - lastBackPressed < 2000) {
+        setBackButtonAlert(false);
+      } else {
+        setBackButtonAlert(true);
+        setLastBackPressed(currentTime);
+        setTimeout(() => {
+          setBackButtonAlert(false);
+        }, 2000);
+      }
+    }
+  }, [showSettings, showSystemSettings, showAbout, lastBackPressed]);
+
+  useEffect(() => {
     window.addEventListener('keydown', handleBackButton);
 
     return () => {
       window.removeEventListener('keydown', handleBackButton);
     };
-  }, [showSettings, showSystemSettings, showAbout, lastBackPressed]);
+  }, [handleBackButton]);
 
   if (showAbout) {
     return (
@@ -159,19 +177,19 @@ const MainPage: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen ${settings.darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'} p-4 animate-fadeIn`}>
-      <div className="max-w-md mx-auto">
+    <div className={`min-h-screen min-w-full ${settings.darkMode ? 'bg-gradient-to-br from-gray-900 to-gray-800 text-white' : 'bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800'} p-4 sm:p-6 animate-fadeIn`}>
+      <div className="max-w-md mx-auto w-full">
         {/* 返回键提示 */}
         {backButtonAlert && (
-          <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg z-50 ${settings.darkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-800'} animate-fadeIn`}>
+          <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg z-50 ${settings.darkMode ? 'bg-gray-700/90 text-white' : 'bg-white/90 text-gray-800'} backdrop-blur-sm animate-fadeIn`}>
             <p>请连续快速两次返回即可退出</p>
           </div>
         )}
         
         {/* 应用标题 */}
-        <div className="text-center mb-6 animate-bounceSoft">
-          <h1 className="text-3xl font-bold text-blue-600">节拍器</h1>
-          <p className={`mt-1 ${settings.darkMode ? 'text-gray-300' : 'text-gray-600'}`}>专业的节拍辅助工具</p>
+        <div className="text-center mb-8 sm:mb-10 animate-bounceSoft">
+          <h1 className={`text-3xl sm:text-4xl font-bold ${settings.darkMode ? 'text-blue-400' : 'text-blue-600'} tracking-tight`}>节拍器</h1>
+          <p className={`mt-2 ${settings.darkMode ? 'text-gray-300' : 'text-gray-600'} text-base sm:text-lg`}>专业的节拍辅助工具</p>
         </div>
         
         {/* 节拍显示 */}
@@ -180,31 +198,35 @@ const MainPage: React.FC = () => {
         {/* 控制面板 */}
         <ControlPanel />
         
-        {/* 参数设置按钮 */}
-        <button
-          onClick={() => setShowSettings(true)}
-          className={`w-full py-5 rounded-xl font-semibold shadow-lg mb-4 hover-lift ripple transition-all duration-300 ${settings.darkMode ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800' : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700'}`}
-        >
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-xl">⚙️</span>
-            <span className="text-lg">参数设置</span>
-          </div>
-        </button>
-        
-        {/* 系统设置按钮 */}
-        <button
-          onClick={() => setShowSystemSettings(true)}
-          className={`w-full py-5 rounded-xl font-semibold shadow-lg mb-6 hover-lift ripple transition-all duration-300 ${settings.darkMode ? 'bg-gradient-to-r from-gray-800 to-gray-700 text-gray-200 hover:from-gray-700 hover:to-gray-600' : 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 hover:from-gray-300 hover:to-gray-400'}`}
-        >
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-xl">🔧</span>
-            <span className="text-lg">系统设置</span>
-          </div>
-        </button>
+        {/* 功能按钮区域 */}
+        <div className="space-y-4 mb-8 sm:mb-10">
+          {/* 参数设置按钮 */}
+          <button
+            onClick={() => setShowSettings(true)}
+            className={`w-full py-4 sm:py-5 rounded-xl font-semibold shadow-lg hover-lift ripple transition-all duration-300 ${settings.darkMode ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-blue-900/20' : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-blue-500/20'}`}
+          >
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-xl sm:text-2xl">⚙️</span>
+              <span className="text-base sm:text-lg">参数设置</span>
+            </div>
+          </button>
+          
+          {/* 系统设置按钮 */}
+          <button
+            onClick={() => setShowSystemSettings(true)}
+            className={`w-full py-4 sm:py-5 rounded-xl font-semibold shadow-lg hover-lift ripple transition-all duration-300 ${settings.darkMode ? 'bg-gradient-to-r from-gray-800 to-gray-700 text-gray-200 hover:from-gray-700 hover:to-gray-600 shadow-gray-700/30' : 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 hover:from-gray-300 hover:to-gray-400 shadow-gray-300/50'}`}
+          >
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-xl sm:text-2xl">🔧</span>
+              <span className="text-base sm:text-lg">系统设置</span>
+            </div>
+          </button>
+        </div>
         
         {/* 页尾 */}
-        <div className={`text-center text-xs mt-8 mb-4 ${settings.darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+        <div className={`text-center text-sm mt-8 mb-6 ${settings.darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
           <p>© 2026 节拍器应用</p>
+          <p className="mt-1">专业、精准、可靠</p>
         </div>
       </div>
     </div>

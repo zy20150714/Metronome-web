@@ -55,7 +55,7 @@ const SystemSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     },
     {
       title: '参数设置',
-      description: '调整小节数、单拍音符、时值和速度等参数。'
+      description: '调整小节数、节拍单位、时值和速度等参数。'
     },
     {
       title: '声音设置',
@@ -93,28 +93,31 @@ const SystemSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [showMusicTheory, setShowMusicTheory] = useState(false);
 
   return (
-    <div className={`min-h-screen p-4 ${settings.darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'}`}>
+    <div className={`min-h-screen p-4 sm:p-6 ${settings.darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'}`}>
       <div className="max-w-md mx-auto">
         {/* 返回按钮 */}
         <button
           onClick={onBack}
-          className={`w-full py-3 font-semibold rounded-lg shadow-sm mb-6 active:bg-gray-300 ${settings.darkMode ? 'bg-gray-800 text-gray-200 active:bg-gray-700' : 'bg-gray-200 text-gray-800 active:bg-gray-300'}`}
+          className={`w-full py-3 sm:py-4 font-semibold rounded-xl shadow-md mb-6 sm:mb-8 active:bg-gray-300 ${settings.darkMode ? 'bg-gray-800 text-gray-200 active:bg-gray-700' : 'bg-gray-200 text-gray-800 active:bg-gray-300'}`}
         >
-          返回主界面
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-xl">⬅️</span>
+            <span className="text-lg">返回主界面</span>
+          </div>
         </button>
 
         {/* 页面标题 */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-blue-600">系统设置</h2>
+        <div className="text-center mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-blue-600">系统设置</h2>
         </div>
 
         {showTutorial ? (
           /* 使用教程 */
-          <div className={`rounded-xl shadow-md p-6 mb-6 ${settings.darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <h3 className={`text-lg font-semibold mb-4 ${settings.darkMode ? 'text-gray-100' : 'text-gray-800'}`}>使用教程</h3>
-            <div className="space-y-4">
+          <div className={`rounded-xl shadow-md p-4 sm:p-6 mb-6 ${settings.darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+            <h3 className={`text-lg sm:text-xl font-semibold mb-4 ${settings.darkMode ? 'text-gray-100' : 'text-gray-800'}`}>使用教程</h3>
+            <div className="space-y-3 sm:space-y-4">
               {tutorialSteps.map((step, index) => (
-                <div key={index} className={`p-4 rounded-lg ${settings.darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                <div key={index} className={`p-3 sm:p-4 rounded-lg ${settings.darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
                   <h4 className="font-bold text-blue-600">{index + 1}. {step.title}</h4>
                   <p className={`mt-1 ${settings.darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{step.description}</p>
                 </div>
@@ -122,18 +125,18 @@ const SystemSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             </div>
             <button
               onClick={() => setShowTutorial(false)}
-              className="mt-6 w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors"
+              className="mt-6 w-full py-2 sm:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors"
             >
               关闭教程
             </button>
           </div>
         ) : showMusicTheory ? (
           /* 乐理知识学习 */
-          <div className={`rounded-xl shadow-md p-6 mb-6 ${settings.darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <h3 className={`text-lg font-semibold mb-4 ${settings.darkMode ? 'text-gray-100' : 'text-gray-800'}`}>乐理知识</h3>
-            <div className="space-y-4">
+          <div className={`rounded-xl shadow-md p-4 sm:p-6 mb-6 ${settings.darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+            <h3 className={`text-lg sm:text-xl font-semibold mb-4 ${settings.darkMode ? 'text-gray-100' : 'text-gray-800'}`}>乐理知识</h3>
+            <div className="space-y-3 sm:space-y-4">
               {musicTheoryData.map((item, index) => (
-                <div key={index} className={`p-4 rounded-lg ${settings.darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                <div key={index} className={`p-3 sm:p-4 rounded-lg ${settings.darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
                   <h4 className="font-bold text-blue-600">{item.title}</h4>
                   <p className={`mt-1 ${settings.darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{item.content}</p>
                 </div>
@@ -141,7 +144,7 @@ const SystemSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             </div>
             <button
               onClick={() => setShowMusicTheory(false)}
-              className="mt-6 w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors"
+              className="mt-6 w-full py-2 sm:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors"
             >
               关闭乐理知识
             </button>
@@ -151,10 +154,10 @@ const SystemSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           <About onBack={() => setShowAbout(false)} />
         ) : (
           /* 系统设置选项 */
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* 明暗模式调节 */}
-            <div className={`rounded-xl shadow-md p-6 ${settings.darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-              <h3 className={`text-lg font-semibold mb-4 ${settings.darkMode ? 'text-gray-100' : 'text-gray-800'}`}>显示设置</h3>
+            <div className={`rounded-xl shadow-md p-4 sm:p-6 ${settings.darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <h3 className={`text-lg sm:text-xl font-semibold mb-4 ${settings.darkMode ? 'text-gray-100' : 'text-gray-800'}`}>显示设置</h3>
               <div className="flex items-center justify-between">
                 <span className={settings.darkMode ? 'text-gray-300' : 'text-gray-700'}>暗黑模式</span>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -173,33 +176,33 @@ const SystemSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             {/* 使用教程按钮 */}
             <button
               onClick={() => setShowTutorial(true)}
-              className={`w-full py-3 rounded-xl shadow-md hover:bg-gray-50 active:bg-gray-100 transition-colors ${settings.darkMode ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 active:bg-gray-600' : 'bg-white text-gray-800'}`}
+              className={`w-full py-3 sm:py-4 rounded-xl shadow-md hover:bg-gray-50 active:bg-gray-100 transition-colors ${settings.darkMode ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 active:bg-gray-600' : 'bg-white text-gray-800'}`}
             >
               <div className="flex items-center justify-center gap-2">
-                <span className="text-lg">📚</span>
-                <span className="text-lg font-semibold">使用教程</span>
+                <span className="text-lg sm:text-xl">📚</span>
+                <span className="text-lg sm:text-xl font-semibold">使用教程</span>
               </div>
             </button>
 
             {/* 乐理知识学习按钮 */}
             <button
               onClick={() => setShowMusicTheory(true)}
-              className={`w-full py-3 rounded-xl shadow-md hover:bg-gray-50 active:bg-gray-100 transition-colors ${settings.darkMode ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 active:bg-gray-600' : 'bg-white text-gray-800'}`}
+              className={`w-full py-3 sm:py-4 rounded-xl shadow-md hover:bg-gray-50 active:bg-gray-100 transition-colors ${settings.darkMode ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 active:bg-gray-600' : 'bg-white text-gray-800'}`}
             >
               <div className="flex items-center justify-center gap-2">
-                <span className="text-lg">🎵</span>
-                <span className="text-lg font-semibold">乐理知识学习</span>
+                <span className="text-lg sm:text-xl">🎵</span>
+                <span className="text-lg sm:text-xl font-semibold">乐理知识学习</span>
               </div>
             </button>
 
             {/* 关于按钮 */}
             <button
               onClick={() => setShowAbout(true)}
-              className={`w-full py-3 rounded-xl shadow-md hover:bg-gray-50 active:bg-gray-100 transition-colors ${settings.darkMode ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 active:bg-gray-600' : 'bg-white text-gray-800'}`}
+              className={`w-full py-3 sm:py-4 rounded-xl shadow-md hover:bg-gray-50 active:bg-gray-100 transition-colors ${settings.darkMode ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 active:bg-gray-600' : 'bg-white text-gray-800'}`}
             >
               <div className="flex items-center justify-center gap-2">
-                <span className="text-lg">ℹ️</span>
-                <span className="text-lg font-semibold">关于</span>
+                <span className="text-lg sm:text-xl">ℹ️</span>
+                <span className="text-lg sm:text-xl font-semibold">关于</span>
               </div>
             </button>
           </div>

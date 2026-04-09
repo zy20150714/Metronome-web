@@ -12,20 +12,23 @@ const About: React.FC<AboutProps> = ({ onBack }) => {
   const [showUpdateLog, setShowUpdateLog] = useState(true);
 
   return (
-    <div className={`min-h-screen p-4 ${settings.darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'} animate-fadeIn`}>
+    <div className={`min-h-screen p-4 sm:p-6 ${settings.darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'} animate-fadeIn`}>
       <div className="max-w-md mx-auto">
         {/* 返回按钮 */}
         <button
           onClick={onBack}
-          className={`w-full py-3 font-semibold rounded-lg shadow-sm mb-6 hover-lift ripple ${settings.darkMode ? 'bg-gray-800 text-gray-200' : 'bg-gray-200 text-gray-800'}`}
+          className={`w-full py-3 sm:py-4 font-semibold rounded-xl shadow-md mb-6 sm:mb-8 hover-lift ripple ${settings.darkMode ? 'bg-gray-800 text-gray-200' : 'bg-gray-200 text-gray-800'}`}
         >
-          返回上一级
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-xl">⬅️</span>
+            <span className="text-lg">返回上一级</span>
+          </div>
         </button>
 
         {/* 关于内容 */}
-        <div className={`rounded-xl shadow-md p-6 mb-6 ${settings.darkMode ? 'bg-gray-800' : 'bg-white'} animate-slideIn`}>
+        <div className={`rounded-xl shadow-md p-4 sm:p-6 mb-6 ${settings.darkMode ? 'bg-gray-800' : 'bg-white'} animate-slideIn`}>
           <div className="text-center space-y-4">
-            <h3 className="text-xl font-semibold animate-bounceSoft">节拍器应用</h3>
+            <h3 className="text-xl sm:text-2xl font-semibold animate-bounceSoft">节拍器应用</h3>
             <p className={`${settings.darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               专业的节拍辅助工具，帮助音乐爱好者和专业人士精准掌握节奏。
             </p>

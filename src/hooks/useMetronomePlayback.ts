@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useMetronome } from '../contexts/MetronomeContext';
 import { calculateBeatDuration } from '../utils/metronomeUtils';
 import { audioUtils } from '../utils/audioUtils';
@@ -6,7 +6,7 @@ import { audioUtils } from '../utils/audioUtils';
 export const useMetronomePlayback = () => {
   const { state, dispatch } = useMetronome();
   const timeoutRef = useRef<number | null>(null);
-  const wasPlayingRef = useRef(false);
+  const isPlayingRef = useRef(false);
   
   const clearAllTimeouts = () => {
     if (timeoutRef.current) {
@@ -15,8 +15,8 @@ export const useMetronomePlayback = () => {
     }
   };
   
-  const playBeat = () => {
-    if (!state.isPlaying) {
+  const playNextBeat = useCallback(() => {
+    if (!isPlayingRef.current) {
       clearAllTimeouts();
       return;
     }
@@ -42,27 +42,36 @@ export const useMetronomePlayback = () => {
     const currentMaxSubdivision = state.subdivision;
     
     timeoutRef.current = setTimeout(() => {
-      if (currentSubdivision < currentMaxSubdivision) {
-        dispatch({ type: 'NEXT_SUBDIVISION' });
-      } else {
-        dispatch({ type: 'NEXT_BEAT' });
+      if (isPlayingRef.current) {
+        if (currentSubdivision < currentMaxSubdivision) {
+          dispatch({ type: 'NEXT_SUBDIVISION' });
+        } else {
+          dispatch({ type: 'NEXT_BEAT' });
+        }
       }
     }, subdivisionDuration) as unknown as number;
-  };
+  }, [state.currentBeat, state.currentSubdivision, state.bpm, state.noteValue, state.subdivision, state.soundType, state.volume, dispatch]);
+  
+  useEffect(() => {
+    isPlayingRef.current = state.isPlaying;
+    
+    if (state.isPlaying) {
+      playNextBeat();
+    } else {
+      clearAllTimeouts();
+    }
+  }, [state.isPlaying, state.timeSignature, playNextBeat]);
   
   useEffect(() => {
     if (state.isPlaying) {
-      playBeat();
-      wasPlayingRef.current = true;
-    } else {
+      // 清除之前的定时器，确保只有一个定时器在运行
       clearAllTimeouts();
-      wasPlayingRef.current = false;
+      playNextBeat();
     }
-  }, [state.isPlaying, state.timeSignature]);
-  
-  useEffect(() => {
-    if (state.isPlaying && wasPlayingRef.current) {
-      playBeat();
-    }
-  }, [state.currentBeat, state.currentSubdivision, state.bpm, state.noteValue, state.subdivision, state.soundType, state.volume, dispatch]);
+
+    // 在组件卸载时清理定时器
+    return () => {
+      clearAllTimeouts();
+    };
+  }, [state.currentBeat, state.currentSubdivision, state.bpm, state.noteValue, state.subdivision, state.soundType, state.volume, dispatch, playNextBeat, state.isPlaying]);
 };

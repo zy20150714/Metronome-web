@@ -69,13 +69,14 @@ const metronomeReducer = (state: MetronomeState, action: MetronomeAction): Metro
         currentSubdivision: 1,
       };
     
-    case 'NEXT_BEAT':
+    case 'NEXT_BEAT': {
       const [beats] = state.timeSignature.split('/').map(Number);
       return {
         ...state,
         currentBeat: state.currentBeat >= beats ? 1 : state.currentBeat + 1,
         currentSubdivision: 1,
       };
+    }
     
     case 'NEXT_SUBDIVISION':
       return {

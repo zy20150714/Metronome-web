@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useMetronome } from '../../contexts/MetronomeContext';
 import { useSystemSettings } from '../ControlPanel/SystemSettings';
 
@@ -49,21 +49,23 @@ const BeatDisplay: React.FC = () => {
     };
   }, [state.currentBeat, state.bpm, state.isPlaying, state.subdivision]);
 
-  const totalBeats = parseInt(state.timeSignature.split('/')[0]);
+  const totalBeats = useMemo(() => {
+    return parseInt(state.timeSignature.split('/')[0]);
+  }, [state.timeSignature]);
 
   return (
-    <div className={`rounded-2xl p-6 mb-6 shadow-xl hover-lift ${settings.darkMode ? 'bg-gradient-to-br from-blue-900 to-blue-700' : 'bg-gradient-to-br from-blue-500 to-blue-600'}`}>
+    <div className={`rounded-2xl p-4 sm:p-6 mb-6 shadow-xl hover-lift ${settings.darkMode ? 'bg-gradient-to-br from-blue-900 to-blue-700' : 'bg-gradient-to-br from-blue-500 to-blue-600'}`}>
       <div className="flex flex-col items-center">
-        <div className={`text-white text-7xl font-bold mb-2 transition-all duration-100 ${flash ? 'scale-110 animate-pulseSoft' : ''}`}>
+        <div className={`text-white text-5xl sm:text-7xl font-bold mb-2 transition-all duration-100 ${flash ? 'scale-110 animate-pulseSoft' : ''}`}>
           {state.bpm}
         </div>
-        <div className="text-white/90 text-sm mb-6">BPM</div>
+        <div className="text-white/90 text-sm mb-4 sm:mb-6">BPM</div>
         
-        <div className="flex items-center justify-center mb-8 animate-bounceSoft">
-          <div className="text-white text-4xl font-semibold">{state.timeSignature}</div>
+        <div className="flex items-center justify-center mb-6 sm:mb-8 animate-bounceSoft">
+          <div className="text-white text-3xl sm:text-4xl font-semibold">{state.timeSignature}</div>
         </div>
         
-        <div className="flex flex-wrap items-center justify-center gap-3 w-full max-w-full">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 w-full max-w-full">
           {Array.from({ length: totalBeats }, (_, i) => {
             const beatNumber = i + 1;
             const beatType = getBeatType(beatNumber);
@@ -93,7 +95,7 @@ const BeatDisplay: React.FC = () => {
             return (
               <div
                 key={i}
-                className={`w-18 h-18 rounded-full flex items-center justify-center transition-all duration-200 ease-in-out 
+                className={`w-16 sm:w-20 h-16 sm:h-20 rounded-full flex items-center justify-center transition-all duration-200 ease-in-out 
                   ${getColor()} 
                   ${getRingColor()}
                   ${getAnimation()}
@@ -101,7 +103,7 @@ const BeatDisplay: React.FC = () => {
                   shadow-lg
                 `}
               >
-                <span className={`${isCurrent ? 'text-white font-bold text-xl' : 'text-white/70 text-lg'}`}>
+                <span className={`${isCurrent ? 'text-white font-bold text-lg sm:text-xl' : 'text-white/70 text-base sm:text-lg'}`}>
                   {beatNumber}
                 </span>
               </div>
@@ -109,13 +111,13 @@ const BeatDisplay: React.FC = () => {
           })}
         </div>
         
-        <div className="mt-6 flex items-center space-x-6 text-white/80 text-sm">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded-full bg-red-500 shadow-md"></div>
+        <div className="mt-4 sm:mt-6 flex items-center space-x-4 sm:space-x-6 text-white/80 text-xs sm:text-sm">
+          <div className="flex items-center space-x-1 sm:space-x-2">
+            <div className="w-3 sm:w-4 h-3 sm:h-4 rounded-full bg-red-500 shadow-md"></div>
             <span>重音</span>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded-full bg-white shadow-md"></div>
+          <div className="flex items-center space-x-1 sm:space-x-2">
+            <div className="w-3 sm:w-4 h-3 sm:h-4 rounded-full bg-white shadow-md"></div>
             <span>普通音</span>
           </div>
         </div>
@@ -124,4 +126,4 @@ const BeatDisplay: React.FC = () => {
   );
 };
 
-export default BeatDisplay;
+export default React.memo(BeatDisplay);

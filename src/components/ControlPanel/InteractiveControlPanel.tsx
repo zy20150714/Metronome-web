@@ -11,7 +11,7 @@ const InteractiveControlPanel: React.FC = () => {
   
   const denominatorOptions = [2, 4, 8, 16];
   
-  const noteValueOptions: NoteValue[] = ['whole', 'half', 'quarter', 'eighth', 'sixteenth'];
+  const noteValueOptions: NoteValue[] = ['whole', 'half', 'quarter', 'eighth', 'sixteenth', 'triplet'];
   
   const [currentNumerator, currentDenominator] = state.timeSignature.split('/').map(Number);
   
@@ -117,12 +117,12 @@ const InteractiveControlPanel: React.FC = () => {
               onChange={(e) => {
                 const value = parseInt(e.target.value) || 0;
                 let finalValue = value;
-                if (value < 40) finalValue = 40;
-                if (value > 208) finalValue = 208;
+                if (value < 30) finalValue = 30;
+                if (value > 300) finalValue = 300;
                 dispatch({ type: 'SET_BPM', payload: finalValue });
               }}
-              min="40"
-              max="208"
+              min="30"
+              max="300"
               className={`flex-1 px-4 py-3 rounded-lg text-center text-xl font-bold border-2 outline-none ${settings.darkMode ? 'bg-gray-700 text-white border-gray-600 focus:border-blue-500' : 'bg-white text-gray-800 border-gray-300 focus:border-blue-500'}`}
             />
             <button

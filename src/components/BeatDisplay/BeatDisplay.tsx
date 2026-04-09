@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useMetronome } from '../../contexts/MetronomeContext';
+import { useSystemSettings } from '../ControlPanel/SystemSettings';
 
 const BeatDisplay: React.FC = () => {
   const { state } = useMetronome();
+  const { settings } = useSystemSettings();
   const [flash, setFlash] = useState(false);
   const [isFirstBeatVisible, setIsFirstBeatVisible] = useState(true);
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -50,18 +52,18 @@ const BeatDisplay: React.FC = () => {
   const totalBeats = parseInt(state.timeSignature.split('/')[0]);
 
   return (
-    <div className="bg-blue-600 rounded-xl p-6 mb-6 shadow-lg hover-lift">
+    <div className={`rounded-2xl p-6 mb-6 shadow-xl hover-lift ${settings.darkMode ? 'bg-gradient-to-br from-blue-900 to-blue-700' : 'bg-gradient-to-br from-blue-500 to-blue-600'}`}>
       <div className="flex flex-col items-center">
-        <div className={`text-white text-6xl font-bold mb-2 transition-all duration-100 ${flash ? 'scale-110 animate-pulseSoft' : ''}`}>
+        <div className={`text-white text-7xl font-bold mb-2 transition-all duration-100 ${flash ? 'scale-110 animate-pulseSoft' : ''}`}>
           {state.bpm}
         </div>
-        <div className="text-white/80 text-sm mb-4">BPM</div>
+        <div className="text-white/90 text-sm mb-6">BPM</div>
         
-        <div className="flex items-center justify-center mb-6 animate-bounceSoft">
-          <div className="text-white text-3xl font-semibold">{state.timeSignature}</div>
+        <div className="flex items-center justify-center mb-8 animate-bounceSoft">
+          <div className="text-white text-4xl font-semibold">{state.timeSignature}</div>
         </div>
         
-        <div className="flex flex-wrap items-center justify-center gap-2 w-full max-w-full">
+        <div className="flex flex-wrap items-center justify-center gap-3 w-full max-w-full">
           {Array.from({ length: totalBeats }, (_, i) => {
             const beatNumber = i + 1;
             const beatType = getBeatType(beatNumber);
@@ -76,7 +78,7 @@ const BeatDisplay: React.FC = () => {
             
             const getRingColor = () => {
               if (isCurrent) {
-                return 'ring-4 ring-white/50';
+                return 'ring-4 ring-white/70';
               }
               return '';
             };
@@ -91,14 +93,15 @@ const BeatDisplay: React.FC = () => {
             return (
               <div
                 key={i}
-                className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 ease-in-out 
+                className={`w-18 h-18 rounded-full flex items-center justify-center transition-all duration-200 ease-in-out 
                   ${getColor()} 
                   ${getRingColor()}
                   ${getAnimation()}
                   opacity-100 hover:scale-110
+                  shadow-lg
                 `}
               >
-                <span className={`${isCurrent ? 'text-white font-bold' : 'text-white/70'}`}>
+                <span className={`${isCurrent ? 'text-white font-bold text-xl' : 'text-white/70 text-lg'}`}>
                   {beatNumber}
                 </span>
               </div>
@@ -106,14 +109,14 @@ const BeatDisplay: React.FC = () => {
           })}
         </div>
         
-        <div className="mt-4 flex items-center space-x-4 text-white/80 text-xs">
-          <div className="flex items-center space-x-1">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <span>首拍</span>
+        <div className="mt-6 flex items-center space-x-6 text-white/80 text-sm">
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 rounded-full bg-red-500 shadow-md"></div>
+            <span>重音</span>
           </div>
-          <div className="flex items-center space-x-1">
-            <div className="w-3 h-3 rounded-full bg-white"></div>
-            <span>普通拍</span>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 rounded-full bg-white shadow-md"></div>
+            <span>普通音</span>
           </div>
         </div>
       </div>

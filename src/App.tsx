@@ -183,17 +183,23 @@ const MainPage: React.FC = () => {
         {/* 参数设置按钮 */}
         <button
           onClick={() => setShowSettings(true)}
-          className="w-full py-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md mb-4 hover-lift ripple"
+          className={`w-full py-5 rounded-xl font-semibold shadow-lg mb-4 hover-lift ripple transition-all duration-300 ${settings.darkMode ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800' : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700'}`}
         >
-          参数设置
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-xl">⚙️</span>
+            <span className="text-lg">参数设置</span>
+          </div>
         </button>
         
         {/* 系统设置按钮 */}
         <button
           onClick={() => setShowSystemSettings(true)}
-          className={`w-full py-4 font-semibold rounded-lg shadow-md mb-6 hover-lift ripple ${settings.darkMode ? 'bg-gray-800 text-gray-200' : 'bg-gray-200 text-gray-800'}`}
+          className={`w-full py-5 rounded-xl font-semibold shadow-lg mb-6 hover-lift ripple transition-all duration-300 ${settings.darkMode ? 'bg-gradient-to-r from-gray-800 to-gray-700 text-gray-200 hover:from-gray-700 hover:to-gray-600' : 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 hover:from-gray-300 hover:to-gray-400'}`}
         >
-          系统设置
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-xl">🔧</span>
+            <span className="text-lg">系统设置</span>
+          </div>
         </button>
         
         {/* 页尾 */}

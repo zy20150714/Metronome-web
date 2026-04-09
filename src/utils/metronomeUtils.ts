@@ -14,6 +14,7 @@ export const calculateBeatDuration = (bpm: number, noteValue: NoteValue): number
     quarter: 1,
     eighth: 0.5,
     sixteenth: 0.25,
+    triplet: 1/3,
   };
   
   return baseDuration * noteValueMultipliers[noteValue];
@@ -24,8 +25,8 @@ export const calculateSubdivisionDuration = (beatDuration: number, subdivision: 
 };
 
 export const validateBPM = (bpm: number): number => {
-  if (bpm < 40) return 40;
-  if (bpm > 208) return 208;
+  if (bpm < 30) return 30;
+  if (bpm > 300) return 300;
   return bpm;
 };
 
@@ -42,6 +43,7 @@ export const getNoteValueSymbol = (noteValue: NoteValue): string => {
     quarter: '𝅘𝅥',
     eighth: '𝅘𝅥𝅮',
     sixteenth: '𝅘𝅥𝅯',
+    triplet: '𝅘𝅥³',
   };
   return symbols[noteValue];
 };
@@ -116,6 +118,7 @@ export const getNoteValueName = (noteValue: NoteValue): string => {
     quarter: '四分音符',
     eighth: '八分音符',
     sixteenth: '十六分音符',
+    triplet: '三连音',
   };
   return names[noteValue];
 };

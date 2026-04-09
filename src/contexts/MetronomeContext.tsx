@@ -2,7 +2,6 @@ import React, { createContext, useReducer, useContext, ReactNode } from 'react';
 import type { MetronomeState, MetronomeAction } from '../types';
 import { validateBPM, validateSubdivision } from '../utils/metronomeUtils';
 
-// 初始状态
 const initialState: MetronomeState = {
   isPlaying: false,
   bpm: 120,
@@ -18,7 +17,6 @@ const initialState: MetronomeState = {
   currentSubdivision: 1,
 };
 
-// Reducer函数
 const metronomeReducer = (state: MetronomeState, action: MetronomeAction): MetronomeState => {
   switch (action.type) {
     case 'TOGGLE_PLAY':
@@ -97,7 +95,6 @@ const metronomeReducer = (state: MetronomeState, action: MetronomeAction): Metro
   }
 };
 
-// 创建Context
 interface MetronomeContextType {
   state: MetronomeState;
   dispatch: React.Dispatch<MetronomeAction>;
@@ -105,7 +102,6 @@ interface MetronomeContextType {
 
 const MetronomeContext = createContext<MetronomeContextType | undefined>(undefined);
 
-// Context Provider组件
 export const MetronomeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(metronomeReducer, initialState);
   
@@ -116,7 +112,6 @@ export const MetronomeProvider: React.FC<{ children: ReactNode }> = ({ children 
   );
 };
 
-// 自定义Hook，用于访问Context
 export const useMetronome = (): MetronomeContextType => {
   const context = useContext(MetronomeContext);
   if (context === undefined) {

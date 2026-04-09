@@ -75,11 +75,9 @@ const MainPage: React.FC = () => {
   const [backButtonAlert, setBackButtonAlert] = useState(false);
   const [lastBackPressed, setLastBackPressed] = useState(0);
 
-  // 加载设置 - 自动加载
   useEffect(() => {
     const saved = loadSettings();
     if (saved) {
-      // 自动加载所有保存的设置
       dispatch({ type: 'SET_BPM', payload: saved.bpm });
       dispatch({ type: 'SET_TIME_SIGNATURE', payload: saved.timeSignature });
       dispatch({ type: 'SET_NOTE_VALUE', payload: saved.noteValue });
@@ -89,9 +87,7 @@ const MainPage: React.FC = () => {
     }
   }, [dispatch]);
 
-  // 保存设置 - 自动保存
   useEffect(() => {
-    // 自动保存所有设置
     saveSettings({
       bpm: state.bpm,
       timeSignature: state.timeSignature,
@@ -102,13 +98,11 @@ const MainPage: React.FC = () => {
     });
   }, [state]);
 
-  // 处理返回键事件
   useEffect(() => {
     const handleBackButton = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' || event.key === 'Backspace') { // 使用Backspace作为返回键替代
+      if (event.key === 'Escape' || event.key === 'Backspace') {
         event.preventDefault();
         
-        // 如果不是主界面，优先返回上级界面
         if (showAbout || showSystemSettings || showSettings) {
           if (showAbout) {
             setShowAbout(false);
@@ -120,17 +114,12 @@ const MainPage: React.FC = () => {
           return;
         }
 
-        // 如果在主界面，处理退出逻辑
         const currentTime = Date.now();
-        if (currentTime - lastBackPressed < 2000) { // 2秒内连续按下返回键
-          // 这里可以调用退出应用的方法，但浏览器环境无法直接退出
-          // 所以我们只是清除警告
+        if (currentTime - lastBackPressed < 2000) {
           setBackButtonAlert(false);
         } else {
-          // 显示提示信息
           setBackButtonAlert(true);
           setLastBackPressed(currentTime);
-          // 2秒后自动隐藏提示
           setTimeout(() => {
             setBackButtonAlert(false);
           }, 2000);
@@ -138,16 +127,13 @@ const MainPage: React.FC = () => {
       }
     };
 
-    // 添加键盘事件监听器
     window.addEventListener('keydown', handleBackButton);
 
-    // 清理函数
     return () => {
       window.removeEventListener('keydown', handleBackButton);
     };
   }, [showSettings, showSystemSettings, showAbout, lastBackPressed]);
 
-  // 关于页面
   if (showAbout) {
     return (
       <div className="animate-slideIn">
@@ -156,7 +142,6 @@ const MainPage: React.FC = () => {
     );
   }
   
-  // 系统设置页面
   if (showSystemSettings) {
     return (
       <div className="animate-slideIn">
@@ -165,7 +150,6 @@ const MainPage: React.FC = () => {
     );
   }
   
-  // 参数设置页面
   if (showSettings) {
     return (
       <div className="animate-slideIn">

@@ -1,36 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import About from '../About/About';
 
-// 系统设置类型定义
 interface SystemSettings {
   darkMode: boolean;
 }
 
-// 系统设置上下文类型
 interface SystemSettingsContextType {
   settings: SystemSettings;
   updateSettings: (newSettings: Partial<SystemSettings>) => void;
 }
 
-// 创建系统设置上下文
 const SystemSettingsContext = React.createContext<SystemSettingsContextType | undefined>(undefined);
 
-// 系统设置提供器组件
 export const SystemSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<SystemSettings>(() => {
-    // 从localStorage加载设置
     const saved = localStorage.getItem('system-settings');
     return saved ? JSON.parse(saved) : {
       darkMode: false
     };
   });
 
-  // 保存设置到localStorage
   useEffect(() => {
     localStorage.setItem('system-settings', JSON.stringify(settings));
   }, [settings]);
 
-  // 更新设置的函数
   const updateSettings = (newSettings: Partial<SystemSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));
   };
@@ -42,7 +35,6 @@ export const SystemSettingsProvider: React.FC<{ children: React.ReactNode }> = (
   );
 };
 
-// 自定义钩子，用于访问系统设置
 export const useSystemSettings = () => {
   const context = React.useContext(SystemSettingsContext);
   if (context === undefined) {
@@ -51,13 +43,11 @@ export const useSystemSettings = () => {
   return context;
 };
 
-// 系统设置组件
 const SystemSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const { settings, updateSettings } = useSystemSettings();
   const [showTutorial, setShowTutorial] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
 
-  // 教程步骤
   const tutorialSteps = [
     {
       title: '主界面',
@@ -77,7 +67,6 @@ const SystemSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     }
   ];
 
-  // 乐理知识数据
   const musicTheoryData = [
     {
       title: '拍号',
@@ -101,7 +90,6 @@ const SystemSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     }
   ];
 
-  // 乐理知识学习状态
   const [showMusicTheory, setShowMusicTheory] = useState(false);
 
   return (

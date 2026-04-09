@@ -24,7 +24,7 @@ A professional metronome application built with React, TypeScript, and Tailwind 
 
 ### Technical Features
 - **Web Audio API**: High-quality audio with low latency
-- **LocalStorage**: Persistent settings across sessions
+- **Dual Storage**: Persistent settings using both LocalStorage and Cookies
 - **Browser Compatibility**: Supports modern browsers and older versions
 - **Performance Optimized**: Smooth operation even on older devices
 
@@ -32,7 +32,7 @@ A professional metronome application built with React, TypeScript, and Tailwind 
 
 The application is deployed and accessible at:
 
-[https://zymetronome.netlify.app/](https://zymetronome.netlify.app/)
+[https://mm.zhongyizy.dpdns.org](https://mm.zhongyizy.dpdns.org)
 
 ## 📱 Mobile Support
 

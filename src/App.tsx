@@ -8,6 +8,7 @@ import SystemSettings from './components/ControlPanel/SystemSettings';
 import { SystemSettingsProvider, useSystemSettings } from './components/ControlPanel/SystemSettings';
 import SoundSelector from './components/SoundSelector/SoundSelector';
 import About from './components/About/About';
+import { cookieUtils } from './utils/cookieUtils';
 
 const SETTINGS_KEY = 'metronome-settings';
 
@@ -62,14 +63,18 @@ const MainPage: React.FC = () => {
 
   const loadSettings = useCallback(() => {
     try {
-      // 检查localStorage是否可用
+      // 优先从localStorage读取
       if (typeof localStorage !== 'undefined') {
         const saved = localStorage.getItem(SETTINGS_KEY);
         if (saved) {
           return JSON.parse(saved);
         }
-      } else {
-        console.warn('localStorage is not available in this browser');
+      }
+      
+      // 如果localStorage没有数据，尝试从cookie读取
+      const cookieValue = cookieUtils.getCookie(SETTINGS_KEY);
+      if (cookieValue) {
+        return JSON.parse(cookieValue);
       }
     } catch (e) {
       console.error('Failed to load settings:', e);
@@ -79,12 +84,15 @@ const MainPage: React.FC = () => {
 
   const saveSettings = useCallback((settings: { bpm: number; timeSignature: string; noteValue: string; soundType: string; volume: { accent: number; normal: number }; subdivision: number }) => {
     try {
-      // 检查localStorage是否可用
+      const settingsJson = JSON.stringify(settings);
+      
+      // 同时保存到localStorage和cookie
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-      } else {
-        console.warn('localStorage is not available in this browser');
+        localStorage.setItem(SETTINGS_KEY, settingsJson);
       }
+      
+      // 保存到cookie，有效期365天
+      cookieUtils.setCookie(SETTINGS_KEY, settingsJson, 365);
     } catch (e) {
       console.error('Failed to save settings:', e);
     }

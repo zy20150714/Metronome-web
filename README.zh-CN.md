@@ -24,7 +24,7 @@
 
 ### 技术特性
 - **Web Audio API**：高质量音频，低延迟
-- **LocalStorage**：跨会话的持久设置
+- **双重存储**：使用LocalStorage和Cookie实现持久化设置
 - **浏览器兼容性**：支持现代浏览器和较旧版本
 - **性能优化**：即使在较旧设备上也能流畅运行
 
@@ -32,7 +32,7 @@
 
 应用已部署并可在以下地址访问：
 
-[https://zymetronome.netlify.app/](https://zymetronome.netlify.app/)
+[https://mm.zhongyizy.dpdns.org](https://mm.zhongyizy.dpdns.org)
 
 ## 📱 移动支持
 

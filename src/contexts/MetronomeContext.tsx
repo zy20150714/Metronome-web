@@ -1,18 +1,17 @@
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
 import type { MetronomeState, MetronomeAction } from '../types';
-import { validateBPM, validateSubdivision } from '../utils/metronomeUtils';
+import { validateBPM, getSubdivisionConfig } from '../utils/metronomeUtils';
 
 const initialState: MetronomeState = {
   isPlaying: false,
   bpm: 120,
   timeSignature: '4/4',
-  noteValue: 'quarter',
+  subdivision: 'quarter',
   soundType: 'click',
   volume: {
     accent: 80,
     normal: 60,
   },
-  subdivision: 1,
   currentBeat: 1,
   currentSubdivision: 1,
 };
@@ -41,10 +40,11 @@ const metronomeReducer = (state: MetronomeState, action: MetronomeAction): Metro
         currentSubdivision: 1,
       };
     
-    case 'SET_NOTE_VALUE':
+    case 'SET_SUBDIVISION':
       return {
         ...state,
-        noteValue: action.payload,
+        subdivision: action.payload,
+        currentSubdivision: 1,
       };
     
     case 'SET_SOUND_TYPE':
@@ -62,13 +62,6 @@ const metronomeReducer = (state: MetronomeState, action: MetronomeAction): Metro
         },
       };
     
-    case 'SET_SUBDIVISION':
-      return {
-        ...state,
-        subdivision: validateSubdivision(action.payload),
-        currentSubdivision: 1,
-      };
-    
     case 'NEXT_BEAT': {
       const [beats] = state.timeSignature.split('/').map(Number);
       return {
@@ -78,11 +71,14 @@ const metronomeReducer = (state: MetronomeState, action: MetronomeAction): Metro
       };
     }
     
-    case 'NEXT_SUBDIVISION':
+    case 'NEXT_SUBDIVISION': {
+      const config = getSubdivisionConfig(state.subdivision);
+      const subdivisionsPerBeat = Math.ceil(config.beatMultiplier);
       return {
         ...state,
-        currentSubdivision: state.currentSubdivision >= state.subdivision ? 1 : state.currentSubdivision + 1,
+        currentSubdivision: state.currentSubdivision >= subdivisionsPerBeat ? 1 : state.currentSubdivision + 1,
       };
+    }
     
     case 'RESET_BEAT':
       return {

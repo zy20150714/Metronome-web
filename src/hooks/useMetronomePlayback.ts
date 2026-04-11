@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useMetronome } from '../contexts/MetronomeContext';
-import { calculateBeatDuration } from '../utils/metronomeUtils';
+import { calculateSubdivisionDuration, getSubdivisionConfig } from '../utils/metronomeUtils';
 import { audioUtils } from '../utils/audioUtils';
 
 export const useMetronomePlayback = () => {
@@ -35,11 +35,12 @@ export const useMetronomePlayback = () => {
       console.error('Error playing sound:', error);
     }
     
-    const beatDuration = calculateBeatDuration(state.bpm, state.noteValue);
-    const subdivisionDuration = beatDuration / state.subdivision;
+    const subdivisionDuration = calculateSubdivisionDuration(state.bpm, state.subdivision);
+    const config = getSubdivisionConfig(state.subdivision);
+    const subdivisionsPerBeat = Math.ceil(config.beatMultiplier);
     
     const currentSubdivision = state.currentSubdivision;
-    const currentMaxSubdivision = state.subdivision;
+    const currentMaxSubdivision = subdivisionsPerBeat;
     
     timeoutRef.current = setTimeout(() => {
       if (isPlayingRef.current) {
@@ -50,7 +51,7 @@ export const useMetronomePlayback = () => {
         }
       }
     }, subdivisionDuration) as unknown as number;
-  }, [state.currentBeat, state.currentSubdivision, state.bpm, state.noteValue, state.subdivision, state.soundType, state.volume, dispatch]);
+  }, [state.currentBeat, state.currentSubdivision, state.bpm, state.subdivision, state.soundType, state.volume, dispatch]);
   
   useEffect(() => {
     isPlayingRef.current = state.isPlaying;
@@ -64,14 +65,12 @@ export const useMetronomePlayback = () => {
   
   useEffect(() => {
     if (state.isPlaying) {
-      // 清除之前的定时器，确保只有一个定时器在运行
       clearAllTimeouts();
       playNextBeat();
     }
 
-    // 在组件卸载时清理定时器
     return () => {
       clearAllTimeouts();
     };
-  }, [state.currentBeat, state.currentSubdivision, state.bpm, state.noteValue, state.subdivision, state.soundType, state.volume, dispatch, playNextBeat, state.isPlaying]);
+  }, [state.currentBeat, state.currentSubdivision, state.bpm, state.subdivision, state.soundType, state.volume, dispatch, playNextBeat, state.isPlaying]);
 };

@@ -82,7 +82,7 @@ const MainPage: React.FC = () => {
     return null;
   }, []);
 
-  const saveSettings = useCallback((settings: { bpm: number; timeSignature: string; noteValue: string; soundType: string; volume: { accent: number; normal: number }; subdivision: number }) => {
+  const saveSettings = useCallback((settings: { bpm: number; timeSignature: string; subdivision: string; soundType: string; volume: { accent: number; normal: number } }) => {
     try {
       const settingsJson = JSON.stringify(settings);
       
@@ -103,10 +103,9 @@ const MainPage: React.FC = () => {
     if (saved) {
       dispatch({ type: 'SET_BPM', payload: saved.bpm });
       dispatch({ type: 'SET_TIME_SIGNATURE', payload: saved.timeSignature });
-      dispatch({ type: 'SET_NOTE_VALUE', payload: saved.noteValue });
+      dispatch({ type: 'SET_SUBDIVISION', payload: saved.subdivision });
       dispatch({ type: 'SET_SOUND_TYPE', payload: saved.soundType });
       dispatch({ type: 'SET_VOLUME', payload: saved.volume });
-      dispatch({ type: 'SET_SUBDIVISION', payload: saved.subdivision });
     }
   }, [dispatch, loadSettings]);
 
@@ -116,13 +115,12 @@ const MainPage: React.FC = () => {
       saveSettings({
         bpm: state.bpm,
         timeSignature: state.timeSignature,
-        noteValue: state.noteValue,
+        subdivision: state.subdivision,
         soundType: state.soundType,
         volume: state.volume,
-        subdivision: state.subdivision,
       });
     }
-  }, [state.bpm, state.timeSignature, state.noteValue, state.soundType, state.volume, state.subdivision, state.isPlaying, saveSettings]);
+  }, [state.bpm, state.timeSignature, state.subdivision, state.soundType, state.volume, state.isPlaying, saveSettings]);
 
   const handleBackButton = useCallback((event: KeyboardEvent) => {
     if (event.key === 'Escape' || event.key === 'Backspace') {

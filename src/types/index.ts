@@ -1,6 +1,18 @@
 export type TimeSignature = '1/4' | '2/4' | '3/4' | '4/4' | '5/4' | '6/8' | '7/8' | '9/8' | '12/8';
 
-export type NoteValue = 'whole' | 'half' | 'quarter' | 'eighth' | 'sixteenth' | 'triplet';
+export type SubdivisionType = 
+  | 'half' 
+  | 'quarter' 
+  | 'eighth' 
+  | 'sixteenth' 
+  | 'thirtysecond'
+  | 'duplet' 
+  | 'triplet' 
+  | 'quartuplet' 
+  | 'quintuplet' 
+  | 'sextuplet' 
+  | 'septuplet'
+  | 'nonuplet';
 
 export type SoundType = 'click' | 'drum' | 'wood' | 'electronic' | 'metal';
 
@@ -13,10 +25,9 @@ export interface MetronomeState {
   isPlaying: boolean;
   bpm: number;
   timeSignature: TimeSignature;
-  noteValue: NoteValue;
+  subdivision: SubdivisionType;
   soundType: SoundType;
   volume: Volume;
-  subdivision: number;
   currentBeat: number;
   currentSubdivision: number;
 }
@@ -25,10 +36,9 @@ export type MetronomeAction =
   | { type: 'TOGGLE_PLAY' }
   | { type: 'SET_BPM'; payload: number }
   | { type: 'SET_TIME_SIGNATURE'; payload: TimeSignature }
-  | { type: 'SET_NOTE_VALUE'; payload: NoteValue }
+  | { type: 'SET_SUBDIVISION'; payload: SubdivisionType }
   | { type: 'SET_SOUND_TYPE'; payload: SoundType }
   | { type: 'SET_VOLUME'; payload: Partial<Volume> }
-  | { type: 'SET_SUBDIVISION'; payload: number }
   | { type: 'NEXT_BEAT' }
   | { type: 'NEXT_SUBDIVISION' }
   | { type: 'RESET_BEAT' };
@@ -40,19 +50,17 @@ export interface SoundConfig {
   duration: number;
 }
 
-export interface NoteValueConfig {
+export interface SubdivisionConfig {
+  value: SubdivisionType;
   name: string;
   symbol: string;
-  value: number;
+  displayName: string;
+  beatMultiplier: number;
+  description: string;
 }
 
 export interface TimeSignatureConfig {
   value: TimeSignature;
   beats: number;
   beatValue: number;
-}
-
-export interface SubdivisionConfig {
-  value: number;
-  symbol: string;
 }

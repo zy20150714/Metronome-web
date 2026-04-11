@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMetronome } from '../../contexts/MetronomeContext';
-import { getNoteValueSymbol } from '../../utils/metronomeUtils';
-import type { NoteValue } from '../../types';
+import { subdivisionConfigs, getSubdivisionConfig } from '../../utils/metronomeUtils';
+import type { SubdivisionType } from '../../types';
 import { useSystemSettings } from '../ControlPanel/SystemSettings';
 
 const InteractiveControlPanel: React.FC = () => {
@@ -10,8 +10,6 @@ const InteractiveControlPanel: React.FC = () => {
   const numeratorOptions = Array.from({ length: 16 }, (_, i) => i + 1);
   
   const denominatorOptions = [2, 4, 8, 16];
-  
-  const noteValueOptions: NoteValue[] = ['whole', 'half', 'quarter', 'eighth', 'sixteenth', 'triplet'];
   
   const [currentNumerator, currentDenominator] = state.timeSignature.split('/').map(Number);
   
@@ -23,8 +21,8 @@ const InteractiveControlPanel: React.FC = () => {
     dispatch({ type: 'SET_TIME_SIGNATURE', payload: `${currentNumerator}/${denominator}` as any });
   };
   
-  const handleNoteValueChange = (noteValue: NoteValue) => {
-    dispatch({ type: 'SET_NOTE_VALUE', payload: noteValue });
+  const handleSubdivisionChange = (subdivision: SubdivisionType) => {
+    dispatch({ type: 'SET_SUBDIVISION', payload: subdivision });
   };
   
   const handleBPMChange = (value: number) => {
@@ -33,27 +31,25 @@ const InteractiveControlPanel: React.FC = () => {
   
   const { settings } = useSystemSettings();
   
+  const currentSubdivisionConfig = getSubdivisionConfig(state.subdivision);
+  
   return (
     <div className={`rounded-2xl p-4 sm:p-6 mb-8 ${settings.darkMode ? 'bg-gray-800/80 backdrop-blur-sm' : 'bg-white/80 backdrop-blur-sm'} shadow-xl`}>
       <h3 className={`text-lg sm:text-xl font-semibold mb-4 sm:mb-6 ${settings.darkMode ? 'text-gray-100' : 'text-gray-800'}`}>交互调节面板</h3>
       
       <div className="flex flex-col space-y-6 sm:space-y-8">
-        {/* 顶部显示区域 */}
         <div className="grid grid-cols-3 gap-3 sm:gap-4">
-          {/* 拍号显示 */}
           <div className={`rounded-xl p-3 sm:p-4 flex flex-col items-center justify-center ${settings.darkMode ? 'bg-gradient-to-br from-blue-900/80 to-blue-800/80' : 'bg-gradient-to-br from-blue-500/90 to-blue-600/90'}`}>
             <div className={`text-2xl sm:text-3xl font-bold text-white`}>{currentNumerator}</div>
             <div className={`text-2xl sm:text-3xl font-bold text-white`}>{currentDenominator}</div>
           </div>
           
-          {/* 音符时值显示 */}
           <div className={`rounded-xl p-3 sm:p-4 flex items-center justify-center ${settings.darkMode ? 'bg-gradient-to-br from-purple-900/80 to-purple-800/80' : 'bg-gradient-to-br from-purple-500/90 to-purple-600/90'}`}>
             <div className={`text-3xl sm:text-4xl text-white`}>
-              {getNoteValueSymbol(state.noteValue)}
+              {currentSubdivisionConfig.symbol}
             </div>
           </div>
           
-          {/* BPM显示 */}
           <div className={`rounded-xl p-3 sm:p-4 flex items-center justify-center ${settings.darkMode ? 'bg-gradient-to-br from-green-900/80 to-green-800/80' : 'bg-gradient-to-br from-green-500/90 to-green-600/90'}`}>
             <div className={`text-3xl sm:text-4xl font-bold text-white`}>
               {state.bpm}
@@ -61,7 +57,6 @@ const InteractiveControlPanel: React.FC = () => {
           </div>
         </div>
         
-        {/* 小节数调节 */}
         <div>
           <div className={`text-xs sm:text-sm font-medium mb-2 sm:mb-3 ${settings.darkMode ? 'text-gray-300' : 'text-gray-600'}`}>小节数</div>
           <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
@@ -77,7 +72,6 @@ const InteractiveControlPanel: React.FC = () => {
           </div>
         </div>
         
-        {/* 节拍单位调节 */}
         <div>
           <div className={`text-xs sm:text-sm font-medium mb-2 sm:mb-3 ${settings.darkMode ? 'text-gray-300' : 'text-gray-600'}`}>节拍单位</div>
           <div className="flex gap-2 sm:gap-3">
@@ -93,23 +87,26 @@ const InteractiveControlPanel: React.FC = () => {
           </div>
         </div>
         
-        {/* 音符时值调节 */}
         <div>
-          <div className={`text-xs sm:text-sm font-medium mb-2 sm:mb-3 ${settings.darkMode ? 'text-gray-300' : 'text-gray-600'}`}>音符时值</div>
+          <div className={`text-xs sm:text-sm font-medium mb-2 sm:mb-3 ${settings.darkMode ? 'text-gray-300' : 'text-gray-600'}`}>节拍细分</div>
           <div className="flex overflow-x-auto gap-2 sm:gap-3 pb-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
-            {noteValueOptions.map((nv) => (
+            {subdivisionConfigs.map((config) => (
               <button
-                key={`nv-${nv}`}
-                onClick={() => handleNoteValueChange(nv)}
-                className={`px-4 sm:px-6 py-3 sm:py-4 rounded-lg transition-all duration-300 flex-shrink-0 ${state.noteValue === nv ? (settings.darkMode ? 'bg-indigo-600 text-white shadow-indigo-900/30' : 'bg-indigo-500 text-white shadow-indigo-500/20') : (settings.darkMode ? 'bg-gray-700 text-gray-100 hover:bg-gray-600' : 'bg-white text-gray-800 hover:bg-gray-100')}`}
+                key={`sub-${config.value}`}
+                onClick={() => handleSubdivisionChange(config.value)}
+                title={config.description}
+                className={`px-4 sm:px-6 py-3 sm:py-4 rounded-lg transition-all duration-300 flex-shrink-0 flex flex-col items-center gap-1 ${state.subdivision === config.value ? (settings.darkMode ? 'bg-indigo-600 text-white shadow-indigo-900/30' : 'bg-indigo-500 text-white shadow-indigo-500/20') : (settings.darkMode ? 'bg-gray-700 text-gray-100 hover:bg-gray-600' : 'bg-white text-gray-800 hover:bg-gray-100')}`}
               >
-                <div className="text-2xl sm:text-3xl">{getNoteValueSymbol(nv)}</div>
+                <div className="text-2xl sm:text-3xl">{config.symbol}</div>
+                <div className="text-xs">{config.name}</div>
               </button>
             ))}
           </div>
+          <div className={`text-xs mt-2 ${settings.darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            {currentSubdivisionConfig.description}
+          </div>
         </div>
         
-        {/* 速度调节 */}
         <div>
           <div className={`text-xs sm:text-sm font-medium mb-2 sm:mb-3 ${settings.darkMode ? 'text-gray-300' : 'text-gray-600'}`}>速度 (BPM)</div>
           <div className="flex items-center gap-2 sm:gap-3">
@@ -146,4 +143,4 @@ const InteractiveControlPanel: React.FC = () => {
   );
 };
 
-export default React.memo(InteractiveControlPanel);
+export default InteractiveControlPanel;

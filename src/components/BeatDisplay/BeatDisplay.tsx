@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useMetronome } from '../../contexts/MetronomeContext';
 import { useSystemSettings } from '../ControlPanel/SystemSettings';
+import { calculateSubdivisionDuration } from '../../utils/metronomeUtils';
 
 const BeatDisplay: React.FC = () => {
   const { state } = useMetronome();
@@ -28,8 +29,7 @@ const BeatDisplay: React.FC = () => {
 
       setIsFirstBeatVisible(true);
       
-      const beatDuration = 60000 / state.bpm;
-      const subdivisionDuration = beatDuration / state.subdivision;
+      const subdivisionDuration = calculateSubdivisionDuration(state.bpm, state.subdivision);
       
       visibilityTimerRef.current = setTimeout(() => {
         setIsFirstBeatVisible(false);

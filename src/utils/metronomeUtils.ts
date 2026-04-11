@@ -1,51 +1,129 @@
-import type { TimeSignature, NoteValue } from '../types';
+import type { TimeSignature, SubdivisionType, SubdivisionConfig } from '../types';
 
 export const parseTimeSignature = (timeSignature: TimeSignature): { beats: number; beatValue: number } => {
   const [beats, beatValue] = timeSignature.split('/').map(Number);
   return { beats, beatValue };
 };
 
-export const calculateBeatDuration = (bpm: number, noteValue: NoteValue): number => {
-  const baseDuration = 60000 / bpm;
-  
-  const noteValueMultipliers: Record<NoteValue, number> = {
-    whole: 4,
-    half: 2,
-    quarter: 1,
-    eighth: 0.5,
-    sixteenth: 0.25,
-    triplet: 1/3,
-  };
-  
-  return baseDuration * noteValueMultipliers[noteValue];
+export const subdivisionConfigs: SubdivisionConfig[] = [
+  {
+    value: 'half',
+    name: '二分',
+    symbol: '𝅗𝅥',
+    displayName: '二分音符',
+    beatMultiplier: 0.5,
+    description: '每拍分为2个二分音符'
+  },
+  {
+    value: 'quarter',
+    name: '四分',
+    symbol: '𝅘𝅥',
+    displayName: '四分音符',
+    beatMultiplier: 1,
+    description: '每拍为1个四分音符'
+  },
+  {
+    value: 'eighth',
+    name: '八分',
+    symbol: '𝅘𝅥𝅮',
+    displayName: '八分音符',
+    beatMultiplier: 2,
+    description: '每拍分为2个八分音符'
+  },
+  {
+    value: 'sixteenth',
+    name: '十六分',
+    symbol: '𝅘𝅥𝅯',
+    displayName: '十六分音符',
+    beatMultiplier: 4,
+    description: '每拍分为4个十六分音符'
+  },
+  {
+    value: 'thirtysecond',
+    name: '三十二分',
+    symbol: '𝅘𝅥𝅰',
+    displayName: '三十二分音符',
+    beatMultiplier: 8,
+    description: '每拍分为8个三十二分音符'
+  },
+  {
+    value: 'duplet',
+    name: '二连音',
+    symbol: '𝅘𝅥²',
+    displayName: '二连音',
+    beatMultiplier: 2/3,
+    description: '二代三，2个音符代替3个'
+  },
+  {
+    value: 'triplet',
+    name: '三连音',
+    symbol: '𝅘𝅥³',
+    displayName: '三连音',
+    beatMultiplier: 3,
+    description: '三代二，3个音符代替2个'
+  },
+  {
+    value: 'quartuplet',
+    name: '四连音',
+    symbol: '𝅘𝅥⁴',
+    displayName: '四连音',
+    beatMultiplier: 4/3,
+    description: '四代三，4个音符代替3个'
+  },
+  {
+    value: 'quintuplet',
+    name: '五连音',
+    symbol: '𝅘𝅥⁵',
+    displayName: '五连音',
+    beatMultiplier: 5,
+    description: '五代四，5个音符代替4个'
+  },
+  {
+    value: 'sextuplet',
+    name: '六连音',
+    symbol: '𝅘𝅥⁶',
+    displayName: '六连音',
+    beatMultiplier: 6,
+    description: '六代四，6个音符代替4个'
+  },
+  {
+    value: 'septuplet',
+    name: '七连音',
+    symbol: '𝅘𝅥⁷',
+    displayName: '七连音',
+    beatMultiplier: 7,
+    description: '七代四，7个音符代替4个'
+  },
+  {
+    value: 'nonuplet',
+    name: '九连音',
+    symbol: '𝅘𝅥⁹',
+    displayName: '九连音',
+    beatMultiplier: 9,
+    description: '九代八，9个音符代替8个'
+  }
+];
+
+export const getSubdivisionConfig = (subdivision: SubdivisionType): SubdivisionConfig => {
+  const config = subdivisionConfigs.find(c => c.value === subdivision);
+  return config || subdivisionConfigs.find(c => c.value === 'quarter')!;
 };
 
-export const calculateSubdivisionDuration = (beatDuration: number, subdivision: number): number => {
-  return beatDuration / subdivision;
+export const calculateSubdivisionDuration = (bpm: number, subdivision: SubdivisionType): number => {
+  const baseDuration = 60000 / bpm;
+  const config = getSubdivisionConfig(subdivision);
+  return baseDuration / config.beatMultiplier;
+};
+
+export const getSubdivisionsPerBeat = (subdivision: SubdivisionType): number => {
+  const config = getSubdivisionConfig(subdivision);
+  return config.beatMultiplier;
 };
 
 export const validateBPM = (bpm: number): number => {
   if (bpm < 30) return 30;
   if (bpm > 300) return 300;
   return bpm;
-};
-
-export const validateSubdivision = (subdivision: number): number => {
-  if (subdivision < 1) return 1;
-  if (subdivision > 4) return 4;
-  return Math.round(subdivision);
-};
-
-export const getNoteValueSymbol = (noteValue: NoteValue): string => {
-  const symbols: Record<NoteValue, string> = {
-    whole: '𝅝',
-    half: '𝅗𝅥',
-    quarter: '𝅘𝅥',
-    eighth: '𝅘𝅥𝅮',
-    sixteenth: '𝅘𝅥𝅯',
-    triplet: '𝅘𝅥³',
-  };
-  return symbols[noteValue];
 };
 
 export const getSoundTypeEmoji = (soundType: string): string => {
@@ -57,16 +135,6 @@ export const getSoundTypeEmoji = (soundType: string): string => {
     metal: '🔔',
   };
   return emojis[soundType] || '🎵';
-};
-
-export const getSubdivisionSymbol = (subdivision: number): string => {
-  const symbols: Record<number, string> = {
-    1: '1',
-    2: '1 +',
-    3: '1 + a',
-    4: '1 + a 2',
-  };
-  return symbols[subdivision] || '1';
 };
 
 export const getSecondaryBeatPositions = (timeSignature: TimeSignature): number[] => {
@@ -111,18 +179,6 @@ export const getTimeSignatureName = (timeSignature: TimeSignature): string => {
   return `${beats}/${beatValue}`;
 };
 
-export const getNoteValueName = (noteValue: NoteValue): string => {
-  const names: Record<NoteValue, string> = {
-    whole: '全音符',
-    half: '二分音符',
-    quarter: '四分音符',
-    eighth: '八分音符',
-    sixteenth: '十六分音符',
-    triplet: '三连音',
-  };
-  return names[noteValue];
-};
-
 export const getSoundTypeName = (soundType: string): string => {
   const names: Record<string, string> = {
     click: '点击声',
@@ -132,4 +188,22 @@ export const getSoundTypeName = (soundType: string): string => {
     metal: '金属声',
   };
   return names[soundType] || '未知声音';
+};
+
+export const getSubdivisionCounting = (subdivision: SubdivisionType): string => {
+  const counting: Record<SubdivisionType, string> = {
+    half: '1 - 2',
+    quarter: '1',
+    eighth: '1 &',
+    sixteenth: '1 e & a',
+    thirtysecond: '1 te ka & ta',
+    duplet: '1-2',
+    triplet: '1-trip-let',
+    quartuplet: '1-2-3-4',
+    quintuplet: '1-2-3-4-5',
+    sextuplet: '1-trip-let-2-trip-let',
+    septuplet: '1-2-3-4-5-6-7',
+    nonuplet: '1-2-3-4-5-6-7-8-9'
+  };
+  return counting[subdivision] || '1';
 };

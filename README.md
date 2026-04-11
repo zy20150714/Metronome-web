@@ -10,10 +10,9 @@ A professional metronome application built with React, TypeScript, and Tailwind 
 ### Core Features
 - **Precise BPM Control**: Adjustable from 30 to 300 BPM
 - **Multiple Time Signatures**: Support for various time signatures including 1/4, 2/4, 3/4, 4/4, 5/4, 6/8, 7/8, 9/8, and 12/8
-- **Note Values**: Options for whole, half, quarter, eighth, sixteenth notes, and triplets
+- **Beat Subdivision**: Comprehensive options including basic subdivisions (half, quarter, eighth, sixteenth, thirty-second notes) and tuplets (duplets, triplets, quartuplets, quintuplets, sextuplets, septuplets, nonuplets)
 - **Sound Options**: Multiple sound types including click, drum, wood, electronic, and metal
 - **Volume Control**: Separate volume controls for accent and normal beats
-- **Subdivision Support**: Adjustable beat subdivisions
 - **Visual Beat Indicator**: Clear visual feedback for each beat
 
 ### User Interface
@@ -92,7 +91,7 @@ The user interface features:
 1. **Start/Stop**: Click the play button to start the metronome, stop button to pause
 2. **Adjust BPM**: Use the BPM slider or input field to set the desired tempo
 3. **Select Time Signature**: Choose the appropriate time signature from the options
-4. **Set Note Value**: Select the desired note value for the beat
+4. **Set Beat Subdivision**: Select the desired beat subdivision from comprehensive options including basic subdivisions and tuplets
 5. **Choose Sound**: Select from different sound types for the metronome
 6. **Adjust Volume**: Use the volume sliders to set the desired volume levels
 7. **Toggle Dark/Light Mode**: Switch between dark and light themes as preferred

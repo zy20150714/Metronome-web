@@ -93,73 +93,70 @@ const SystemSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [showMusicTheory, setShowMusicTheory] = useState(false);
 
   return (
-    <div className={`min-h-screen p-4 sm:p-6 ${settings.darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'}`}>
+    <div className="min-h-screen p-4 sm:p-6 animate-fadeIn">
       <div className="max-w-md mx-auto">
-        {/* 返回按钮 */}
         <button
           onClick={onBack}
-          className={`w-full py-3 sm:py-4 font-semibold rounded-xl shadow-md mb-6 sm:mb-8 active:bg-gray-300 ${settings.darkMode ? 'bg-gray-800 text-gray-200 active:bg-gray-700' : 'bg-gray-200 text-gray-800 active:bg-gray-300'}`}
+          className="w-full py-4 font-semibold rounded-2xl shadow-xl mb-8 hover-lift ripple transition-all duration-300 glass hover:bg-white/10"
         >
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-xl">⬅️</span>
+          <div className="flex items-center justify-center gap-2 text-gray-300">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
             <span className="text-lg">返回主界面</span>
           </div>
         </button>
 
-        {/* 页面标题 */}
-        <div className="text-center mb-6 sm:mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-blue-600">系统设置</h2>
+        <div className="text-center mb-8 animate-fadeIn">
+          <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent">
+            系统设置
+          </h2>
         </div>
 
         {showTutorial ? (
-          /* 使用教程 */
-          <div className={`rounded-xl shadow-md p-4 sm:p-6 mb-6 ${settings.darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <h3 className={`text-lg sm:text-xl font-semibold mb-4 ${settings.darkMode ? 'text-gray-100' : 'text-gray-800'}`}>使用教程</h3>
-            <div className="space-y-3 sm:space-y-4">
+          <div className="glass rounded-2xl shadow-xl p-6 mb-6 animate-fadeIn">
+            <h3 className="text-xl font-semibold mb-6 text-white">使用教程</h3>
+            <div className="space-y-4">
               {tutorialSteps.map((step, index) => (
-                <div key={index} className={`p-3 sm:p-4 rounded-lg ${settings.darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                  <h4 className="font-bold text-blue-600">{index + 1}. {step.title}</h4>
-                  <p className={`mt-1 ${settings.darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{step.description}</p>
+                <div key={index} className="bg-white/5 rounded-xl p-4">
+                  <h4 className="font-bold text-cyan-400">{index + 1}. {step.title}</h4>
+                  <p className="mt-2 text-gray-300">{step.description}</p>
                 </div>
               ))}
             </div>
             <button
               onClick={() => setShowTutorial(false)}
-              className="mt-6 w-full py-2 sm:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors"
+              className="mt-8 w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl font-semibold hover:from-cyan-600 hover:to-blue-700 transition-all duration-300 shadow-lg shadow-cyan-500/30"
             >
               关闭教程
             </button>
           </div>
         ) : showMusicTheory ? (
-          /* 乐理知识学习 */
-          <div className={`rounded-xl shadow-md p-4 sm:p-6 mb-6 ${settings.darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <h3 className={`text-lg sm:text-xl font-semibold mb-4 ${settings.darkMode ? 'text-gray-100' : 'text-gray-800'}`}>乐理知识</h3>
-            <div className="space-y-3 sm:space-y-4">
+          <div className="glass rounded-2xl shadow-xl p-6 mb-6 animate-fadeIn">
+            <h3 className="text-xl font-semibold mb-6 text-white">乐理知识</h3>
+            <div className="space-y-4">
               {musicTheoryData.map((item, index) => (
-                <div key={index} className={`p-3 sm:p-4 rounded-lg ${settings.darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                  <h4 className="font-bold text-blue-600">{item.title}</h4>
-                  <p className={`mt-1 ${settings.darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{item.content}</p>
+                <div key={index} className="bg-white/5 rounded-xl p-4">
+                  <h4 className="font-bold text-pink-400">{item.title}</h4>
+                  <p className="mt-2 text-gray-300">{item.content}</p>
                 </div>
               ))}
             </div>
             <button
               onClick={() => setShowMusicTheory(false)}
-              className="mt-6 w-full py-2 sm:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors"
+              className="mt-8 w-full py-4 bg-gradient-to-r from-pink-500 to-rose-600 text-white rounded-xl font-semibold hover:from-pink-600 hover:to-rose-700 transition-all duration-300 shadow-lg shadow-pink-500/30"
             >
               关闭乐理知识
             </button>
           </div>
         ) : showAbout ? (
-          /* 关于页面 */
           <About onBack={() => setShowAbout(false)} />
         ) : (
-          /* 系统设置选项 */
-          <div className="space-y-4 sm:space-y-6">
-            {/* 明暗模式调节 */}
-            <div className={`rounded-xl shadow-md p-4 sm:p-6 ${settings.darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-              <h3 className={`text-lg sm:text-xl font-semibold mb-4 ${settings.darkMode ? 'text-gray-100' : 'text-gray-800'}`}>显示设置</h3>
+          <div className="space-y-4">
+            <div className="glass rounded-2xl shadow-xl p-6 animate-fadeIn">
+              <h3 className="text-xl font-semibold mb-6 text-white">显示设置</h3>
               <div className="flex items-center justify-between">
-                <span className={settings.darkMode ? 'text-gray-300' : 'text-gray-700'}>暗黑模式</span>
+                <span className="text-gray-300">暗黑模式</span>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
@@ -167,49 +164,51 @@ const SystemSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                     onChange={(e) => updateSettings({ darkMode: e.target.checked })}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  <div className="w-14 h-7 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-pink-500 peer-checked:to-cyan-500"></div>
                 </label>
               </div>
-              <p className={`text-sm mt-2 ${settings.darkMode ? 'text-gray-400' : 'text-gray-500'}`}>切换应用的明暗主题</p>
+              <p className="text-sm mt-3 text-gray-400">切换应用的明暗主题</p>
             </div>
 
-            {/* 使用教程按钮 */}
             <button
               onClick={() => setShowTutorial(true)}
-              className={`w-full py-3 sm:py-4 rounded-xl shadow-md hover:bg-gray-50 active:bg-gray-100 transition-colors ${settings.darkMode ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 active:bg-gray-600' : 'bg-white text-gray-800'}`}
+              className="w-full py-5 glass rounded-2xl shadow-xl hover-lift transition-all duration-300 hover:bg-white/10"
             >
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-lg sm:text-xl">📚</span>
-                <span className="text-lg sm:text-xl font-semibold">使用教程</span>
+              <div className="flex items-center justify-center gap-3">
+                <svg className="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <span className="text-lg font-semibold text-gray-300">使用教程</span>
               </div>
             </button>
 
-            {/* 乐理知识学习按钮 */}
             <button
               onClick={() => setShowMusicTheory(true)}
-              className={`w-full py-3 sm:py-4 rounded-xl shadow-md hover:bg-gray-50 active:bg-gray-100 transition-colors ${settings.darkMode ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 active:bg-gray-600' : 'bg-white text-gray-800'}`}
+              className="w-full py-5 glass rounded-2xl shadow-xl hover-lift transition-all duration-300 hover:bg-white/10"
             >
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-lg sm:text-xl">🎵</span>
-                <span className="text-lg sm:text-xl font-semibold">乐理知识学习</span>
+              <div className="flex items-center justify-center gap-3">
+                <svg className="w-7 h-7 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+                <span className="text-lg font-semibold text-gray-300">乐理知识学习</span>
               </div>
             </button>
 
-            {/* 关于按钮 */}
             <button
               onClick={() => setShowAbout(true)}
-              className={`w-full py-3 sm:py-4 rounded-xl shadow-md hover:bg-gray-50 active:bg-gray-100 transition-colors ${settings.darkMode ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 active:bg-gray-600' : 'bg-white text-gray-800'}`}
+              className="w-full py-5 glass rounded-2xl shadow-xl hover-lift transition-all duration-300 hover:bg-white/10"
             >
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-lg sm:text-xl">ℹ️</span>
-                <span className="text-lg sm:text-xl font-semibold">关于</span>
+              <div className="flex items-center justify-center gap-3">
+                <svg className="w-7 h-7 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-lg font-semibold text-gray-300">关于</span>
               </div>
             </button>
           </div>
         )}
 
-        {/* 页脚 */}
-        <div className={`text-center text-xs mt-8 mb-4 ${settings.darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+        <div className="text-center text-sm mt-12 mb-6 text-gray-500">
           <p>© 2026 节拍器应用</p>
         </div>
       </div>
@@ -217,7 +216,4 @@ const SystemSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   );
 };
 
-
-
-// 导出系统设置组件
 export default SystemSettings;

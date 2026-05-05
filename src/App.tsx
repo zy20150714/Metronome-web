@@ -13,36 +13,32 @@ import { cookieUtils } from './utils/cookieUtils';
 const SETTINGS_KEY = 'metronome-settings';
 
 const SettingsPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-  const { settings } = useSystemSettings();
-  
   return (
-    <div className={`min-h-screen min-w-full ${settings.darkMode ? 'bg-gradient-to-br from-gray-900 to-gray-800 text-white' : 'bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800'} p-4 animate-fadeIn`}>
+    <div className="min-h-screen min-w-full p-4 sm:p-6 animate-fadeIn">
       <div className="max-w-md mx-auto w-full">
-        {/* 返回按钮 */}
         <button
           onClick={onBack}
-          className={`w-full py-4 font-semibold rounded-xl shadow-lg mb-8 hover-lift ripple transition-all duration-300 ${settings.darkMode ? 'bg-gradient-to-r from-gray-800 to-gray-700 text-gray-200 hover:from-gray-700 hover:to-gray-600' : 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 hover:from-gray-300 hover:to-gray-400'}`}
+          className="w-full py-4 font-semibold rounded-2xl shadow-xl mb-8 hover-lift ripple transition-all duration-300 glass hover:bg-white/10"
         >
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-xl">⬅️</span>
+          <div className="flex items-center justify-center gap-2 text-gray-300">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
             <span className="text-lg">返回主界面</span>
           </div>
         </button>
         
-        {/* 页面标题 */}
-        <div className="text-center mb-8 animate-bounceSoft">
-          <h2 className={`text-3xl font-bold ${settings.darkMode ? 'text-blue-400' : 'text-blue-600'} tracking-tight`}>参数设置</h2>
-          <p className={`mt-2 ${settings.darkMode ? 'text-gray-300' : 'text-gray-600'}`}>调整节拍器的各项参数</p>
+        <div className="text-center mb-8 animate-fadeIn">
+          <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent">
+            参数设置
+          </h2>
+          <p className="mt-3 text-gray-400">调整节拍器的各项参数</p>
         </div>
         
-        {/* 交互式控制面板 */}
         <InteractiveControlPanel />
-        
-        {/* 声音设置 */}
         <SoundSelector />
         
-        {/* 页尾 */}
-        <div className={`text-center text-sm mt-12 mb-6 ${settings.darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+        <div className="text-center text-sm mt-12 mb-6 text-gray-500">
           <p>© 2026 节拍器应用</p>
           <p className="mt-1">专业、精准、可靠</p>
         </div>
@@ -54,7 +50,6 @@ const SettingsPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 const MainPage: React.FC = () => {
   useMetronomePlayback();
   const { state, dispatch } = useMetronome();
-  const { settings } = useSystemSettings();
   const [showSettings, setShowSettings] = useState(false);
   const [showSystemSettings, setShowSystemSettings] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
@@ -63,7 +58,6 @@ const MainPage: React.FC = () => {
 
   const loadSettings = useCallback(() => {
     try {
-      // 优先从localStorage读取
       if (typeof localStorage !== 'undefined') {
         const saved = localStorage.getItem(SETTINGS_KEY);
         if (saved) {
@@ -71,7 +65,6 @@ const MainPage: React.FC = () => {
         }
       }
       
-      // 如果localStorage没有数据，尝试从cookie读取
       const cookieValue = cookieUtils.getCookie(SETTINGS_KEY);
       if (cookieValue) {
         return JSON.parse(cookieValue);
@@ -86,12 +79,10 @@ const MainPage: React.FC = () => {
     try {
       const settingsJson = JSON.stringify(settings);
       
-      // 同时保存到localStorage和cookie
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem(SETTINGS_KEY, settingsJson);
       }
       
-      // 保存到cookie，有效期365天
       cookieUtils.setCookie(SETTINGS_KEY, settingsJson, 365);
     } catch (e) {
       console.error('Failed to save settings:', e);
@@ -110,7 +101,6 @@ const MainPage: React.FC = () => {
   }, [dispatch, loadSettings]);
 
   useEffect(() => {
-    // 只在非运行状态或设置实际变化时保存，避免节拍变化时频繁写入
     if (!state.isPlaying) {
       saveSettings({
         bpm: state.bpm,
@@ -183,54 +173,60 @@ const MainPage: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen min-w-full ${settings.darkMode ? 'bg-gradient-to-br from-gray-900 to-gray-800 text-white' : 'bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800'} p-4 sm:p-6 animate-fadeIn`}>
+    <div className="min-h-screen min-w-full p-4 sm:p-6 md:p-8 animate-fadeIn">
       <div className="max-w-md mx-auto w-full">
-        {/* 返回键提示 */}
         {backButtonAlert && (
-          <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg z-50 ${settings.darkMode ? 'bg-gray-700/90 text-white' : 'bg-white/90 text-gray-800'} backdrop-blur-sm animate-fadeIn`}>
-            <p>请连续快速两次返回即可退出</p>
+          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-2xl shadow-2xl z-50 glass animate-fadeIn">
+            <p className="text-gray-300">请连续快速两次返回即可退出</p>
           </div>
         )}
         
-        {/* 应用标题 */}
-        <div className="text-center mb-8 sm:mb-10 animate-bounceSoft">
-          <h1 className={`text-3xl sm:text-4xl font-bold ${settings.darkMode ? 'text-blue-400' : 'text-blue-600'} tracking-tight`}>节拍器</h1>
-          <p className={`mt-2 ${settings.darkMode ? 'text-gray-300' : 'text-gray-600'} text-base sm:text-lg`}>专业的节拍辅助工具</p>
+        <div className="text-center mb-8 sm:mb-10 animate-fadeIn">
+          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-pink-500 to-cyan-500 mb-4 shadow-2xl shadow-pink-500/30">
+            <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent">
+            节拍器
+          </h1>
+          <p className="mt-3 text-gray-400 text-base sm:text-lg">
+            专业的音乐节拍辅助工具
+          </p>
         </div>
         
-        {/* 节拍显示 */}
         <BeatDisplay />
-        
-        {/* 控制面板 */}
         <ControlPanel />
         
-        {/* 功能按钮区域 */}
-        <div className="space-y-4 mb-8 sm:mb-10">
-          {/* 参数设置按钮 */}
+        <div className="grid grid-cols-2 gap-4 mb-8 sm:mb-10">
           <button
             onClick={() => setShowSettings(true)}
-            className={`w-full py-4 sm:py-5 rounded-xl font-semibold shadow-lg hover-lift ripple transition-all duration-300 ${settings.darkMode ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-blue-900/20' : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-blue-500/20'}`}
+            className="py-5 sm:py-6 rounded-2xl font-semibold shadow-xl hover-lift ripple transition-all duration-300 glass hover:bg-white/10"
           >
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-xl sm:text-2xl">⚙️</span>
-              <span className="text-base sm:text-lg">参数设置</span>
+            <div className="flex flex-col items-center gap-2">
+              <svg className="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span className="text-base sm:text-lg text-gray-300">参数设置</span>
             </div>
           </button>
           
-          {/* 系统设置按钮 */}
           <button
             onClick={() => setShowSystemSettings(true)}
-            className={`w-full py-4 sm:py-5 rounded-xl font-semibold shadow-lg hover-lift ripple transition-all duration-300 ${settings.darkMode ? 'bg-gradient-to-r from-gray-800 to-gray-700 text-gray-200 hover:from-gray-700 hover:to-gray-600 shadow-gray-700/30' : 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 hover:from-gray-300 hover:to-gray-400 shadow-gray-300/50'}`}
+            className="py-5 sm:py-6 rounded-2xl font-semibold shadow-xl hover-lift ripple transition-all duration-300 glass hover:bg-white/10"
           >
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-xl sm:text-2xl">🔧</span>
-              <span className="text-base sm:text-lg">系统设置</span>
+            <div className="flex flex-col items-center gap-2">
+              <svg className="w-7 h-7 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span className="text-base sm:text-lg text-gray-300">系统设置</span>
             </div>
           </button>
         </div>
         
-        {/* 页尾 */}
-        <div className={`text-center text-sm mt-8 mb-6 ${settings.darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+        <div className="text-center text-sm mt-8 mb-6 text-gray-500">
           <p>© 2026 节拍器应用</p>
           <p className="mt-1">专业、精准、可靠</p>
         </div>
@@ -238,8 +234,6 @@ const MainPage: React.FC = () => {
     </div>
   );
 };
-
-
 
 const App: React.FC = () => {
   return (

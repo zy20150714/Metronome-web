@@ -2,28 +2,26 @@ import React from 'react';
 import { useMetronome } from '../../contexts/MetronomeContext';
 import { getSoundTypeEmoji } from '../../utils/metronomeUtils';
 import { audioUtils } from '../../utils/audioUtils';
-import { useSystemSettings } from '../ControlPanel/SystemSettings';
 
 const SoundSelector: React.FC = () => {
   const { state, dispatch } = useMetronome();
-  const { settings } = useSystemSettings();
-  
+
   const handleSoundTypeChange = (soundType: string) => {
     dispatch({ type: 'SET_SOUND_TYPE', payload: soundType as any });
   };
-  
+
   const handleVolumeChange = (type: 'accent' | 'normal', value: number) => {
     dispatch({ type: 'SET_VOLUME', payload: { [type]: value } });
   };
-  
+
   const handlePreviewAccent = () => {
     audioUtils.playAccent(state.soundType, state.volume.accent);
   };
-  
+
   const handlePreviewNormal = () => {
     audioUtils.playNormal(state.soundType, state.volume.normal);
   };
-  
+
   const soundTypes = [
     { value: 'click', label: '点击声' },
     { value: 'drum', label: '鼓声' },
@@ -31,64 +29,71 @@ const SoundSelector: React.FC = () => {
     { value: 'electronic', label: '电子音' },
     { value: 'metal', label: '金属音' },
   ];
-  
+
   return (
-    <div className={`rounded-2xl p-4 sm:p-6 mb-8 ${settings.darkMode ? 'bg-gray-800/80 backdrop-blur-sm' : 'bg-white/80 backdrop-blur-sm'} shadow-xl`}>
-      <h3 className={`text-lg sm:text-xl font-semibold mb-4 sm:mb-6 ${settings.darkMode ? 'text-gray-100' : 'text-gray-800'}`}>声音设置</h3>
-      
-      {/* 声音类型选择 */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 mb-4 sm:mb-6">
+    <div className="glass rounded-2xl p-6 shadow-xl animate-fadeIn">
+      <h3 className="text-xl font-semibold mb-6 text-white">声音设置</h3>
+
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8">
         {soundTypes.map((sound) => (
           <button
             key={sound.value}
             onClick={() => handleSoundTypeChange(sound.value)}
-            className={`py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 flex flex-col items-center ${state.soundType === sound.value ? (settings.darkMode ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-blue-900/30 scale-105' : 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-blue-500/20 scale-105') : (settings.darkMode ? 'bg-gray-700 text-gray-100 hover:bg-gray-600' : 'bg-white text-gray-800 hover:bg-gray-100')}`}
+            className={`py-4 rounded-xl font-semibold transition-all duration-300 flex flex-col items-center gap-2 hover:scale-105 ${
+              state.soundType === sound.value
+                ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 scale-105'
+                : 'bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10'
+            }`}
           >
-            <span className="text-2xl mb-1">{getSoundTypeEmoji(sound.value)}</span>
+            <span className="text-3xl">{getSoundTypeEmoji(sound.value)}</span>
             <span className="text-xs">{sound.label}</span>
           </button>
         ))}
       </div>
-      
-      {/* 预览按钮 */}
-      <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
+
+      <div className="flex gap-4 mb-8">
         <button
           onClick={handlePreviewAccent}
-          className={`flex-1 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 ${settings.darkMode ? 'bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800' : 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700'}`}
+          className="flex-1 py-4 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r from-pink-500 to-rose-600 text-white hover:from-pink-600 hover:to-rose-700 shadow-lg shadow-pink-500/30 hover:scale-105 active:scale-95"
         >
           预览重音
         </button>
         <button
           onClick={handlePreviewNormal}
-          className={`flex-1 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 ${settings.darkMode ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800' : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700'}`}
+          className="flex-1 py-4 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 shadow-lg shadow-cyan-500/30 hover:scale-105 active:scale-95"
         >
           预览普通音
         </button>
       </div>
-      
-      {/* 音量调节 */}
-      <div className="space-y-3 sm:space-y-4">
+
+      <div className="space-y-6">
         <div>
-          <label className={`block text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${settings.darkMode ? 'text-gray-300' : 'text-gray-600'}`}>重音音量: {state.volume.accent}%</label>
+          <div className="flex items-center justify-between mb-3">
+            <label className="text-sm font-medium text-gray-300">重音音量</label>
+            <span className="text-pink-400 font-semibold">{state.volume.accent}%</span>
+          </div>
           <input
             type="range"
             min="0"
             max="100"
             value={state.volume.accent}
             onChange={(e) => handleVolumeChange('accent', parseInt(e.target.value))}
-            className={`w-full h-3 rounded-lg appearance-none cursor-pointer transition-all duration-300 ${settings.darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}
+            className="w-full h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer"
           />
         </div>
-        
+
         <div>
-          <label className={`block text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${settings.darkMode ? 'text-gray-300' : 'text-gray-600'}`}>普通音音量: {state.volume.normal}%</label>
+          <div className="flex items-center justify-between mb-3">
+            <label className="text-sm font-medium text-gray-300">普通音音量</label>
+            <span className="text-cyan-400 font-semibold">{state.volume.normal}%</span>
+          </div>
           <input
             type="range"
             min="0"
             max="100"
             value={state.volume.normal}
             onChange={(e) => handleVolumeChange('normal', parseInt(e.target.value))}
-            className={`w-full h-3 rounded-lg appearance-none cursor-pointer transition-all duration-300 ${settings.darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}
+            className="w-full h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer"
           />
         </div>
       </div>

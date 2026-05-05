@@ -5,122 +5,150 @@
 /* 自定义样式 */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%);
+  min-height: 100vh;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: 'Fira Code', 'Consolas', monospace;
+}
+
+/* 霓虹发光效果 */
+.neon-pink {
+  box-shadow: 0 0 5px #ff2d95, 0 0 10px #ff2d95, 0 0 20px #ff2d95;
+}
+
+.neon-blue {
+  box-shadow: 0 0 5px #00d4ff, 0 0 10px #00d4ff, 0 0 20px #00d4ff;
+}
+
+.neon-green {
+  box-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14;
 }
 
 /* 自定义输入框样式 */
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: #0ea5e9;
+  background: linear-gradient(135deg, #ff2d95, #ff6b9d);
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px #ff2d95, 0 0 20px rgba(255, 45, 149, 0.5);
+  transition: all 0.2s ease;
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: #0ea5e9;
+  background: linear-gradient(135deg, #ff2d95, #ff6b9d);
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px #ff2d95, 0 0 20px rgba(255, 45, 149, 0.5);
+  transition: all 0.2s ease;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
-  background: #0284c7;
+  transform: scale(1.2);
+  box-shadow: 0 0 15px #ff2d95, 0 0 30px rgba(255, 45, 149, 0.7);
 }
 
 input[type="range"]::-moz-range-thumb:hover {
-  background: #0284c7;
+  transform: scale(1.2);
+  box-shadow: 0 0 15px #ff2d95, 0 0 30px rgba(255, 45, 149, 0.7);
 }
 
 /* 按钮点击效果 */
 button:active {
-  transform: scale(0.98);
-  transition: transform 0.1s;
+  transform: scale(0.96);
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 玻璃拟态效果 */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* 自定义动画效果 */
 @layer utilities {
   /* 淡入动画 */
   .animate-fadeIn {
-    animation: fadeIn 0.2s ease-out;
+    animation: fadeIn 0.3s ease-out;
     will-change: opacity;
     transform: translateZ(0);
   }
 
   /* 淡入淡出动画 */
   .animate-fadeInOut {
-    animation: fadeInOut 0.4s ease-in-out;
+    animation: fadeInOut 0.5s ease-in-out;
     will-change: opacity;
     transform: translateZ(0);
   }
 
   /* 滑入动画 */
   .animate-slideIn {
-    animation: slideIn 0.2s ease-out;
+    animation: slideIn 0.3s ease-out;
     will-change: transform, opacity;
     transform: translateZ(0);
   }
 
   /* 滑入滑出动画 */
   .animate-slideInOut {
-    animation: slideInOut 0.4s ease-in-out;
+    animation: slideInOut 0.5s ease-in-out;
     will-change: transform, opacity;
     transform: translateZ(0);
   }
 
   /* 弹跳动画 */
   .animate-bounceSoft {
-    animation: bounceSoft 0.4s ease-out;
+    animation: bounceSoft 0.5s ease-out;
     will-change: transform;
     transform: translateZ(0);
   }
 
   /* 缩放动画 */
   .animate-scale {
-    animation: scale 0.2s ease-out;
+    animation: scale 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     will-change: transform, opacity;
     transform: translateZ(0);
   }
 
   /* 旋转动画 */
   .animate-rotate {
-    animation: rotate 0.4s ease-out;
+    animation: rotate 0.5s ease-out;
     will-change: transform;
     transform: translateZ(0);
   }
 
   /* 脉冲动画 */
   .animate-pulseSoft {
-    animation: pulseSoft 0.8s infinite ease-in-out;
+    animation: pulseSoft 1s infinite ease-in-out;
     will-change: opacity;
     transform: translateZ(0);
   }
 
   /* 悬浮效果 */
   .hover-lift {
-    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
     will-change: transform, box-shadow;
     transform: translateZ(0);
   }
 
   .hover-lift:hover {
-    transform: translateY(-2px) translateZ(0);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px) translateZ(0);
   }
 
   /* 按钮点击波纹效果 */
@@ -138,15 +166,35 @@ button:active {
     width: 0;
     height: 0;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.3);
     transform: translate(-50%, -50%) translateZ(0);
-    transition: width 0.4s ease-out, height 0.4s ease-out;
+    transition: width 0.5s ease-out, height 0.5s ease-out;
     will-change: width, height;
   }
 
   .ripple:active::after {
-    width: 300px;
-    height: 300px;
+    width: 400px;
+    height: 400px;
+  }
+
+  /* 发光动画 */
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  /* 呼吸动画 */
+  .animate-breath {
+    animation: breath 2s ease-in-out infinite;
+  }
+
+  /* 摇摆动画 */
+  .animate-swing {
+    animation: swing 0.5s ease-in-out;
+  }
+
+  /* 渐入渐出缩放 */
+  .animate-scaleIn {
+    animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
@@ -154,27 +202,32 @@ button:active {
 @keyframes fadeIn {
   from {
     opacity: 0;
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @keyframes fadeInOut {
   0% {
     opacity: 0;
+    transform: scale(0.9);
   }
   50% {
     opacity: 1;
+    transform: scale(1);
   }
   100% {
     opacity: 0;
+    transform: scale(0.9);
   }
 }
 
 @keyframes slideIn {
   from {
-    transform: translateY(-15px) translateZ(0);
+    transform: translateY(-20px) translateZ(0);
     opacity: 0;
   }
   to {
@@ -185,7 +238,7 @@ button:active {
 
 @keyframes slideInOut {
   0% {
-    transform: translateY(-15px) translateZ(0);
+    transform: translateY(-20px) translateZ(0);
     opacity: 0;
   }
   50% {
@@ -193,7 +246,7 @@ button:active {
     opacity: 1;
   }
   100% {
-    transform: translateY(15px) translateZ(0);
+    transform: translateY(20px) translateZ(0);
     opacity: 0;
   }
 }
@@ -203,14 +256,17 @@ button:active {
     transform: translateY(0) translateZ(0);
   }
   50% {
-    transform: translateY(-8px) translateZ(0);
+    transform: translateY(-12px) translateZ(0);
   }
 }
 
 @keyframes scale {
   0% {
-    transform: scale(0.95) translateZ(0);
+    transform: scale(0.8) translateZ(0);
     opacity: 0;
+  }
+  50% {
+    transform: scale(1.1) translateZ(0);
   }
   100% {
     transform: scale(1) translateZ(0);
@@ -230,8 +286,53 @@ button:active {
 @keyframes pulseSoft {
   0%, 100% {
     opacity: 1;
+    transform: scale(1);
   }
   50% {
     opacity: 0.7;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 10px rgba(255, 45, 149, 0.5), 0 0 20px rgba(255, 45, 149, 0.3);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(255, 45, 149, 0.8), 0 0 40px rgba(255, 45, 149, 0.5);
+  }
+}
+
+@keyframes breath {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes swing {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(5deg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }

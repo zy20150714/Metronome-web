@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useMetronome } from '../../contexts/MetronomeContext';
-import { useSystemSettings } from '../ControlPanel/SystemSettings';
 import { calculateSubdivisionDuration } from '../../utils/metronomeUtils';
 
 const BeatDisplay: React.FC = () => {
   const { state } = useMetronome();
-  const { settings } = useSystemSettings();
   const [flash, setFlash] = useState(false);
   const [isFirstBeatVisible, setIsFirstBeatVisible] = useState(true);
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -25,12 +23,9 @@ const BeatDisplay: React.FC = () => {
 
     if (state.isPlaying) {
       setFlash(true);
-      flashTimerRef.current = setTimeout(() => setFlash(false), 100);
-
+      flashTimerRef.current = setTimeout(() => setFlash(false), 150);
       setIsFirstBeatVisible(true);
-      
       const subdivisionDuration = calculateSubdivisionDuration(state.bpm, state.subdivision);
-      
       visibilityTimerRef.current = setTimeout(() => {
         setIsFirstBeatVisible(false);
       }, subdivisionDuration);
@@ -53,72 +48,75 @@ const BeatDisplay: React.FC = () => {
     return parseInt(state.timeSignature.split('/')[0]);
   }, [state.timeSignature]);
 
+  const renderBeat = (i: number) => {
+    const beatNumber = i + 1;
+    const beatType = getBeatType(beatNumber);
+    const isCurrent = beatNumber === state.currentBeat;
+    let baseClass, shadowClass, ringClass, glowClass, animClass;
+
+    if (beatType === 'first') {
+      if (isCurrent && state.isPlaying) {
+        baseClass = 'bg-gradient-to-br from-pink-500 to-rose-600';
+        shadowClass = 'shadow-lg shadow-pink-500/50';
+        ringClass = 'ring-4 ring-pink-400/50';
+        glowClass = 'animate-glow';
+      } else {
+        baseClass = 'bg-gradient-to-br from-pink-600/50 to-rose-700/50';
+        shadowClass = 'shadow-md';
+        ringClass = '';
+        glowClass = '';
+      }
+    } else if (isCurrent && state.isPlaying) {
+      baseClass = 'bg-gradient-to-br from-cyan-400 to-blue-500';
+      shadowClass = 'shadow-lg shadow-cyan-500/50';
+      ringClass = 'ring-4 ring-cyan-400/50';
+      glowClass = 'animate-glow';
+    } else {
+      baseClass = 'bg-gradient-to-br from-gray-700 to-gray-800';
+      shadowClass = 'shadow-md';
+      ringClass = '';
+      glowClass = '';
+    }
+
+    animClass = isCurrent && state.isPlaying ? 'animate-scaleIn scale-110' : '';
+
+    return (
+      <div
+        key={i}
+        className={`w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center transition-all duration-300 ease-out ${baseClass} ${ringClass} ${shadowClass} ${animClass} ${glowClass} hover:scale-105`}
+      >
+        <span className={`text-xl sm:text-2xl md:text-3xl font-bold text-white drop-shadow-lg`}>{beatNumber}</span>
+      </div>
+    );
+  };
+
   return (
-    <div className={`rounded-2xl p-4 sm:p-6 mb-6 shadow-xl hover-lift ${settings.darkMode ? 'bg-gradient-to-br from-blue-900 to-blue-700' : 'bg-gradient-to-br from-blue-500 to-blue-600'}`}>
+    <div className="rounded-2xl p-6 sm:p-8 mb-6 hover-lift glass">
       <div className="flex flex-col items-center">
-        <div className={`text-white text-5xl sm:text-7xl font-bold mb-2 transition-all duration-100 ${flash ? 'scale-110 animate-pulseSoft' : ''}`}>
-          {state.bpm}
+        <div className="relative mb-6 sm:mb-8">
+          <div className={`text-6xl sm:text-8xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent transition-all duration-300 animate-glow`}>{state.bpm}</div>
+          <div className="text-gray-400 text-sm sm:text-base mt-2 tracking-widest uppercase">Beats Per Minute</div>
+          {flash && (
+            <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-cyan-500/20 rounded-full blur-xl animate-fadeInOut"></div>
+          )}
         </div>
-        <div className="text-white/90 text-sm mb-4 sm:mb-6">BPM</div>
-        
-        <div className="flex items-center justify-center mb-6 sm:mb-8 animate-bounceSoft">
-          <div className="text-white text-3xl sm:text-4xl font-semibold">{state.timeSignature}</div>
+
+        <div className="flex items-center justify-center mb-8 sm:mb-10">
+          <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-pink-400 to-cyan-400 bg-clip-text text-transparent">{state.timeSignature}</div>
         </div>
-        
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 w-full max-w-full">
-          {Array.from({ length: totalBeats }, (_, i) => {
-            const beatNumber = i + 1;
-            const beatType = getBeatType(beatNumber);
-            const isCurrent = beatNumber === state.currentBeat;
-            
-            const getColor = () => {
-              if (beatType === 'first') {
-                return state.isPlaying && state.currentBeat === 1 && !isFirstBeatVisible ? 'bg-white/30' : 'bg-red-500';
-              }
-              return 'bg-white';
-            };
-            
-            const getRingColor = () => {
-              if (isCurrent) {
-                return 'ring-4 ring-white/70';
-              }
-              return '';
-            };
-            
-            const getAnimation = () => {
-              if (isCurrent && state.isPlaying) {
-                return 'animate-scale';
-              }
-              return '';
-            };
-            
-            return (
-              <div
-                key={i}
-                className={`w-16 sm:w-20 h-16 sm:h-20 rounded-full flex items-center justify-center transition-all duration-200 ease-in-out 
-                  ${getColor()} 
-                  ${getRingColor()}
-                  ${getAnimation()}
-                  opacity-100 hover:scale-110
-                  shadow-lg
-                `}
-              >
-                <span className={`${isCurrent ? 'text-white font-bold text-lg sm:text-xl' : 'text-white/70 text-base sm:text-lg'}`}>
-                  {beatNumber}
-                </span>
-              </div>
-            );
-          })}
+
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 w-full max-w-full mb-6 sm:mb-8">
+          {Array.from({ length: totalBeats }, (_, i) => renderBeat(i))}
         </div>
-        
-        <div className="mt-4 sm:mt-6 flex items-center space-x-4 sm:space-x-6 text-white/80 text-xs sm:text-sm">
-          <div className="flex items-center space-x-1 sm:space-x-2">
-            <div className="w-3 sm:w-4 h-3 sm:h-4 rounded-full bg-red-500 shadow-md"></div>
-            <span>重音</span>
+
+        <div className="flex items-center space-x-6 sm:space-x-8 text-gray-400 text-xs sm:text-sm">
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 shadow-md shadow-pink-500/50"></div>
+            <span>重音拍</span>
           </div>
-          <div className="flex items-center space-x-1 sm:space-x-2">
-            <div className="w-3 sm:w-4 h-3 sm:h-4 rounded-full bg-white shadow-md"></div>
-            <span>普通音</span>
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 shadow-md shadow-cyan-500/50"></div>
+            <span>普通拍</span>
           </div>
         </div>
       </div>

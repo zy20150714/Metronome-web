@@ -12,6 +12,10 @@ export interface Theme {
   border: string;
   gradient: string;
   glow: string;
+  cardStyle: 'glass' | 'rounded' | 'sharp' | 'organic';
+  buttonStyle: 'gradient' | 'outline' | 'flat' | 'pill';
+  cornerRadius: string;
+  shadow: string;
 }
 
 export const themes: Theme[] = [
@@ -28,7 +32,11 @@ export const themes: Theme[] = [
     textSecondary: '#888888',
     border: 'rgba(255, 255, 255, 0.06)',
     gradient: 'linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%)',
-    glow: 'rgba(255, 107, 0, 0.4)'
+    glow: 'rgba(255, 107, 0, 0.4)',
+    cardStyle: 'glass',
+    buttonStyle: 'gradient',
+    cornerRadius: '16px',
+    shadow: '0 8px 32px rgba(0, 0, 0, 0.5)'
   },
   {
     id: 'minimal',
@@ -41,9 +49,13 @@ export const themes: Theme[] = [
     surface: '#f8fafc',
     text: '#1e293b',
     textSecondary: '#64748b',
-    border: 'rgba(0, 0, 0, 0.1)',
+    border: 'rgba(0, 0, 0, 0.08)',
     gradient: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-    glow: 'rgba(37, 99, 235, 0.3)'
+    glow: 'rgba(37, 99, 235, 0.2)',
+    cardStyle: 'rounded',
+    buttonStyle: 'outline',
+    cornerRadius: '12px',
+    shadow: '0 4px 16px rgba(0, 0, 0, 0.08)'
   },
   {
     id: 'cute',
@@ -56,9 +68,13 @@ export const themes: Theme[] = [
     surface: '#ffffff',
     text: '#4c1d4c',
     textSecondary: '#be185d',
-    border: 'rgba(236, 72, 153, 0.2)',
+    border: 'rgba(236, 72, 153, 0.15)',
     gradient: 'linear-gradient(135deg, #ec4899 0%, #f472b6 100%)',
-    glow: 'rgba(236, 72, 153, 0.4)'
+    glow: 'rgba(236, 72, 153, 0.3)',
+    cardStyle: 'organic',
+    buttonStyle: 'gradient',
+    cornerRadius: '24px',
+    shadow: '0 8px 24px rgba(236, 72, 153, 0.2)'
   },
   {
     id: 'nature',
@@ -71,9 +87,13 @@ export const themes: Theme[] = [
     surface: '#ffffff',
     text: '#14532d',
     textSecondary: '#166534',
-    border: 'rgba(34, 197, 94, 0.2)',
+    border: 'rgba(34, 197, 94, 0.15)',
     gradient: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
-    glow: 'rgba(34, 197, 94, 0.4)'
+    glow: 'rgba(34, 197, 94, 0.3)',
+    cardStyle: 'rounded',
+    buttonStyle: 'flat',
+    cornerRadius: '16px',
+    shadow: '0 4px 20px rgba(34, 197, 94, 0.15)'
   },
   {
     id: 'ocean',
@@ -86,9 +106,13 @@ export const themes: Theme[] = [
     surface: '#ffffff',
     text: '#0c4a6e',
     textSecondary: '#075985',
-    border: 'rgba(14, 165, 233, 0.2)',
+    border: 'rgba(14, 165, 233, 0.15)',
     gradient: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
-    glow: 'rgba(14, 165, 233, 0.4)'
+    glow: 'rgba(14, 165, 233, 0.3)',
+    cardStyle: 'glass',
+    buttonStyle: 'gradient',
+    cornerRadius: '20px',
+    shadow: '0 6px 24px rgba(14, 165, 233, 0.2)'
   },
   {
     id: 'sunset',
@@ -101,9 +125,13 @@ export const themes: Theme[] = [
     surface: '#ffffff',
     text: '#7c2d12',
     textSecondary: '#9a3412',
-    border: 'rgba(249, 115, 22, 0.2)',
+    border: 'rgba(249, 115, 22, 0.15)',
     gradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-    glow: 'rgba(249, 115, 22, 0.4)'
+    glow: 'rgba(249, 115, 22, 0.3)',
+    cardStyle: 'rounded',
+    buttonStyle: 'pill',
+    cornerRadius: '16px',
+    shadow: '0 6px 20px rgba(249, 115, 22, 0.2)'
   },
   {
     id: 'dark',
@@ -118,7 +146,11 @@ export const themes: Theme[] = [
     textSecondary: '#a1a1aa',
     border: 'rgba(255, 255, 255, 0.08)',
     gradient: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)',
-    glow: 'rgba(168, 85, 247, 0.4)'
+    glow: 'rgba(168, 85, 247, 0.4)',
+    cardStyle: 'glass',
+    buttonStyle: 'gradient',
+    cornerRadius: '16px',
+    shadow: '0 8px 32px rgba(0, 0, 0, 0.5)'
   },
   {
     id: 'retro',
@@ -131,9 +163,13 @@ export const themes: Theme[] = [
     surface: '#ffffff',
     text: '#4c1d4c',
     textSecondary: '#7c3aed',
-    border: 'rgba(217, 70, 239, 0.2)',
+    border: 'rgba(217, 70, 239, 0.15)',
     gradient: 'linear-gradient(135deg, #d946ef 0%, #c026d3 100%)',
-    glow: 'rgba(217, 70, 239, 0.4)'
+    glow: 'rgba(217, 70, 239, 0.3)',
+    cardStyle: 'sharp',
+    buttonStyle: 'outline',
+    cornerRadius: '8px',
+    shadow: '0 4px 16px rgba(217, 70, 239, 0.2)'
   }
 ];
 

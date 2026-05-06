@@ -1,5 +1,23 @@
 import type { TimeSignature, SubdivisionType, SubdivisionConfig } from '../types';
 
+export const timeSignatures = [
+  { beats: 2, noteValue: 4 },
+  { beats: 3, noteValue: 4 },
+  { beats: 4, noteValue: 4 },
+  { beats: 5, noteValue: 4 },
+  { beats: 6, noteValue: 8 },
+  { beats: 7, noteValue: 8 },
+  { beats: 9, noteValue: 8 },
+  { beats: 12, noteValue: 8 },
+];
+
+export const subdivisions = [
+  { id: 'quarter', label: '四分', description: '每拍为1个四分音符' },
+  { id: 'eighth', label: '八分', description: '每拍分为2个八分音符' },
+  { id: 'sixteenth', label: '十六分', description: '每拍分为4个十六分音符' },
+  { id: 'triplet', label: '三连音', description: '三代二，3个音符代替2个' },
+];
+
 export const parseTimeSignature = (timeSignature: TimeSignature): { beats: number; beatValue: number } => {
   const [beats, beatValue] = timeSignature.split('/').map(Number);
   return { beats, beatValue };
@@ -206,4 +224,12 @@ export const getSubdivisionCounting = (subdivision: SubdivisionType): string => 
     nonuplet: '1-2-3-4-5-6-7-8-9'
   };
   return counting[subdivision] || '1';
+};
+
+export const formatBPM = (bpm: number): string => {
+  return `${bpm}`;
+};
+
+export const formatTimeSignature = (timeSignature: { beats: number; noteValue: number }): string => {
+  return `${timeSignature.beats}/${timeSignature.noteValue}`;
 };

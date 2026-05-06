@@ -1,259 +1,220 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMetronome } from '../contexts/MetronomeContext';
-import { useMetronomePlayback } from '../hooks/useMetronomePlayback';
 import { useTheme } from '../contexts/ThemeContext';
+import { formatBPM, formatTimeSignature } from '../utils/metronomeUtils';
+import { soundNames } from '../utils/audioUtils';
 
 const Home: React.FC = () => {
-  useMetronomePlayback();
   const { state, dispatch } = useMetronome();
   const { theme } = useTheme();
+  const navigate = useNavigate();
 
-  const totalBeats = parseInt(state.timeSignature.split('/')[0]);
-
-  const handleBPMChange = (value: number) => {
-    dispatch({ type: 'SET_BPM', payload: Math.max(30, Math.min(300, value)) });
-  };
-
-  const handleTogglePlay = () => {
+  const handlePlayPause = () => {
     dispatch({ type: 'TOGGLE_PLAY' });
   };
 
+  const handleBPMChange = (delta: number) => {
+    const newBPM = Math.min(300, Math.max(20, state.bpm + delta));
+    dispatch({ type: 'SET_BPM', payload: newBPM });
+  };
+
+  const getBeatIndicatorStyle = (index: number) => {
+    const isActive = state.currentBeat === index && state.currentSubdivision === 1;
+    const isAccent = index === 1;
+    
+    return {
+      width: isAccent ? '50px' : '40px',
+      height: isAccent ? '50px' : '40px',
+      borderRadius: theme.cardStyle === 'organic' ? '50% 50% 50% 0%' : 
+                   theme.cardStyle === 'sharp' ? '8px' : 
+                   theme.cardStyle === 'rounded' ? '12px' : '50%',
+      backgroundColor: isActive ? theme.primary : `${theme.primary}22`,
+      boxShadow: isActive ? `0 0 20px ${theme.glow}` : 'none',
+      transition: 'all 0.3s ease',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: isAccent ? '18px' : '14px',
+      fontWeight: 'bold',
+      color: isActive ? '#fff' : theme.textSecondary
+    };
+  };
+
   return (
-    <div className="min-h-screen relative overflow-hidden pb-24">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* 标题 */}
-        <div className="text-center mb-12">
-          <h1 
-            className="text-4xl md:text-5xl font-bold mb-3"
+    <div 
+      className="min-h-screen p-4 sm:p-6"
+      style={{ backgroundColor: theme.background }}
+    >
+      <div className="container mx-auto max-w-lg">
+        <div className="flex justify-end mb-6">
+          <Link
+            to="/themes"
+            className="p-3 rounded-lg transition-all duration-300"
             style={{ 
-              fontFamily: "'Orbitron', monospace",
-              letterSpacing: '0.05em',
-              background: theme.gradient,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
+              backgroundColor: theme.surface,
+              border: `1px solid ${theme.border}`,
+              boxShadow: theme.shadow
             }}
           >
-            节拍器
-          </h1>
-          <p style={{ color: theme.textSecondary }}>
-            专业节奏控制
-          </p>
+            <svg className="w-6 h-6" style={{ color: theme.text }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </Link>
         </div>
 
-        {/* BPM 显示 */}
         <div 
-          className="p-8 mb-8 text-center"
+          className="text-center mb-8 p-6 rounded-xl"
           style={{ 
             backgroundColor: theme.surface,
-            borderRadius: '16px',
             border: `1px solid ${theme.border}`,
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+            borderRadius: theme.cornerRadius,
+            boxShadow: theme.shadow
           }}
         >
-          <div 
-            className="text-[72px] md:text-[88px] font-bold mb-2"
-            style={{ 
-              fontFamily: "'Orbitron', monospace",
-              background: theme.gradient,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}
-          >
-            {state.bpm}
+          <div className="text-6xl md:text-7xl font-bold mb-2" 
+               style={{ 
+                 fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : 
+                             theme.id === 'retro' ? "'Georgia', serif" : "'Inter', sans-serif",
+                 color: theme.primary
+               }}>
+            {formatBPM(state.bpm)}
           </div>
-          <div 
-            className="tracking-widest uppercase text-sm"
-            style={{ color: theme.textSecondary }}
-          >
-            每分钟节拍数
+          <div style={{ color: theme.textSecondary }}>
+            {soundNames[state.soundType]} · {formatTimeSignature(state.timeSignature)}
           </div>
         </div>
 
-        {/* 节拍显示 */}
         <div 
-          className="p-6 mb-8"
-          style={{ 
-            backgroundColor: theme.surface,
-            borderRadius: '16px',
-            border: `1px solid ${theme.border}`,
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
-          }}
+          className="flex justify-center gap-3 mb-8"
+          style={{ flexWrap: 'wrap' }}
         >
-          <div className="flex items-center justify-between mb-6">
-            <span style={{ color: theme.textSecondary, fontSize: '12px', letterSpacing: '0.1em' }}>
-              拍号
-            </span>
-            <span 
-              className="text-2xl font-bold"
-              style={{ 
-                fontFamily: "'Orbitron', monospace",
-                color: theme.primary
-              }}
-            >
-              {state.timeSignature}
-            </span>
-          </div>
-          
-          <div className="flex items-center justify-center gap-3 md:gap-4">
-            {Array.from({ length: totalBeats }).map((_, i) => {
-              const beatNum = i + 1;
-              const isCurrent = beatNum === state.currentBeat;
-              const isAccent = beatNum === 1;
-              
-              return (
-                <div
-                  key={beatNum}
-                  className="w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center font-bold text-lg transition-all duration-200"
-                  style={{
-                    backgroundColor: isCurrent 
-                      ? isAccent ? theme.primary : theme.secondary
-                      : isAccent 
-                        ? `${theme.primary}33` 
-                        : `${theme.text}11`,
-                    border: isCurrent ? 'none' : `1px solid ${theme.border}`,
-                    boxShadow: isCurrent ? `0 0 15px ${theme.glow}` : 'none',
-                    transform: isCurrent ? 'scale(1.1)' : 'scale(1)',
-                    color: isCurrent ? '#ffffff' : theme.textSecondary
-                  }}
-                >
-                  {beatNum}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* BPM 滑块 */}
-        <div 
-          className="p-6 mb-8"
-          style={{ 
-            backgroundColor: theme.surface,
-            borderRadius: '16px',
-            border: `1px solid ${theme.border}`,
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
-          }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <span style={{ color: theme.textSecondary, fontSize: '12px', letterSpacing: '0.1em' }}>
-              速度
-            </span>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => handleBPMChange(state.bpm - 1)}
-                className="w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200"
-                style={{ 
-                  backgroundColor: `${theme.text}11`,
-                  border: `1px solid ${theme.border}`
-                }}
-              >
-                <span style={{ color: theme.text, fontSize: '18px', fontWeight: 'bold' }}>−</span>
-              </button>
-              <button
-                onClick={() => handleBPMChange(state.bpm + 1)}
-                className="w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200"
-                style={{ 
-                  backgroundColor: `${theme.text}11`,
-                  border: `1px solid ${theme.border}`
-                }}
-              >
-                <span style={{ color: theme.text, fontSize: '18px', fontWeight: 'bold' }}>+</span>
-              </button>
+          {Array.from({ length: state.timeSignature.beats }).map((_, i) => (
+            <div key={i} style={getBeatIndicatorStyle(i + 1)}>
+              {i + 1}
             </div>
-          </div>
-          
-          <input
-            type="range"
-            min="30"
-            max="300"
-            value={state.bpm}
-            onChange={(e) => handleBPMChange(parseInt(e.target.value))}
-            className="w-full"
-            style={{
-              height: '6px',
-              borderRadius: '3px',
-              backgroundColor: `${theme.text}11`,
-              WebkitAppearance: 'none'
-            }}
-          />
-          
-          <div className="flex justify-between mt-2" style={{ color: theme.textSecondary, fontSize: '10px' }}>
-            <span>30</span>
-            <span>300</span>
-          </div>
+          ))}
         </div>
 
-        {/* 播放控制 */}
-        <div className="flex justify-center mb-10">
+        <div 
+          className="flex justify-center mb-8"
+        >
           <button
-            onClick={handleTogglePlay}
-            className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center transition-all duration-300"
+            onClick={handlePlayPause}
+            className="w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
             style={{ 
-              background: state.isPlaying 
-                ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
-                : theme.gradient,
-              boxShadow: state.isPlaying ? 'none' : `0 0 30px ${theme.glow}`
+              background: theme.gradient,
+              boxShadow: `0 8px 32px ${theme.glow}`,
+              borderRadius: theme.cardStyle === 'sharp' ? '16px' : '50%'
             }}
           >
-            <div className="w-0 h-0 border-t-[18px] border-t-transparent border-l-[32px] border-l-white border-b-[18px] border-b-transparent md:border-t-[20px] md:border-l-[36px] md:border-b-[20px] ml-1" />
+            {state.isPlaying ? (
+              <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+              </svg>
+            ) : (
+              <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
           </button>
         </div>
 
-        {/* 导航按钮 */}
-        <div className="grid grid-cols-2 gap-4">
-          <Link
-            to="/settings"
-            className="p-6 text-center transition-all duration-300"
+        <div 
+          className="flex items-center justify-center gap-6 mb-8"
+        >
+          <button
+            onClick={() => handleBPMChange(-10)}
+            className="p-4 rounded-xl transition-all duration-300 hover:scale-105"
             style={{ 
               backgroundColor: theme.surface,
-              borderRadius: '16px',
-              border: `1px solid ${theme.border}`
+              border: `1px solid ${theme.border}`,
+              borderRadius: theme.cornerRadius,
+              boxShadow: theme.shadow
             }}
           >
-            <div className="text-3xl mb-2">⚙️</div>
-            <span style={{ color: theme.text, fontWeight: '600' }}>参数设置</span>
-          </Link>
-          
-          <Link
-            to="/sound"
-            className="p-6 text-center transition-all duration-300"
+            <svg className="w-6 h-6" style={{ color: theme.text }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+            </svg>
+          </button>
+          <input
+            type="range"
+            min="20"
+            max="300"
+            value={state.bpm}
+            onChange={(e) => dispatch({ type: 'SET_BPM', payload: parseInt(e.target.value) })}
+            className="flex-1 max-w-xs h-2 rounded-full appearance-none cursor-pointer"
+            style={{ 
+              background: `linear-gradient(to right, ${theme.primary} 0%, ${theme.primary} ${((state.bpm - 20) / 280) * 100}%, ${theme.border} ${((state.bpm - 20) / 280) * 100}%, ${theme.border} 100%)`,
+              borderRadius: '10px'
+            }}
+          />
+          <button
+            onClick={() => handleBPMChange(10)}
+            className="p-4 rounded-xl transition-all duration-300 hover:scale-105"
             style={{ 
               backgroundColor: theme.surface,
-              borderRadius: '16px',
-              border: `1px solid ${theme.border}`
+              border: `1px solid ${theme.border}`,
+              borderRadius: theme.cornerRadius,
+              boxShadow: theme.shadow
             }}
           >
-            <div className="text-3xl mb-2">🔊</div>
-            <span style={{ color: theme.text, fontWeight: '600' }}>声音设置</span>
-          </Link>
-          
-          <Link
-            to="/themes"
-            className="p-6 text-center transition-all duration-300"
+            <svg className="w-6 h-6" style={{ color: theme.text }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+        </div>
+
+        <div 
+          className="grid grid-cols-3 gap-4"
+        >
+          <button
+            onClick={() => navigate('/settings')}
+            className="p-4 rounded-xl transition-all duration-300 hover:scale-105 text-center"
             style={{ 
               backgroundColor: theme.surface,
-              borderRadius: '16px',
-              border: `1px solid ${theme.border}`
+              border: `1px solid ${theme.border}`,
+              borderRadius: theme.cornerRadius,
+              boxShadow: theme.shadow
             }}
           >
-            <div className="text-3xl mb-2">🎨</div>
-            <span style={{ color: theme.text, fontWeight: '600' }}>主题选择</span>
-          </Link>
-          
-          <Link
-            to="/system"
-            className="p-6 text-center transition-all duration-300"
+            <svg className="w-8 h-8 mx-auto mb-2" style={{ color: theme.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span style={{ color: theme.text, fontSize: '14px' }}>参数设置</span>
+          </button>
+          <button
+            onClick={() => navigate('/sound')}
+            className="p-4 rounded-xl transition-all duration-300 hover:scale-105 text-center"
             style={{ 
               backgroundColor: theme.surface,
-              borderRadius: '16px',
-              border: `1px solid ${theme.border}`
+              border: `1px solid ${theme.border}`,
+              borderRadius: theme.cornerRadius,
+              boxShadow: theme.shadow
             }}
           >
-            <div className="text-3xl mb-2">🔧</div>
-            <span style={{ color: theme.text, fontWeight: '600' }}>系统设置</span>
-          </Link>
+            <svg className="w-8 h-8 mx-auto mb-2" style={{ color: theme.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+            <span style={{ color: theme.text, fontSize: '14px' }}>声音设置</span>
+          </button>
+          <button
+            onClick={() => navigate('/system')}
+            className="p-4 rounded-xl transition-all duration-300 hover:scale-105 text-center"
+            style={{ 
+              backgroundColor: theme.surface,
+              border: `1px solid ${theme.border}`,
+              borderRadius: theme.cornerRadius,
+              boxShadow: theme.shadow
+            }}
+          >
+            <svg className="w-8 h-8 mx-auto mb-2" style={{ color: theme.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span style={{ color: theme.text, fontSize: '14px' }}>系统设置</span>
+          </button>
         </div>
       </div>
     </div>

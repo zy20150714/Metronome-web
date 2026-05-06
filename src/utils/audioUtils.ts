@@ -1,5 +1,15 @@
 import type { SoundType, SoundConfig } from '../types';
 
+export const soundTypes: SoundType[] = ['click', 'drum', 'wood', 'electronic', 'metal'];
+
+export const soundNames: Record<SoundType, string> = {
+  click: '点击声',
+  drum: '鼓声',
+  wood: '木鱼声',
+  electronic: '电子音',
+  metal: '金属声',
+};
+
 class AudioUtils {
   private audioContext: AudioContext | null = null;
   private soundConfigs: Record<SoundType, SoundConfig> = {

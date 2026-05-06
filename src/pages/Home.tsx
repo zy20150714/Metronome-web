@@ -1,12 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useMetronome } from '../contexts/MetronomeContext';
 import { useMetronomePlayback } from '../hooks/useMetronomePlayback';
+import { useTheme } from '../contexts/ThemeContext';
 
 const Home: React.FC = () => {
   useMetronomePlayback();
   const { state, dispatch } = useMetronome();
-  const prevBeatRef = useRef(state.currentBeat);
+  const { theme } = useTheme();
 
   const totalBeats = parseInt(state.timeSignature.split('/')[0]);
 
@@ -18,41 +19,80 @@ const Home: React.FC = () => {
     dispatch({ type: 'TOGGLE_PLAY' });
   };
 
-  useEffect(() => {
-    prevBeatRef.current = state.currentBeat;
-  }, [state.currentBeat]);
-
   return (
-    <div className="min-h-screen tech-bg grid-bg relative overflow-hidden">
-      {/* 扫描线效果 */}
-      <div className="scan-line absolute inset-0 pointer-events-none" />
-      
+    <div className="min-h-screen relative overflow-hidden pb-24">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* 标题 */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 display-font">
-            METRONOME
+          <h1 
+            className="text-4xl md:text-5xl font-bold mb-3"
+            style={{ 
+              fontFamily: "'Orbitron', monospace",
+              letterSpacing: '0.05em',
+              background: theme.gradient,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}
+          >
+            节拍器
           </h1>
-          <p className="text-gray-400 text-sm tracking-widest uppercase">
-            Professional Beat Control
+          <p style={{ color: theme.textSecondary }}>
+            专业节奏控制
           </p>
         </div>
 
         {/* BPM 显示 */}
-        <div className="card-tech p-8 mb-8 text-center float">
-          <div className="text-[72px] md:text-[88px] font-bold display-font mb-2 bg-gradient-to-r from-orange-500 via-orange-400 to-cyan-400 bg-clip-text text-transparent">
+        <div 
+          className="p-8 mb-8 text-center"
+          style={{ 
+            backgroundColor: theme.surface,
+            borderRadius: '16px',
+            border: `1px solid ${theme.border}`,
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+          }}
+        >
+          <div 
+            className="text-[72px] md:text-[88px] font-bold mb-2"
+            style={{ 
+              fontFamily: "'Orbitron', monospace",
+              background: theme.gradient,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}
+          >
             {state.bpm}
           </div>
-          <div className="text-gray-500 tracking-widest uppercase text-sm">
-            Beats Per Minute
+          <div 
+            className="tracking-widest uppercase text-sm"
+            style={{ color: theme.textSecondary }}
+          >
+            每分钟节拍数
           </div>
         </div>
 
         {/* 节拍显示 */}
-        <div className="card-tech p-6 mb-8">
+        <div 
+          className="p-6 mb-8"
+          style={{ 
+            backgroundColor: theme.surface,
+            borderRadius: '16px',
+            border: `1px solid ${theme.border}`,
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+          }}
+        >
           <div className="flex items-center justify-between mb-6">
-            <span className="text-gray-400 text-sm tracking-wider">TIME SIGNATURE</span>
-            <span className="text-2xl font-bold text-cyan-400 display-font">
+            <span style={{ color: theme.textSecondary, fontSize: '12px', letterSpacing: '0.1em' }}>
+              拍号
+            </span>
+            <span 
+              className="text-2xl font-bold"
+              style={{ 
+                fontFamily: "'Orbitron', monospace",
+                color: theme.primary
+              }}
+            >
               {state.timeSignature}
             </span>
           </div>
@@ -66,19 +106,20 @@ const Home: React.FC = () => {
               return (
                 <div
                   key={beatNum}
-                  className={`w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center font-bold text-lg transition-all duration-200 ${
-                    isCurrent
-                      ? isAccent
-                        ? 'bg-gradient-to-br from-orange-500 to-orange-600 glow-orange scale-110'
-                        : 'bg-gradient-to-br from-cyan-500 to-cyan-600 glow-cyan scale-110'
-                      : isAccent
-                      ? 'bg-orange-900/40 border border-orange-700/50'
-                      : 'bg-gray-800/60 border border-gray-700/50'
-                  } ${isCurrent ? 'pulse-beat' : ''}`}
+                  className="w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center font-bold text-lg transition-all duration-200"
+                  style={{
+                    backgroundColor: isCurrent 
+                      ? isAccent ? theme.primary : theme.secondary
+                      : isAccent 
+                        ? `${theme.primary}33` 
+                        : `${theme.text}11`,
+                    border: isCurrent ? 'none' : `1px solid ${theme.border}`,
+                    boxShadow: isCurrent ? `0 0 15px ${theme.glow}` : 'none',
+                    transform: isCurrent ? 'scale(1.1)' : 'scale(1)',
+                    color: isCurrent ? '#ffffff' : theme.textSecondary
+                  }}
                 >
-                  <span className={isCurrent ? 'text-white' : 'text-gray-400'}>
-                    {beatNum}
-                  </span>
+                  {beatNum}
                 </div>
               );
             })}
@@ -86,21 +127,39 @@ const Home: React.FC = () => {
         </div>
 
         {/* BPM 滑块 */}
-        <div className="card-tech p-6 mb-8">
+        <div 
+          className="p-6 mb-8"
+          style={{ 
+            backgroundColor: theme.surface,
+            borderRadius: '16px',
+            border: `1px solid ${theme.border}`,
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+          }}
+        >
           <div className="flex items-center justify-between mb-4">
-            <span className="text-gray-400 text-sm tracking-wider">TEMPO</span>
+            <span style={{ color: theme.textSecondary, fontSize: '12px', letterSpacing: '0.1em' }}>
+              速度
+            </span>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => handleBPMChange(state.bpm - 1)}
-                className="w-10 h-10 rounded-lg bg-gray-800 border border-gray-700 hover:border-gray-500 transition-colors flex items-center justify-center"
+                className="w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200"
+                style={{ 
+                  backgroundColor: `${theme.text}11`,
+                  border: `1px solid ${theme.border}`
+                }}
               >
-                <span className="text-xl text-gray-300">−</span>
+                <span style={{ color: theme.text, fontSize: '18px', fontWeight: 'bold' }}>−</span>
               </button>
               <button
                 onClick={() => handleBPMChange(state.bpm + 1)}
-                className="w-10 h-10 rounded-lg bg-gray-800 border border-gray-700 hover:border-gray-500 transition-colors flex items-center justify-center"
+                className="w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200"
+                style={{ 
+                  backgroundColor: `${theme.text}11`,
+                  border: `1px solid ${theme.border}`
+                }}
               >
-                <span className="text-xl text-gray-300">+</span>
+                <span style={{ color: theme.text, fontSize: '18px', fontWeight: 'bold' }}>+</span>
               </button>
             </div>
           </div>
@@ -112,9 +171,15 @@ const Home: React.FC = () => {
             value={state.bpm}
             onChange={(e) => handleBPMChange(parseInt(e.target.value))}
             className="w-full"
+            style={{
+              height: '6px',
+              borderRadius: '3px',
+              backgroundColor: `${theme.text}11`,
+              WebkitAppearance: 'none'
+            }}
           />
           
-          <div className="flex justify-between mt-2 text-xs text-gray-600">
+          <div className="flex justify-between mt-2" style={{ color: theme.textSecondary, fontSize: '10px' }}>
             <span>30</span>
             <span>300</span>
           </div>
@@ -124,11 +189,13 @@ const Home: React.FC = () => {
         <div className="flex justify-center mb-10">
           <button
             onClick={handleTogglePlay}
-            className={`w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center transition-all duration-300 ${
-              state.isPlaying
-                ? 'bg-gradient-to-br from-red-600 to-red-700 hover:from-red-500 hover:to-red-600'
-                : 'bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500'
-            } ${state.isPlaying ? '' : 'glow-orange'}`}
+            className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center transition-all duration-300"
+            style={{ 
+              background: state.isPlaying 
+                ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                : theme.gradient,
+              boxShadow: state.isPlaying ? 'none' : `0 0 30px ${theme.glow}`
+            }}
           >
             <div className="w-0 h-0 border-t-[18px] border-t-transparent border-l-[32px] border-l-white border-b-[18px] border-b-transparent md:border-t-[20px] md:border-l-[36px] md:border-b-[20px] ml-1" />
           </button>
@@ -138,26 +205,54 @@ const Home: React.FC = () => {
         <div className="grid grid-cols-2 gap-4">
           <Link
             to="/settings"
-            className="card-tech p-6 text-center transition-all duration-300 hover:bg-gray-800/60"
+            className="p-6 text-center transition-all duration-300"
+            style={{ 
+              backgroundColor: theme.surface,
+              borderRadius: '16px',
+              border: `1px solid ${theme.border}`
+            }}
           >
             <div className="text-3xl mb-2">⚙️</div>
-            <span className="text-gray-300 font-semibold">参数设置</span>
+            <span style={{ color: theme.text, fontWeight: '600' }}>参数设置</span>
           </Link>
           
           <Link
             to="/sound"
-            className="card-tech p-6 text-center transition-all duration-300 hover:bg-gray-800/60"
+            className="p-6 text-center transition-all duration-300"
+            style={{ 
+              backgroundColor: theme.surface,
+              borderRadius: '16px',
+              border: `1px solid ${theme.border}`
+            }}
           >
             <div className="text-3xl mb-2">🔊</div>
-            <span className="text-gray-300 font-semibold">声音设置</span>
+            <span style={{ color: theme.text, fontWeight: '600' }}>声音设置</span>
+          </Link>
+          
+          <Link
+            to="/themes"
+            className="p-6 text-center transition-all duration-300"
+            style={{ 
+              backgroundColor: theme.surface,
+              borderRadius: '16px',
+              border: `1px solid ${theme.border}`
+            }}
+          >
+            <div className="text-3xl mb-2">🎨</div>
+            <span style={{ color: theme.text, fontWeight: '600' }}>主题选择</span>
           </Link>
           
           <Link
             to="/system"
-            className="card-tech p-6 text-center transition-all duration-300 hover:bg-gray-800/60 col-span-2"
+            className="p-6 text-center transition-all duration-300"
+            style={{ 
+              backgroundColor: theme.surface,
+              borderRadius: '16px',
+              border: `1px solid ${theme.border}`
+            }}
           >
             <div className="text-3xl mb-2">🔧</div>
-            <span className="text-gray-300 font-semibold">系统设置</span>
+            <span style={{ color: theme.text, fontWeight: '600' }}>系统设置</span>
           </Link>
         </div>
       </div>

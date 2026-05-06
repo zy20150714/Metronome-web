@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useMetronome } from '../contexts/MetronomeContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { subdivisionConfigs } from '../utils/metronomeUtils';
 
 const Settings: React.FC = () => {
   const { state, dispatch } = useMetronome();
+  const { theme } = useTheme();
   const [numerator, denominator] = state.timeSignature.split('/').map(Number);
 
   const numeratorOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
@@ -22,13 +24,17 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen tech-bg grid-bg relative overflow-hidden pb-24">
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
-        {/* 返回导航 */}
+    <div className="min-h-screen p-4 sm:p-6 pb-24">
+      <div className="container mx-auto max-w-2xl">
         <div className="mb-8">
           <Link
             to="/"
-            className="btn-secondary inline-flex items-center gap-3 px-6 py-4 rounded-lg text-gray-300 font-semibold"
+            className="inline-flex items-center gap-3 px-6 py-4 rounded-lg font-semibold transition-all duration-300"
+            style={{ 
+              backgroundColor: theme.surface,
+              color: theme.text,
+              border: `1px solid ${theme.border}`
+            }}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -37,29 +43,50 @@ const Settings: React.FC = () => {
           </Link>
         </div>
 
-        {/* 标题 */}
         <div className="mb-10">
-          <h1 className="text-3xl font-bold text-white mb-2 display-font">PARAMETERS</h1>
-          <p className="text-gray-400 text-sm tracking-wider">调整节拍器参数设置</p>
+          <h1 
+            className="text-3xl font-bold mb-2"
+            style={{ fontFamily: "'Orbitron', monospace", color: theme.text }}
+          >
+            参数设置
+          </h1>
+          <p style={{ color: theme.textSecondary }}>调整节拍器参数设置</p>
         </div>
 
-        {/* 拍号设置 */}
-        <div className="card-tech p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-6 text-cyan-400">TIME SIGNATURE</h2>
+        <div 
+          className="p-6 mb-6"
+          style={{ 
+            backgroundColor: theme.surface,
+            borderRadius: '16px',
+            border: `1px solid ${theme.border}`
+          }}
+        >
+          <h2 
+            className="text-lg font-semibold mb-6"
+            style={{ color: theme.primary }}
+          >
+            拍号设置
+          </h2>
           
           <div className="grid grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="text-sm text-gray-400 mb-3 block">小节数 (Beats)</label>
+              <label 
+                className="text-sm mb-3 block"
+                style={{ color: theme.textSecondary }}
+              >
+                小节数
+              </label>
               <div className="grid grid-cols-4 gap-2">
                 {numeratorOptions.map(num => (
                   <button
                     key={num}
                     onClick={() => handleTimeSignatureChange(num, denominator)}
-                    className={`py-3 rounded-lg font-semibold transition-all duration-200 ${
-                      numerator === num
-                        ? 'bg-gradient-to-br from-cyan-500 to-cyan-600 text-white'
-                        : 'bg-gray-800 border border-gray-700 text-gray-300 hover:border-gray-500'
-                    }`}
+                    className="py-3 rounded-lg font-semibold transition-all duration-200"
+                    style={{
+                      backgroundColor: numerator === num ? theme.primary : `${theme.text}11`,
+                      color: numerator === num ? '#ffffff' : theme.text,
+                      border: numerator === num ? 'none' : `1px solid ${theme.border}`
+                    }}
                   >
                     {num}
                   </button>
@@ -68,17 +95,23 @@ const Settings: React.FC = () => {
             </div>
 
             <div>
-              <label className="text-sm text-gray-400 mb-3 block">节拍单位 (Note Value)</label>
+              <label 
+                className="text-sm mb-3 block"
+                style={{ color: theme.textSecondary }}
+              >
+                节拍单位
+              </label>
               <div className="grid grid-cols-2 gap-2">
                 {denominatorOptions.map(den => (
                   <button
                     key={den}
                     onClick={() => handleTimeSignatureChange(numerator, den)}
-                    className={`py-3 rounded-lg font-semibold transition-all duration-200 ${
-                      denominator === den
-                        ? 'bg-gradient-to-br from-cyan-500 to-cyan-600 text-white'
-                        : 'bg-gray-800 border border-gray-700 text-gray-300 hover:border-gray-500'
-                    }`}
+                    className="py-3 rounded-lg font-semibold transition-all duration-200"
+                    style={{
+                      backgroundColor: denominator === den ? theme.primary : `${theme.text}11`,
+                      color: denominator === den ? '#ffffff' : theme.text,
+                      border: denominator === den ? 'none' : `1px solid ${theme.border}`
+                    }}
                   >
                     {den}
                   </button>
@@ -87,33 +120,68 @@ const Settings: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-gray-900/50 rounded-xl p-4 flex items-center justify-center gap-3">
-            <span className="text-5xl font-bold text-white display-font">{numerator}</span>
-            <div className="w-12 h-0.5 bg-cyan-500" />
-            <span className="text-5xl font-bold text-white display-font">{denominator}</span>
+          <div 
+            className="p-4 flex items-center justify-center gap-3"
+            style={{ backgroundColor: `${theme.text}08`, borderRadius: '12px' }}
+          >
+            <span 
+              className="text-5xl font-bold"
+              style={{ fontFamily: "'Orbitron', monospace", color: theme.text }}
+            >
+              {numerator}
+            </span>
+            <div 
+              className="w-12 h-0.5"
+              style={{ backgroundColor: theme.primary }}
+            />
+            <span 
+              className="text-5xl font-bold"
+              style={{ fontFamily: "'Orbitron', monospace", color: theme.text }}
+            >
+              {denominator}
+            </span>
           </div>
         </div>
 
-        {/* 细分设置 */}
-        <div className="card-tech p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-6 text-orange-400">SUBDIVISION</h2>
+        <div 
+          className="p-6 mb-6"
+          style={{ 
+            backgroundColor: theme.surface,
+            borderRadius: '16px',
+            border: `1px solid ${theme.border}`
+          }}
+        >
+          <h2 
+            className="text-lg font-semibold mb-6"
+            style={{ color: theme.primary }}
+          >
+            节拍细分
+          </h2>
           
           <div className="grid grid-cols-2 gap-3">
             {subdivisionConfigs.map(config => (
               <button
                 key={config.value}
                 onClick={() => handleSubdivisionChange(config.value)}
-                className={`p-4 rounded-xl transition-all duration-300 text-left ${
-                  state.subdivision === config.value
-                    ? 'bg-gradient-to-br from-orange-500/20 to-orange-600/20 border border-orange-500/40'
-                    : 'bg-gray-800 border border-gray-700 hover:border-gray-500'
-                }`}
+                className="p-4 rounded-xl transition-all duration-300 text-left"
+                style={{
+                  backgroundColor: state.subdivision === config.value ? `${theme.primary}22` : `${theme.text}08`,
+                  border: state.subdivision === config.value ? `1px solid ${theme.primary}` : `1px solid ${theme.border}`
+                }}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xl font-semibold text-white">{config.name}</span>
-                  <span className="text-2xl">{config.symbol}</span>
+                  <span 
+                    className="font-semibold"
+                    style={{ color: theme.text }}
+                  >
+                    {config.name}
+                  </span>
+                  <span className="text-xl">{config.symbol}</span>
                 </div>
-                <p className="text-xs text-gray-400 leading-relaxed">
+                <p 
+                  className="text-xs"
+                  style={{ color: theme.textSecondary }}
+                >
                   {config.description}
                 </p>
               </button>
@@ -121,17 +189,52 @@ const Settings: React.FC = () => {
           </div>
         </div>
 
-        {/* 当前设置 */}
-        <div className="card-tech p-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-400">CURRENT SETTINGS</h2>
+        <div 
+          className="p-6"
+          style={{ 
+            backgroundColor: theme.surface,
+            borderRadius: '16px',
+            border: `1px solid ${theme.border}`
+          }}
+        >
+          <h2 
+            className="text-lg font-semibold mb-4"
+            style={{ color: theme.textSecondary }}
+          >
+            当前设置
+          </h2>
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-900/50 rounded-lg p-4">
-              <div className="text-xs text-gray-500 mb-1">TIME SIGNATURE</div>
-              <div className="text-2xl font-bold text-white display-font">{state.timeSignature}</div>
+            <div 
+              className="p-4 rounded-lg"
+              style={{ backgroundColor: `${theme.text}08` }}
+            >
+              <div 
+                className="text-xs mb-1"
+                style={{ color: theme.textSecondary }}
+              >
+                拍号
+              </div>
+              <div 
+                className="text-2xl font-bold"
+                style={{ fontFamily: "'Orbitron', monospace", color: theme.text }}
+              >
+                {state.timeSignature}
+              </div>
             </div>
-            <div className="bg-gray-900/50 rounded-lg p-4">
-              <div className="text-xs text-gray-500 mb-1">SUBDIVISION</div>
-              <div className="text-2xl font-bold text-white display-font">
+            <div 
+              className="p-4 rounded-lg"
+              style={{ backgroundColor: `${theme.text}08` }}
+            >
+              <div 
+                className="text-xs mb-1"
+                style={{ color: theme.textSecondary }}
+              >
+                节拍细分
+              </div>
+              <div 
+                className="text-2xl font-bold"
+                style={{ fontFamily: "'Orbitron', monospace", color: theme.text }}
+              >
                 {subdivisionConfigs.find(c => c.value === state.subdivision)?.name}
               </div>
             </div>

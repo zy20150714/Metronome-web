@@ -1,32 +1,29 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { MetronomeProvider, useMetronome } from './contexts/MetronomeContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { SystemSettingsProvider } from './components/ControlPanel/SystemSettings';
-import { useMetronomePlayback } from './hooks/useMetronomePlayback';
 import { cookieUtils } from './utils/cookieUtils';
 import CookieBanner from './components/CookieBanner';
 
-// 页面
 import Home from './pages/Home';
 import Settings from './pages/Settings';
 import Sound from './pages/Sound';
 import System from './pages/System';
+import Themes from './pages/Themes';
 
 const SETTINGS_KEY = 'metronome-settings';
 
 const AppContent: React.FC = () => {
   const { state, dispatch } = useMetronome();
   
-  // 加载保存的设置
   const loadSettings = useCallback(() => {
     try {
-      // 首先检查Cookie同意
       const consent = cookieUtils.getCookie('cookieConsent');
       if (consent !== 'accepted') {
         return;
       }
 
-      // 尝试从localStorage加载
       if (typeof localStorage !== 'undefined') {
         const saved = localStorage.getItem(SETTINGS_KEY);
         if (saved) {
@@ -34,7 +31,6 @@ const AppContent: React.FC = () => {
         }
       }
 
-      // 尝试从cookie加载
       const cookieValue = cookieUtils.getCookie(SETTINGS_KEY);
       if (cookieValue) {
         return JSON.parse(cookieValue);
@@ -45,7 +41,6 @@ const AppContent: React.FC = () => {
     return null;
   }, []);
 
-  // 保存设置
   const saveSettings = useCallback((settings: any) => {
     try {
       const consent = cookieUtils.getCookie('cookieConsent');
@@ -55,19 +50,16 @@ const AppContent: React.FC = () => {
 
       const settingsJson = JSON.stringify(settings);
 
-      // 同时保存到localStorage和cookie
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem(SETTINGS_KEY, settingsJson);
       }
 
-      // 保存到cookie，有效期365天
       cookieUtils.setCookie(SETTINGS_KEY, settingsJson, 365);
     } catch (e) {
       console.error('Failed to save settings:', e);
     }
   }, []);
 
-  // 初始化时加载设置
   useEffect(() => {
     const saved = loadSettings();
     if (saved) {
@@ -79,7 +71,6 @@ const AppContent: React.FC = () => {
     }
   }, [dispatch, loadSettings]);
 
-  // 保存设置变化
   useEffect(() => {
     if (!state.isPlaying) {
       saveSettings({
@@ -108,6 +99,7 @@ const AppContent: React.FC = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/sound" element={<Sound />} />
         <Route path="/system" element={<System />} />
+        <Route path="/themes" element={<Themes />} />
       </Routes>
     </Router>
   );
@@ -115,11 +107,13 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <SystemSettingsProvider>
-      <MetronomeProvider>
-        <AppContent />
-      </MetronomeProvider>
-    </SystemSettingsProvider>
+    <ThemeProvider>
+      <SystemSettingsProvider>
+        <MetronomeProvider>
+          <AppContent />
+        </MetronomeProvider>
+      </SystemSettingsProvider>
+    </ThemeProvider>
   );
 };
 

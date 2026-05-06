@@ -67,6 +67,8 @@ const Home: React.FC = () => {
     };
   };
 
+  const beatsCount = parseInt(state.timeSignature.split('/')[0]);
+
   return (
     <div 
       className="min-h-screen p-4 sm:p-6"
@@ -154,7 +156,7 @@ const Home: React.FC = () => {
           className="flex justify-center gap-3 mb-8"
           style={{ flexWrap: 'wrap' }}
         >
-          {Array.from({ length: state.timeSignature.beats }).map((_, i) => (
+          {Array.from({ length: beatsCount }).map((_, i) => (
             <div key={i} style={getBeatIndicatorStyle(i + 1)}>
               {i + 1}
             </div>

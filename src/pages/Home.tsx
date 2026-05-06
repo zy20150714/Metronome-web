@@ -1,18 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMetronome } from '../contexts/MetronomeContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { formatBPM, formatTimeSignature } from '../utils/metronomeUtils';
+import { formatBPM, formatTimeSignature, calculateSubdivisionDuration } from '../utils/metronomeUtils';
 import { soundNames } from '../utils/audioUtils';
 
 const Home: React.FC = () => {
   const { state, dispatch } = useMetronome();
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const [flash, setFlash] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
+  const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (flashTimerRef.current) {
+      clearTimeout(flashTimerRef.current);
+    }
+
+    if (state.isPlaying) {
+      setFlash(true);
+      flashTimerRef.current = setTimeout(() => setFlash(false), 150);
+    } else {
+      setFlash(false);
+    }
+
+    return () => {
+      if (flashTimerRef.current) {
+        clearTimeout(flashTimerRef.current);
+      }
+    };
+  }, [state.currentBeat, state.isPlaying]);
 
   const handlePlayPause = () => {
     dispatch({ type: 'TOGGLE_PLAY' });
   };
+
+  const handleMouseDown = () => setIsPressed(true);
+  const handleMouseUp = () => setIsPressed(false);
 
   const handleBPMChange = (delta: number) => {
     const newBPM = Math.min(300, Math.max(20, state.bpm + delta));
@@ -37,7 +62,8 @@ const Home: React.FC = () => {
       justifyContent: 'center',
       fontSize: isAccent ? '18px' : '14px',
       fontWeight: 'bold',
-      color: isActive ? '#fff' : theme.textSecondary
+      color: isActive ? '#fff' : theme.textSecondary,
+      transform: isActive && state.isPlaying ? 'scale(1.1)' : 'scale(1)'
     };
   };
 
@@ -64,7 +90,7 @@ const Home: React.FC = () => {
         </div>
 
         <div 
-          className="text-center mb-8 p-6 rounded-xl"
+          className="text-center mb-8 p-6 rounded-xl relative overflow-hidden"
           style={{ 
             backgroundColor: theme.surface,
             border: `1px solid ${theme.border}`,
@@ -72,16 +98,55 @@ const Home: React.FC = () => {
             boxShadow: theme.shadow
           }}
         >
-          <div className="text-6xl md:text-7xl font-bold mb-2" 
-               style={{ 
-                 fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : 
-                             theme.id === 'retro' ? "'Georgia', serif" : "'Inter', sans-serif",
-                 color: theme.primary
-               }}>
-            {formatBPM(state.bpm)}
+          {flash && (
+            <div 
+              className="absolute inset-0 blur-xl animate-fadeInOut"
+              style={{ background: `${theme.primary}30` }}
+            />
+          )}
+          <div className="relative">
+            <div className="text-6xl md:text-7xl font-bold mb-2" 
+                 style={{ 
+                   fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : 
+                               theme.id === 'retro' ? "'Georgia', serif" : "'Inter', sans-serif",
+                   color: theme.primary
+                 }}>
+              {formatBPM(state.bpm)}
+            </div>
+            <div style={{ color: theme.textSecondary }}>
+              {soundNames[state.soundType]} · {formatTimeSignature(state.timeSignature)}
+            </div>
           </div>
-          <div style={{ color: theme.textSecondary }}>
-            {soundNames[state.soundType]} · {formatTimeSignature(state.timeSignature)}
+        </div>
+
+        <div className="flex items-center justify-center mb-6">
+          <div 
+            className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${
+              state.isPlaying ? 'animate-breath' : ''
+            }`}
+            style={{ 
+              background: state.isPlaying ? theme.gradient : `${theme.primary}30`,
+              boxShadow: state.isPlaying ? `0 0 30px ${theme.glow}` : 'none'
+            }}
+          >
+            {state.isPlaying ? (
+              <div className="flex items-center space-x-1">
+                <div 
+                  className="w-2 h-6 rounded animate-pulse" 
+                  style={{ backgroundColor: '#fff', animationDelay: '0s' }} 
+                />
+                <div 
+                  className="w-2 h-8 rounded animate-pulse" 
+                  style={{ backgroundColor: '#fff', animationDelay: '0.1s' }} 
+                />
+                <div 
+                  className="w-2 h-6 rounded animate-pulse" 
+                  style={{ backgroundColor: '#fff', animationDelay: '0.2s' }} 
+                />
+              </div>
+            ) : (
+              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: theme.textSecondary }} />
+            )}
           </div>
         </div>
 
@@ -96,28 +161,61 @@ const Home: React.FC = () => {
           ))}
         </div>
 
+        <div className="flex items-center justify-center gap-6 mb-4">
+          <div className="flex items-center gap-2">
+            <div 
+              className="w-3 h-3 rounded-full"
+              style={{ 
+                background: theme.gradient,
+                boxShadow: `0 0 8px ${theme.glow}`
+              }}
+            />
+            <span style={{ color: theme.textSecondary, fontSize: '12px' }}>重音拍</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div 
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: `${theme.primary}60` }}
+            />
+            <span style={{ color: theme.textSecondary, fontSize: '12px' }}>普通拍</span>
+          </div>
+        </div>
+
         <div 
           className="flex justify-center mb-8"
         >
           <button
             onClick={handlePlayPause}
-            className="w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onTouchStart={handleMouseDown}
+            onTouchEnd={handleMouseUp}
+            className={`w-28 h-28 rounded-full flex items-center justify-center transition-all duration-300 ${
+              isPressed ? 'scale-95' : 'scale-100'
+            } ${state.isPlaying ? 'animate-glow' : ''}`}
             style={{ 
-              background: theme.gradient,
-              boxShadow: `0 8px 32px ${theme.glow}`,
+              background: state.isPlaying ? theme.gradient : `${theme.primary}22`,
+              border: `3px solid ${theme.primary}`,
+              boxShadow: state.isPlaying ? `0 8px 32px ${theme.glow}` : theme.shadow,
               borderRadius: theme.cardStyle === 'sharp' ? '16px' : '50%'
             }}
           >
             {state.isPlaying ? (
-              <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-              </svg>
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-12 bg-white rounded" />
+                <div className="w-4 h-12 bg-white rounded" />
+              </div>
             ) : (
-              <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-10 h-10" style={{ color: theme.primary }} fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
               </svg>
             )}
           </button>
+        </div>
+
+        <div style={{ color: theme.textSecondary, textAlign: 'center', fontSize: '14px', marginBottom: '8px' }}>
+          {state.isPlaying ? '正在播放...' : '点击开始'}
         </div>
 
         <div 

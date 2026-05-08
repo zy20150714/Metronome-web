@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMetronome } from '../contexts/MetronomeContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { formatBPM, formatTimeSignature, calculateSubdivisionDuration } from '../utils/metronomeUtils';
+import { formatBPM, formatTimeSignature } from '../utils/metronomeUtils';
 import { soundNames } from '../utils/audioUtils';
 
 const Home: React.FC = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { MetronomeProvider, useMetronome } from './contexts/MetronomeContext';
 import { ThemeProvider } from './contexts/ThemeContext';

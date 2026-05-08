@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 import { useMetronome } from '../contexts/MetronomeContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { soundTypes, soundNames, audioUtils } from '../utils/audioUtils';
+import type { SoundType } from '../types';
 
 const Sound: React.FC = () => {
   const { state, dispatch } = useMetronome();
   const { theme } = useTheme();
 
-  const handleSoundSelect = (soundType: string) => {
+  const handleSoundSelect = (soundType: SoundType) => {
     dispatch({ type: 'SET_SOUND_TYPE', payload: soundType });
     audioUtils.playSound(soundType, true, false, state.volume.accent);
   };

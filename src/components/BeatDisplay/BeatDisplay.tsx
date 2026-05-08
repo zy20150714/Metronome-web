@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useMetronome } from '../../contexts/MetronomeContext';
-import { calculateSubdivisionDuration } from '../../utils/metronomeUtils';
 
 const BeatDisplay: React.FC = () => {
   const { state } = useMetronome();
   const [flash, setFlash] = useState(false);
-  const [isFirstBeatVisible, setIsFirstBeatVisible] = useState(true);
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const visibilityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const getBeatType = useCallback((beatNumber: number): 'first' | 'normal' => {
     return beatNumber === 1 ? 'first' : 'normal';
@@ -17,32 +14,20 @@ const BeatDisplay: React.FC = () => {
     if (flashTimerRef.current) {
       clearTimeout(flashTimerRef.current);
     }
-    if (visibilityTimerRef.current) {
-      clearTimeout(visibilityTimerRef.current);
-    }
 
     if (state.isPlaying) {
       setFlash(true);
       flashTimerRef.current = setTimeout(() => setFlash(false), 150);
-      setIsFirstBeatVisible(true);
-      const subdivisionDuration = calculateSubdivisionDuration(state.bpm, state.subdivision);
-      visibilityTimerRef.current = setTimeout(() => {
-        setIsFirstBeatVisible(false);
-      }, subdivisionDuration);
     } else {
       setFlash(false);
-      setIsFirstBeatVisible(true);
     }
 
     return () => {
       if (flashTimerRef.current) {
         clearTimeout(flashTimerRef.current);
       }
-      if (visibilityTimerRef.current) {
-        clearTimeout(visibilityTimerRef.current);
-      }
     };
-  }, [state.currentBeat, state.bpm, state.isPlaying, state.subdivision]);
+  }, [state.currentBeat, state.bpm, state.isPlaying]);
 
   const totalBeats = useMemo(() => {
     return parseInt(state.timeSignature.split('/')[0]);
@@ -97,26 +82,26 @@ const BeatDisplay: React.FC = () => {
           <div className={`text-6xl sm:text-8xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent transition-all duration-300 animate-glow`}>{state.bpm}</div>
           <div className="text-gray-400 text-sm sm:text-base mt-2 tracking-widest uppercase">Beats Per Minute</div>
           {flash && (
-            <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-cyan-500/20 rounded-full blur-xl animate-fadeInOut"></div>
+            <div className="absolute inset-0 bg-white/20 rounded-lg animate-ping pointer-events-none" />
           )}
         </div>
 
-        <div className="flex items-center justify-center mb-8 sm:mb-10">
-          <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-pink-400 to-cyan-400 bg-clip-text text-transparent">{state.timeSignature}</div>
+        <div className="flex gap-4 sm:gap-6 mb-6 sm:mb-8">
+          {Array.from({ length: totalBeats }).map((_, i) => (
+            <div key={i} className="relative">
+              {renderBeat(i)}
+            </div>
+          ))}
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 w-full max-w-full mb-6 sm:mb-8">
-          {Array.from({ length: totalBeats }, (_, i) => renderBeat(i))}
-        </div>
-
-        <div className="flex items-center space-x-6 sm:space-x-8 text-gray-400 text-xs sm:text-sm">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 shadow-md shadow-pink-500/50"></div>
-            <span>重音拍</span>
+        <div className="flex items-center gap-4 sm:gap-8">
+          <div className="text-center">
+            <div className="w-4 h-4 rounded-full bg-pink-500 mb-2 mx-auto"></div>
+            <div className="text-xs text-gray-400">重音</div>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 shadow-md shadow-cyan-500/50"></div>
-            <span>普通拍</span>
+          <div className="text-center">
+            <div className="w-4 h-4 rounded-full bg-cyan-500 mb-2 mx-auto"></div>
+            <div className="text-xs text-gray-400">普通</div>
           </div>
         </div>
       </div>
@@ -124,4 +109,4 @@ const BeatDisplay: React.FC = () => {
   );
 };
 
-export default React.memo(BeatDisplay);
+export default BeatDisplay;

@@ -230,6 +230,9 @@ export const formatBPM = (bpm: number): string => {
   return `${bpm}`;
 };
 
-export const formatTimeSignature = (timeSignature: { beats: number; noteValue: number }): string => {
+export const formatTimeSignature = (timeSignature: string | { beats: number; noteValue: number }): string => {
+  if (typeof timeSignature === 'string') {
+    return timeSignature;
+  }
   return `${timeSignature.beats}/${timeSignature.noteValue}`;
 };

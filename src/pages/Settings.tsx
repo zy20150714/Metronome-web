@@ -2,33 +2,31 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useMetronome } from '../contexts/MetronomeContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { subdivisionConfigs, getSubdivisionConfig } from '../utils/metronomeUtils';
-import type { SubdivisionType } from '../types';
 
 const Settings: React.FC = () => {
-  const { state, dispatch } = useMetronome();
   const { theme } = useTheme();
+  const { state } = useMetronome();
 
-  const numeratorOptions = Array.from({ length: 16 }, (_, i) => i + 1);
-  const denominatorOptions = [2, 4, 8, 16];
-  const [currentNumerator, currentDenominator] = state.timeSignature.split('/').map(Number);
-  const currentSubdivisionConfig = getSubdivisionConfig(state.subdivision);
-
-  const handleNumeratorChange = (numerator: number) => {
-    dispatch({ type: 'SET_TIME_SIGNATURE', payload: `${numerator}/${currentDenominator}` as any });
-  };
-
-  const handleDenominatorChange = (denominator: number) => {
-    dispatch({ type: 'SET_TIME_SIGNATURE', payload: `${currentNumerator}/${denominator}` as any });
-  };
-
-  const handleSubdivisionChange = (subdivision: SubdivisionType) => {
-    dispatch({ type: 'SET_SUBDIVISION', payload: subdivision });
-  };
-
-  const handleBPMChange = (value: number) => {
-    dispatch({ type: 'SET_BPM', payload: value });
-  };
+  const settings = [
+    {
+      id: 'time-signature',
+      title: '拍号设置',
+      description: '设置小节数、节拍单位、节拍细分',
+      icon: '🎼',
+      path: '/settings/time-signature',
+      color: '#8b5cf6',
+      current: state.timeSignature,
+    },
+    {
+      id: 'bpm',
+      title: '速度设置',
+      description: '调整每分钟节拍数',
+      icon: '⚡',
+      path: '/settings/bpm',
+      color: '#3b82f6',
+      current: `${state.bpm} BPM`,
+    },
+  ];
 
   return (
     <div 
@@ -65,236 +63,40 @@ const Settings: React.FC = () => {
           <p style={{ color: theme.textSecondary }}>调整节拍器的参数配置</p>
         </div>
 
-        <div 
-          className="mb-6 p-6"
-          style={{ 
-            backgroundColor: theme.surface,
-            border: `1px solid ${theme.border}`,
-            borderRadius: theme.cornerRadius,
-            boxShadow: theme.shadow
-          }}
-        >
-          <h2 
-            className="text-lg font-semibold mb-4"
-            style={{ color: theme.text }}
-          >
-            拍号
-          </h2>
-          
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div 
-              className="p-4 rounded-xl flex flex-col items-center justify-center"
+        <div className="grid grid-cols-2 gap-3">
+          {settings.map((item) => (
+            <Link
+              key={item.id}
+              to={item.path}
+              className="p-5 rounded-2xl transition-all hover:scale-105 group"
               style={{ 
-                backgroundColor: `${theme.primary}15`,
-                border: `1px solid ${theme.primary}40`,
-                borderRadius: theme.cardStyle === 'organic' ? '20px' : theme.cornerRadius
-              }}
-            >
-              <div 
-                className="text-3xl font-bold"
-                style={{ color: theme.primary }}
-              >
-                {currentNumerator}
-              </div>
-              <div 
-                className="text-3xl font-bold"
-                style={{ color: theme.primary }}
-              >
-                {currentDenominator}
-              </div>
-            </div>
-
-            <div 
-              className="p-4 rounded-xl flex items-center justify-center"
-              style={{ 
-                backgroundColor: `${theme.primary}10`,
+                backgroundColor: theme.surface,
                 border: `1px solid ${theme.border}`,
-                borderRadius: theme.cardStyle === 'organic' ? '20px' : theme.cornerRadius
-              }}
-            >
-              <div className="text-4xl" style={{ color: theme.primary }}>
-                {currentSubdivisionConfig.symbol}
-              </div>
-            </div>
-
-            <div 
-              className="p-4 rounded-xl flex items-center justify-center"
-              style={{ 
-                backgroundColor: `${theme.primary}10`,
-                border: `1px solid ${theme.border}`,
-                borderRadius: theme.cardStyle === 'organic' ? '20px' : theme.cornerRadius
               }}
             >
               <div 
-                className="text-4xl font-bold"
-                style={{ color: theme.primary }}
+                className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform"
+                style={{ 
+                  background: `linear-gradient(135deg, ${item.color}20, ${item.color}40)`,
+                  border: `1px solid ${item.color}40`,
+                }}
               >
-                {state.bpm}
+                {item.icon}
               </div>
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <div 
-              className="text-sm font-medium mb-4"
-              style={{ color: theme.textSecondary }}
-            >
-              小节数
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {numeratorOptions.map((num) => (
-                <button
-                  key={`num-${num}`}
-                  onClick={() => handleNumeratorChange(num)}
-                  className={`min-w-[50px] py-3 px-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 ${
-                    currentNumerator === num ? 'scale-105' : ''
-                  }`}
-                  style={{ 
-                    backgroundColor: currentNumerator === num
-                      ? theme.primary
-                      : `${theme.primary}15`,
-                    color: currentNumerator === num
-                      ? '#fff'
-                      : theme.text,
-                    borderRadius: theme.cardStyle === 'organic' ? '16px' : theme.cornerRadius,
-                    boxShadow: currentNumerator === num
-                      ? `0 4px 16px ${theme.glow}`
-                      : 'none'
-                  }}
-                >
-                  {num}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <div 
-              className="text-sm font-medium mb-4"
-              style={{ color: theme.textSecondary }}
-            >
-              节拍单位
-            </div>
-            <div className="flex gap-3">
-              {denominatorOptions.map((den) => (
-                <button
-                  key={`den-${den}`}
-                  onClick={() => handleDenominatorChange(den)}
-                  className={`flex-1 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 ${
-                    currentDenominator === den ? 'scale-105' : ''
-                  }`}
-                  style={{ 
-                    backgroundColor: currentDenominator === den
-                      ? theme.primary
-                      : `${theme.primary}15`,
-                    color: currentDenominator === den
-                      ? '#fff'
-                      : theme.text,
-                    borderRadius: theme.cardStyle === 'organic' ? '16px' : theme.cornerRadius,
-                    boxShadow: currentDenominator === den
-                      ? `0 4px 16px ${theme.glow}`
-                      : 'none'
-                  }}
-                >
-                  {den}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <div 
-              className="text-sm font-medium mb-4"
-              style={{ color: theme.textSecondary }}
-            >
-              节拍细分
-            </div>
-            <div className="flex gap-3 overflow-x-auto pb-2">
-              {subdivisionConfigs.map((config) => (
-                <button
-                  key={`sub-${config.value}`}
-                  onClick={() => handleSubdivisionChange(config.value)}
-                  title={config.description}
-                  className={`min-w-[80px] py-4 px-3 rounded-lg transition-all duration-300 flex flex-col items-center gap-2 hover:scale-105 ${
-                    state.subdivision === config.value ? 'scale-105' : ''
-                  }`}
-                  style={{ 
-                    backgroundColor: state.subdivision === config.value
-                      ? theme.primary
-                      : `${theme.primary}15`,
-                    color: state.subdivision === config.value
-                      ? '#fff'
-                      : theme.text,
-                    borderRadius: theme.cardStyle === 'organic' ? '16px' : theme.cornerRadius,
-                    boxShadow: state.subdivision === config.value
-                      ? `0 4px 16px ${theme.glow}`
-                      : 'none'
-                  }}
-                >
-                  <div className="text-3xl">{config.symbol}</div>
-                  <div className="text-xs">{config.name}</div>
-                </button>
-              ))}
-            </div>
-            <div 
-              className="text-xs mt-3"
-              style={{ color: theme.textSecondary }}
-            >
-              {currentSubdivisionConfig.description}
-            </div>
-          </div>
-
-          <div>
-            <div 
-              className="text-sm font-medium mb-4"
-              style={{ color: theme.textSecondary }}
-            >
-              速度 (BPM)
-            </div>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => handleBPMChange(Math.max(20, state.bpm - 1))}
-                className="w-14 h-14 rounded-full font-bold text-2xl transition-all duration-300 hover:scale-110 active:scale-95"
-                style={{ 
-                  backgroundColor: `${theme.primary}15`,
-                  color: theme.text,
-                  border: `1px solid ${theme.border}`
-                }}
+              <h3 className="font-bold mb-1" style={{ color: theme.text }}>
+                {item.title}
+              </h3>
+              <p className="text-xs mb-2 leading-relaxed" style={{ color: theme.textSecondary }}>
+                {item.description}
+              </p>
+              <div 
+                className="text-sm font-medium"
+                style={{ color: item.color }}
               >
-                -
-              </button>
-              <input
-                type="number"
-                value={state.bpm}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value) || 0;
-                  let finalValue = value;
-                  if (value < 20) finalValue = 20;
-                  if (value > 300) finalValue = 300;
-                  dispatch({ type: 'SET_BPM', payload: finalValue });
-                }}
-                min="20"
-                max="300"
-                className="flex-1 py-4 px-4 rounded-xl text-center text-3xl font-bold transition-all duration-300 outline-none"
-                style={{ 
-                  backgroundColor: `${theme.primary}10`,
-                  color: theme.text,
-                  border: `1px solid ${theme.border}`
-                }}
-              />
-              <button
-                onClick={() => handleBPMChange(Math.min(300, state.bpm + 1))}
-                className="w-14 h-14 rounded-full font-bold text-2xl transition-all duration-300 hover:scale-110 active:scale-95"
-                style={{ 
-                  backgroundColor: `${theme.primary}15`,
-                  color: theme.text,
-                  border: `1px solid ${theme.border}`
-                }}
-              >
-                +
-              </button>
-            </div>
-          </div>
+                {item.current}
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </div>

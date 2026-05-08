@@ -2,29 +2,20 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useMetronome } from '../contexts/MetronomeContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { soundTypes, soundNames, audioUtils } from '../utils/audioUtils';
-import type { SoundType } from '../types';
 
 const Sound: React.FC = () => {
-  const { state, dispatch } = useMetronome();
   const { theme } = useTheme();
+  const { state } = useMetronome();
 
-  const handleSoundSelect = (soundType: SoundType) => {
-    dispatch({ type: 'SET_SOUND_TYPE', payload: soundType });
-    audioUtils.playSound(soundType, true, false, state.volume.accent);
-  };
+  const soundTypes = [
+    { id: 'click', name: '经典点击', icon: '🔊', color: '#3b82f6' },
+    { id: 'woodblock', name: '木鱼', icon: '🥁', color: '#8b5cf6' },
+    { id: 'hihat', name: '踩镲', icon: '🎛️', color: '#ec4899' },
+    { id: 'bell', name: '钟声', icon: '🔔', color: '#f59e0b' },
+    { id: 'digital', name: '电子音', icon: '💻', color: '#06b6d4' },
+  ];
 
-  const handleVolumeChange = (type: 'accent' | 'normal', value: number) => {
-    dispatch({ type: 'SET_VOLUME', payload: { ...state.volume, [type]: value } });
-  };
-
-  const handlePreviewAccent = () => {
-    audioUtils.playAccent(state.soundType, state.volume.accent);
-  };
-
-  const handlePreviewNormal = () => {
-    audioUtils.playNormal(state.soundType, state.volume.normal);
-  };
+  const currentSound = soundTypes.find(s => s.id === state.soundType) || soundTypes[0];
 
   return (
     <div 
@@ -58,149 +49,71 @@ const Sound: React.FC = () => {
           >
             声音设置
           </h1>
-          <p style={{ color: theme.textSecondary }}>选择节拍器的音色和音量</p>
+          <p style={{ color: theme.textSecondary }}>选择节拍音色和调整音量</p>
         </div>
 
-        <div 
-          className="mb-6 p-6"
-          style={{ 
-            backgroundColor: theme.surface,
-            border: `1px solid ${theme.border}`,
-            borderRadius: theme.cornerRadius,
-            boxShadow: theme.shadow
-          }}
-        >
-          <h2 
-            className="text-lg font-semibold mb-4"
-            style={{ color: theme.text }}
+        <div className="grid grid-cols-2 gap-3">
+          <Link
+            to="/sound/main"
+            className="p-5 rounded-2xl transition-all hover:scale-105 group"
+            style={{ 
+              backgroundColor: theme.surface,
+              border: `1px solid ${theme.border}`,
+            }}
           >
-            音色选择
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
-            {soundTypes.map((sound) => (
-              <button
-                key={sound}
-                onClick={() => handleSoundSelect(sound)}
-                className={`py-4 rounded-xl font-semibold transition-all duration-300 flex flex-col items-center gap-2 hover:scale-105 ${
-                  state.soundType === sound ? 'scale-105' : ''
-                }`}
-                style={{ 
-                  backgroundColor: state.soundType === sound
-                    ? theme.primary
-                    : `${theme.primary}15`,
-                  color: state.soundType === sound
-                    ? '#fff'
-                    : theme.text,
-                  borderRadius: theme.cardStyle === 'organic' ? '20px' : theme.cornerRadius,
-                  boxShadow: state.soundType === sound
-                    ? `0 4px 16px ${theme.glow}`
-                    : 'none'
-                }}
-              >
-                <span className="text-3xl">
-                  {sound === 'click' && '👆'}
-                  {sound === 'drum' && '🥁'}
-                  {sound === 'wood' && '🪵'}
-                  {sound === 'electronic' && '🔊'}
-                  {sound === 'metal' && '🔔'}
-                </span>
-                <span className="text-xs">{soundNames[sound]}</span>
-              </button>
-            ))}
-          </div>
-
-          <div className="flex gap-4">
-            <button
-              onClick={handlePreviewAccent}
-              className="flex-1 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105 active:scale-95"
+            <div 
+              className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform"
               style={{ 
-                background: theme.gradient,
-                color: '#fff',
-                borderRadius: theme.cardStyle === 'organic' ? '20px' : theme.cornerRadius,
-                boxShadow: `0 4px 16px ${theme.glow}`
+                background: `linear-gradient(135deg, ${currentSound.color}20, ${currentSound.color}40)`,
+                border: `1px solid ${currentSound.color}40`,
               }}
             >
-              预览重音
-            </button>
-            <button
-              onClick={handlePreviewNormal}
-              className="flex-1 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105 active:scale-95"
+              {currentSound.icon}
+            </div>
+            <h3 className="font-bold mb-1" style={{ color: theme.text }}>
+              节拍音色
+            </h3>
+            <p className="text-xs mb-2 leading-relaxed" style={{ color: theme.textSecondary }}>
+              选择不同的节拍声音
+            </p>
+            <div 
+              className="text-sm font-medium"
+              style={{ color: currentSound.color }}
+            >
+              {currentSound.name}
+            </div>
+          </Link>
+
+          <Link
+            to="/sound/main"
+            className="p-5 rounded-2xl transition-all hover:scale-105 group"
+            style={{ 
+              backgroundColor: theme.surface,
+              border: `1px solid ${theme.border}`,
+            }}
+          >
+            <div 
+              className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform"
               style={{ 
-                backgroundColor: `${theme.primary}20`,
-                color: theme.text,
-                border: `1px solid ${theme.primary}`,
-                borderRadius: theme.cardStyle === 'organic' ? '20px' : theme.cornerRadius
+                background: `linear-gradient(135deg, ${theme.primary}20, ${theme.glow}40)`,
+                border: `1px solid ${theme.primary}40`,
               }}
             >
-              预览普通音
-            </button>
-          </div>
-        </div>
-
-        <div 
-          className="mb-6 p-6"
-          style={{ 
-            backgroundColor: theme.surface,
-            border: `1px solid ${theme.border}`,
-            borderRadius: theme.cornerRadius,
-            boxShadow: theme.shadow
-          }}
-        >
-          <h2 
-            className="text-lg font-semibold mb-4"
-            style={{ color: theme.text }}
-          >
-            重拍音量
-          </h2>
-          <div className="flex items-center gap-4">
-            <span style={{ color: theme.textSecondary, width: '60px' }}>低</span>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={state.volume.accent}
-              onChange={(e) => handleVolumeChange('accent', parseInt(e.target.value))}
-              className="flex-1 h-3 rounded-full appearance-none cursor-pointer"
-              style={{ 
-                background: `linear-gradient(to right, ${theme.primary} 0%, ${theme.primary} ${state.volume.accent}%, ${theme.border} ${state.volume.accent}%, ${theme.border} 100%)`,
-                borderRadius: '15px'
-              }}
-            />
-            <span style={{ color: theme.text, width: '40px', textAlign: 'right' }}>{state.volume.accent}%</span>
-          </div>
-        </div>
-
-        <div 
-          className="p-6"
-          style={{ 
-            backgroundColor: theme.surface,
-            border: `1px solid ${theme.border}`,
-            borderRadius: theme.cornerRadius,
-            boxShadow: theme.shadow
-          }}
-        >
-          <h2 
-            className="text-lg font-semibold mb-4"
-            style={{ color: theme.text }}
-          >
-            普通拍音量
-          </h2>
-          <div className="flex items-center gap-4">
-            <span style={{ color: theme.textSecondary, width: '60px' }}>低</span>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={state.volume.normal}
-              onChange={(e) => handleVolumeChange('normal', parseInt(e.target.value))}
-              className="flex-1 h-3 rounded-full appearance-none cursor-pointer"
-              style={{ 
-                background: `linear-gradient(to right, ${theme.primary} 0%, ${theme.primary} ${state.volume.normal}%, ${theme.border} ${state.volume.normal}%, ${theme.border} 100%)`,
-                borderRadius: '15px'
-              }}
-            />
-            <span style={{ color: theme.text, width: '40px', textAlign: 'right' }}>{state.volume.normal}%</span>
-          </div>
+              🔈
+            </div>
+            <h3 className="font-bold mb-1" style={{ color: theme.text }}>
+              音量控制
+            </h3>
+            <p className="text-xs mb-2 leading-relaxed" style={{ color: theme.textSecondary }}>
+              调整重音和普通音量
+            </p>
+            <div 
+              className="text-sm font-medium"
+              style={{ color: theme.primary }}
+            >
+              重音 {state.volume.accent}% · 普通 {state.volume.normal}%
+            </div>
+          </Link>
         </div>
       </div>
     </div>

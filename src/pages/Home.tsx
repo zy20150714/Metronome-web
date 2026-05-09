@@ -86,36 +86,37 @@ const Home: React.FC = () => {
             }}
           >
             <svg className="w-6 h-6" style={{ color: theme.text }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
             </svg>
           </Link>
         </div>
 
         <div 
-          className="text-center mb-8 p-6 rounded-xl relative overflow-hidden"
+          className="text-center mb-8 p-6 rounded-2xl relative overflow-hidden"
           style={{ 
             backgroundColor: theme.surface,
             border: `1px solid ${theme.border}`,
-            borderRadius: theme.cornerRadius,
             boxShadow: theme.shadow
           }}
         >
           {flash && (
             <div 
-              className="absolute inset-0 blur-xl animate-fadeInOut"
-              style={{ background: `${theme.primary}30` }}
+              className="absolute inset-0 animate-pulse"
+              style={{ backgroundColor: `${theme.primary}15` }}
             />
           )}
           <div className="relative">
-            <div className="text-6xl md:text-7xl font-bold mb-2" 
-                 style={{ 
-                   fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : 
-                               theme.id === 'retro' ? "'Georgia', serif" : "'Inter', sans-serif",
-                   color: theme.primary
-                 }}>
+            <div 
+              className="text-6xl md:text-7xl font-bold mb-2" 
+              style={{ 
+                fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : 
+                            theme.id === 'retro' ? "'Georgia', serif" : "'Inter', sans-serif",
+                color: theme.primary
+              }}
+            >
               {formatBPM(state.bpm)}
             </div>
-            <div style={{ color: theme.textSecondary }}>
+            <div style={{ color: theme.textSecondary, fontSize: '14px' }}>
               {soundNames[state.soundType]} · {state.timeSignature}
             </div>
           </div>
@@ -124,27 +125,18 @@ const Home: React.FC = () => {
         <div className="flex items-center justify-center mb-6">
           <div 
             className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${
-              state.isPlaying ? 'animate-breath' : ''
+              state.isPlaying ? 'animate-pulse' : ''
             }`}
             style={{ 
-              background: state.isPlaying ? theme.gradient : `${theme.primary}30`,
+              backgroundColor: state.isPlaying ? theme.primary : `${theme.primary}30`,
               boxShadow: state.isPlaying ? `0 0 30px ${theme.glow}` : 'none'
             }}
           >
             {state.isPlaying ? (
               <div className="flex items-center space-x-1">
-                <div 
-                  className="w-2 h-6 rounded animate-pulse" 
-                  style={{ backgroundColor: '#fff', animationDelay: '0s' }} 
-                />
-                <div 
-                  className="w-2 h-8 rounded animate-pulse" 
-                  style={{ backgroundColor: '#fff', animationDelay: '0.1s' }} 
-                />
-                <div 
-                  className="w-2 h-6 rounded animate-pulse" 
-                  style={{ backgroundColor: '#fff', animationDelay: '0.2s' }} 
-                />
+                <div className="w-2 h-6 rounded" style={{ backgroundColor: '#fff' }} />
+                <div className="w-2 h-8 rounded" style={{ backgroundColor: '#fff' }} />
+                <div className="w-2 h-6 rounded" style={{ backgroundColor: '#fff' }} />
               </div>
             ) : (
               <div className="w-4 h-4 rounded-full" style={{ backgroundColor: theme.textSecondary }} />
@@ -167,25 +159,20 @@ const Home: React.FC = () => {
           <div className="flex items-center gap-2">
             <div 
               className="w-3 h-3 rounded-full"
-              style={{ 
-                background: theme.gradient,
-                boxShadow: `0 0 8px ${theme.glow}`
-              }}
+              style={{ backgroundColor: theme.primary }}
             />
-            <span style={{ color: theme.textSecondary, fontSize: '12px' }}>重音拍</span>
+            <span style={{ color: theme.textSecondary, fontSize: '12px' }}>重音</span>
           </div>
           <div className="flex items-center gap-2">
             <div 
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: `${theme.primary}60` }}
             />
-            <span style={{ color: theme.textSecondary, fontSize: '12px' }}>普通拍</span>
+            <span style={{ color: theme.textSecondary, fontSize: '12px' }}>普通</span>
           </div>
         </div>
 
-        <div 
-          className="flex justify-center mb-8"
-        >
+        <div className="flex justify-center mb-8">
           <button
             onClick={handlePlayPause}
             onMouseDown={handleMouseDown}
@@ -193,14 +180,14 @@ const Home: React.FC = () => {
             onMouseLeave={handleMouseUp}
             onTouchStart={handleMouseDown}
             onTouchEnd={handleMouseUp}
+            data-onboard="play-button"
             className={`w-28 h-28 rounded-full flex items-center justify-center transition-all duration-300 ${
               isPressed ? 'scale-95' : 'scale-100'
-            } ${state.isPlaying ? 'animate-glow' : ''}`}
+            }`}
             style={{ 
-              background: state.isPlaying ? theme.gradient : `${theme.primary}22`,
+              backgroundColor: state.isPlaying ? theme.primary : `${theme.primary}22`,
               border: `3px solid ${theme.primary}`,
-              boxShadow: state.isPlaying ? `0 8px 32px ${theme.glow}` : theme.shadow,
-              borderRadius: theme.cardStyle === 'sharp' ? '16px' : '50%'
+              boxShadow: state.isPlaying ? `0 8px 32px ${theme.glow}` : theme.shadow
             }}
           >
             {state.isPlaying ? (
@@ -217,23 +204,23 @@ const Home: React.FC = () => {
         </div>
 
         <div style={{ color: theme.textSecondary, textAlign: 'center', fontSize: '14px', marginBottom: '8px' }}>
-          {state.isPlaying ? '正在播放...' : '点击开始'}
+          {state.isPlaying ? '正在播放' : '点击开始'}
         </div>
 
         <div 
-          className="flex items-center justify-center gap-6 mb-8"
+          className="flex items-center justify-center gap-4 mb-8"
+          data-onboard="bpm-slider"
         >
           <button
             onClick={() => handleBPMChange(-10)}
-            className="p-4 rounded-xl transition-all duration-300 hover:scale-105"
+            className="w-12 h-12 rounded-xl transition-all duration-300 hover:scale-105"
             style={{ 
               backgroundColor: theme.surface,
               border: `1px solid ${theme.border}`,
-              borderRadius: theme.cornerRadius,
               boxShadow: theme.shadow
             }}
           >
-            <svg className="w-6 h-6" style={{ color: theme.text }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 mx-auto" style={{ color: theme.text }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
             </svg>
           </button>
@@ -245,75 +232,71 @@ const Home: React.FC = () => {
             onChange={(e) => dispatch({ type: 'SET_BPM', payload: parseInt(e.target.value) })}
             className="flex-1 max-w-xs h-2 rounded-full appearance-none cursor-pointer"
             style={{ 
-              background: `linear-gradient(to right, ${theme.primary} 0%, ${theme.primary} ${((state.bpm - 20) / 280) * 100}%, ${theme.border} ${((state.bpm - 20) / 280) * 100}%, ${theme.border} 100%)`,
-              borderRadius: '10px'
+              background: `linear-gradient(to right, ${theme.primary} 0%, ${theme.primary} ${((state.bpm - 20) / 280) * 100}%, ${theme.border} ${((state.bpm - 20) / 280) * 100}%, ${theme.border} 100%)`
             }}
           />
           <button
             onClick={() => handleBPMChange(10)}
-            className="p-4 rounded-xl transition-all duration-300 hover:scale-105"
+            className="w-12 h-12 rounded-xl transition-all duration-300 hover:scale-105"
             style={{ 
               backgroundColor: theme.surface,
               border: `1px solid ${theme.border}`,
-              borderRadius: theme.cornerRadius,
               boxShadow: theme.shadow
             }}
           >
-            <svg className="w-6 h-6" style={{ color: theme.text }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 mx-auto" style={{ color: theme.text }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
           </button>
         </div>
 
-        <div 
-          className="grid grid-cols-3 gap-4"
-        >
+        <div className="grid grid-cols-3 gap-4">
           <button
             onClick={() => navigate('/settings')}
-            className="p-4 rounded-xl transition-all duration-300 hover:scale-105 text-center"
+            data-onboard="settings-nav"
+            className="p-4 rounded-2xl transition-all duration-300 hover:scale-105 text-center"
             style={{ 
               backgroundColor: theme.surface,
               border: `1px solid ${theme.border}`,
-              borderRadius: theme.cornerRadius,
               boxShadow: theme.shadow
             }}
           >
-            <svg className="w-8 h-8 mx-auto mb-2" style={{ color: theme.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-7 h-7 mx-auto mb-2" style={{ color: theme.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            <span style={{ color: theme.text, fontSize: '14px' }}>参数设置</span>
+            <span style={{ color: theme.text, fontSize: '13px' }}>参数</span>
           </button>
           <button
             onClick={() => navigate('/sound')}
-            className="p-4 rounded-xl transition-all duration-300 hover:scale-105 text-center"
+            data-onboard="sound-nav"
+            className="p-4 rounded-2xl transition-all duration-300 hover:scale-105 text-center"
             style={{ 
               backgroundColor: theme.surface,
               border: `1px solid ${theme.border}`,
-              borderRadius: theme.cornerRadius,
               boxShadow: theme.shadow
             }}
           >
-            <svg className="w-8 h-8 mx-auto mb-2" style={{ color: theme.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            <svg className="w-7 h-7 mx-auto mb-2" style={{ color: theme.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
             </svg>
-            <span style={{ color: theme.text, fontSize: '14px' }}>声音设置</span>
+            <span style={{ color: theme.text, fontSize: '13px' }}>声音</span>
           </button>
           <button
             onClick={() => navigate('/system')}
-            className="p-4 rounded-xl transition-all duration-300 hover:scale-105 text-center"
+            data-onboard="system-nav"
+            className="p-4 rounded-2xl transition-all duration-300 hover:scale-105 text-center"
             style={{ 
               backgroundColor: theme.surface,
               border: `1px solid ${theme.border}`,
-              borderRadius: theme.cornerRadius,
               boxShadow: theme.shadow
             }}
           >
-            <svg className="w-8 h-8 mx-auto mb-2" style={{ color: theme.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-7 h-7 mx-auto mb-2" style={{ color: theme.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            <span style={{ color: theme.text, fontSize: '14px' }}>系统设置</span>
+            <span style={{ color: theme.text, fontSize: '13px' }}>系统</span>
           </button>
         </div>
       </div>

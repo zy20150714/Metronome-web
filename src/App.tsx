@@ -5,15 +5,12 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { SystemSettingsProvider } from './components/ControlPanel/SystemSettings';
 import { cookieUtils } from './utils/cookieUtils';
 import CookieBanner from './components/CookieBanner';
+import Onboarding from './components/Onboarding/Onboarding';
 
 import Home from './pages/Home';
 import Settings from './pages/Settings';
-import TimeSignatureSettings from './pages/settings/TimeSignatureSettings';
-import BPMSettings from './pages/settings/BPMSettings';
 import Sound from './pages/Sound';
-import SoundDetailSettings from './pages/sound/SoundDetailSettings';
 import System from './pages/System';
-import CookieSettings from './pages/system/CookieSettings';
 import Themes from './pages/Themes';
 
 const SETTINGS_KEY = 'metronome-settings';
@@ -96,20 +93,19 @@ const AppContent: React.FC = () => {
   ]);
 
   return (
-    <Router>
+    <>
       <CookieBanner />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/settings/time-signature" element={<TimeSignatureSettings />} />
-        <Route path="/settings/bpm" element={<BPMSettings />} />
-        <Route path="/sound" element={<Sound />} />
-        <Route path="/sound/detail" element={<SoundDetailSettings />} />
-        <Route path="/system" element={<System />} />
-        <Route path="/system/cookie" element={<CookieSettings />} />
-        <Route path="/themes" element={<Themes />} />
-      </Routes>
-    </Router>
+      <Onboarding />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/sound" element={<Sound />} />
+          <Route path="/system" element={<System />} />
+          <Route path="/themes" element={<Themes />} />
+        </Routes>
+      </Router>
+    </>
   );
 };
 

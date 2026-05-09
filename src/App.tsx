@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { MetronomeProvider, useMetronome } from './contexts/MetronomeContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -8,8 +8,12 @@ import CookieBanner from './components/CookieBanner';
 
 import Home from './pages/Home';
 import Settings from './pages/Settings';
+import TimeSignatureSettings from './pages/settings/TimeSignatureSettings';
+import BPMSettings from './pages/settings/BPMSettings';
 import Sound from './pages/Sound';
+import SoundDetailSettings from './pages/sound/SoundDetailSettings';
 import System from './pages/System';
+import CookieSettings from './pages/system/CookieSettings';
 import Themes from './pages/Themes';
 
 const SETTINGS_KEY = 'metronome-settings';
@@ -97,8 +101,12 @@ const AppContent: React.FC = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/settings/time-signature" element={<TimeSignatureSettings />} />
+        <Route path="/settings/bpm" element={<BPMSettings />} />
         <Route path="/sound" element={<Sound />} />
+        <Route path="/sound/detail" element={<SoundDetailSettings />} />
         <Route path="/system" element={<System />} />
+        <Route path="/system/cookie" element={<CookieSettings />} />
         <Route path="/themes" element={<Themes />} />
       </Routes>
     </Router>

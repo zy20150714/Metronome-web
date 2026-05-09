@@ -5,7 +5,6 @@ import { calculateSubdivisionDuration } from '../../utils/metronomeUtils';
 const BeatDisplay: React.FC = () => {
   const { state } = useMetronome();
   const [flash, setFlash] = useState(false);
-  const [isFirstBeatVisible, setIsFirstBeatVisible] = useState(true);
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const visibilityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -24,14 +23,11 @@ const BeatDisplay: React.FC = () => {
     if (state.isPlaying) {
       setFlash(true);
       flashTimerRef.current = setTimeout(() => setFlash(false), 150);
-      setIsFirstBeatVisible(true);
       const subdivisionDuration = calculateSubdivisionDuration(state.bpm, state.subdivision);
       visibilityTimerRef.current = setTimeout(() => {
-        setIsFirstBeatVisible(false);
       }, subdivisionDuration);
     } else {
       setFlash(false);
-      setIsFirstBeatVisible(true);
     }
 
     return () => {

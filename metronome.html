@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#2563eb" />
+<title>节拍器 Metronome</title>
+<style>
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+:root { --primary:#2563eb;--primary-light:#60a5fa;--primary-dark:#1e40af;--bg:#f8fafc;--surface:#ffffff;--text:#1e293b;--text-secondary:#64748b;--border:rgba(0,0,0,0.08);--glow:rgba(37,99,235,0.25);--danger:#ef4444;--radius-lg:16px;--radius-md:12px;--radius-sm:8px;--shadow-sm:0 2px 8px rgba(0,0,0,0.06);--shadow-md:0 4px 16px rgba(0,0,0,0.08);--shadow-lg:0 8px 32px rgba(0,0,0,0.12);--font-size-base:16px;--transition:0.25s cubic-bezier(0.4,0,0.2,1); }
+body { background: var(--bg); color: var(--text); font-size: var(--font-size-base); line-height: 1.5; transition: background var(--transition), color var(--transition); min-height:100vh; padding-bottom: env(safe-area-inset-bottom, 0); }
+body.theme-tech{--primary:#ff6b00;--primary-light:#ffa94d;--primary-dark:#c75000;--bg:#0a0a0f;--surface:rgba(15,15,22,0.85);--text:#e0e0e0;--text-secondary:#888;--border:rgba(255,255,255,0.06);--glow:rgba(255,107,0,0.4);}
+body.theme-minimal{--primary:#2563eb;--primary-light:#60a5fa;--primary-dark:#1e40af;--bg:#ffffff;--surface:#f8fafc;--text:#1e293b;--text-secondary:#64748b;--border:rgba(0,0,0,0.08);--glow:rgba(37,99,235,0.2);}
+body.theme-cute{--primary:#ec4899;--primary-light:#f472b6;--primary-dark:#be185d;--bg:#fff5f5;--surface:#ffffff;--text:#4c1d4c;--text-secondary:#be185d;--border:rgba(236,72,153,0.15);--glow:rgba(236,72,153,0.3);}
+body.theme-nature{--primary:#22c55e;--primary-light:#4ade80;--primary-dark:#166534;--bg:#f0fdf4;--surface:#ffffff;--text:#14532d;--text-secondary:#166534;--border:rgba(34,197,94,0.15);--glow:rgba(34,197,94,0.3);}
+body.theme-ocean{--primary:#0ea5e9;--primary-light:#38bdf8;--primary-dark:#075985;--bg:#f0f9ff;--surface:#ffffff;--text:#0c4a6e;--text-secondary:#075985;--border:rgba(14,165,233,0.15);--glow:rgba(14,165,233,0.3);}
+body.theme-sunset{--primary:#f97316;--primary-light:#fb923c;--primary-dark:#9a3412;--bg:#fff7ed;--surface:#ffffff;--text:#7c2d12;--text-secondary:#9a3412;--border:rgba(249,115,22,0.15);--glow:rgba(249,115,22,0.3);}
+body.theme-dark{--primary:#a855f7;--primary-light:#c084fc;--primary-dark:#7e22ce;--bg:#0f0f1a;--surface:#1a1a2e;--text:#e0e0e0;--text-secondary:#a1a1aa;--border:rgba(255,255,255,0.08);--glow:rgba(168,85,247,0.4);}
+body.theme-retro{--primary:#d946ef;--primary-light:#e879f9;--primary-dark:#86198f;--bg:#fef3c7;--surface:#ffffff;--text:#4c1d4c;--text-secondary:#7c3aed;--border:rgba(217,70,239,0.15);--glow:rgba(217,70,239,0.3);}
+body.theme-midnight{--primary:#22d3ee;--primary-light:#67e8f9;--primary-dark:#0e7490;--bg:#083344;--surface:#164e63;--text:#ecfeff;--text-secondary:#7dd3fc;--border:rgba(34,211,238,0.15);--glow:rgba(34,211,238,0.4);}
+.app-container{max-width:560px;margin:0 auto;padding:12px;min-height:100vh;display:flex;flex-direction:column;}
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:8px 4px 16px;}
+.app-title{font-size:1.2em;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;}
+.icon-btn{width:40px;height:40px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface);color:var(--text);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--transition);box-shadow:var(--shadow-sm);}
+.icon-btn:active{transform:scale(0.94);}
+.icon-btn svg{width:20px;height:20px;}
+.bpm-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 16px 24px;box-shadow:var(--shadow-md);margin-bottom:16px;position:relative;overflow:hidden;text-align:center;}
+.bpm-panel::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 50% 30%,var(--glow) 0%,transparent 60%);opacity:0.6;pointer-events:none;}
+.bpm-display{font-size:5em;font-weight:800;color:var(--primary);line-height:1;letter-spacing:-2px;transition:transform var(--transition);position:relative;}
+.bpm-display.beat-flash{transform:scale(1.08);}
+.bpm-label{color:var(--text-secondary);font-size:0.9em;margin-top:6px;letter-spacing:4px;text-transform:uppercase;font-weight:500;}
+.bpm-info{color:var(--text-secondary);font-size:0.85em;margin-top:10px;}
+.bpm-info strong{color:var(--primary);font-weight:600;}
+.bpm-controls{display:flex;align-items:center;gap:8px;margin-top:20px;justify-content:center;}
+.bpm-step{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:1.2em;font-weight:700;cursor:pointer;transition:all var(--transition);box-shadow:var(--shadow-sm);display:inline-flex;align-items:center;justify-content:center;}
+.bpm-step:hover{border-color:var(--primary);color:var(--primary);}
+.bpm-step:active{transform:scale(0.9);background:var(--primary);color:#fff;}
+.bpm-input{width:90px;height:44px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);color:var(--primary);text-align:center;font-size:1.3em;font-weight:700;outline:none;box-shadow:var(--shadow-sm);-moz-appearance:textfield;}
+.bpm-input::-webkit-outer-spin-button,.bpm-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.bpm-slider-wrap{padding:8px 4px 4px;margin-top:14px;}
+input[type="range"].bpm-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:var(--border);border-radius:999px;outline:none;position:relative;}
+input[type="range"].bpm-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--primary);cursor:pointer;border:3px solid var(--surface);box-shadow:0 0 0 2px var(--primary), 0 2px 8px var(--glow);transition:all var(--transition);}
+input[type="range"].bpm-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--primary);cursor:pointer;border:3px solid var(--surface);box-shadow:0 0 0 2px var(--primary);}
+.beat-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 12px;box-shadow:var(--shadow-md);margin-bottom:16px;}
+.beat-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;}
+.beat-dot{width:42px;height:42px;border-radius:50%;border:2px solid var(--border);background:var(--bg);color:var(--text-secondary);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:0.95em;transition:all var(--transition);position:relative;}
+.beat-dot.secondary{border-style:dashed;}
+.beat-dot.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 0 20px var(--glow);transform:scale(1.15);}
+.beat-dot.accent{background:var(--primary-dark);color:#fff;border-color:var(--primary-dark);box-shadow:0 0 24px var(--glow);transform:scale(1.25);}
+.beat-legend{display:flex;justify-content:center;gap:14px;margin-top:14px;font-size:0.8em;color:var(--text-secondary);}
+.beat-legend-item{display:inline-flex;align-items:center;gap:6px;}
+.legend-dot{width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--border);}
+.legend-dot.accent{background:var(--primary-dark);border-color:var(--primary-dark);}
+.legend-dot.active{background:var(--primary);border-color:var(--primary);}
+.play-wrap{display:flex;justify-content:center;align-items:center;margin:8px 0 16px;position:relative;}
+.play-btn{width:110px;height:110px;border-radius:50%;border:none;background:var(--primary);color:#fff;cursor:pointer;box-shadow:0 12px 32px var(--glow), inset 0 0 0 4px rgba(255,255,255,0.1);display:inline-flex;align-items:center;justify-content:center;transition:all var(--transition);position:relative;overflow:hidden;}
+.play-btn::after{content:'';position:absolute;inset:0;border-radius:50%;border:3px solid transparent;border-top-color:rgba(255,255,255,0.35);border-right-color:rgba(255,255,255,0.35);transition:transform 0.4s ease;}
+.play-btn.playing{transform:scale(1.02);}
+.play-btn.playing::after{animation:spin 1s linear infinite;}
+.play-btn:active{transform:scale(0.95);}
+.play-btn svg{width:44px;height:44px;fill:currentColor;}
+@keyframes spin{from{transform:rotate(0);}to{transform:rotate(360deg);}}
+.pulse-ring{position:absolute;left:50%;top:50%;width:110px;height:110px;border-radius:50%;border:2px solid var(--primary);transform:translate(-50%,-50%);pointer-events:none;opacity:0;}
+.pulse-ring.pulse{animation:pulseRing 0.6s ease-out;}
+@keyframes pulseRing{0%{opacity:0.6;transform:translate(-50%,-50%) scale(1);}100%{opacity:0;transform:translate(-50%,-50%) scale(1.6);}}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;box-shadow:var(--shadow-md);margin-bottom:12px;}
+.panel-title{font-size:1em;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.panel-title svg{width:18px;height:18px;color:var(--primary);fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.ts-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.ts-item{padding:10px 4px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.9em;font-weight:600;text-align:center;cursor:pointer;transition:all var(--transition);}
+.ts-item.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 12px var(--glow);}
+.ts-subgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.ts-subitem{padding:8px 4px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text-secondary);font-size:0.8em;text-align:center;cursor:pointer;transition:all var(--transition);}
+.ts-subitem.active{background:var(--primary-light);color:#fff;border-color:var(--primary);font-weight:600;}
+.sound-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.sound-item{padding:12px 4px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg);color:var(--text-secondary);font-size:0.78em;font-weight:500;text-align:center;cursor:pointer;transition:all var(--transition);display:flex;flex-direction:column;align-items:center;gap:4px;}
+.sound-item svg{width:22px;height:22px;color:var(--primary);fill:currentColor;}
+.sound-item.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.sound-item.active svg{color:#fff;}
+.vol-row{display:flex;align-items:center;gap:12px;margin-top:10px;}
+.vol-label{width:70px;color:var(--text-secondary);font-size:0.85em;font-weight:500;flex-shrink:0;}
+.vol-slider{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--border);border-radius:999px;outline:none;}
+.vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--primary);cursor:pointer;border:2px solid var(--surface);box-shadow:0 0 0 2px var(--primary);}
+.vol-slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--primary);cursor:pointer;border:2px solid var(--surface);}
+.vol-val{width:44px;text-align:right;color:var(--primary);font-weight:600;font-size:0.85em;}
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.theme-item{padding:10px 6px;border-radius:var(--radius-md);border:2px solid var(--border);background:var(--bg);color:var(--text);font-size:0.82em;font-weight:600;text-align:center;cursor:pointer;transition:all var(--transition);}
+.theme-item .swatch{display:inline-block;width:18px;height:18px;border-radius:50%;vertical-align:middle;margin-right:6px;box-shadow:0 0 0 2px var(--surface) inset;}
+.theme-item.active{border-color:var(--primary);box-shadow:0 4px 14px var(--glow);}
+.font-row{display:flex;align-items:center;gap:10px;margin-top:8px;}
+.font-row .label{width:70px;color:var(--text-secondary);font-size:0.85em;font-weight:500;}
+.practice-list{display:flex;flex-direction:column;gap:8px;}
+.practice-item{padding:12px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg);cursor:pointer;transition:all var(--transition);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.practice-item:hover{border-color:var(--primary-light);}
+.practice-item.active{border-color:var(--primary);background:var(--primary);color:#fff;}
+.practice-item.active .practice-sub{color:rgba(255,255,255,0.7);}
+.practice-name{font-weight:600;font-size:0.95em;}
+.practice-sub{font-size:0.78em;color:var(--text-secondary);margin-top:3px;}
+.practice-badge{font-size:0.7em;padding:4px 8px;border-radius:999px;background:var(--border);color:var(--text);font-weight:600;white-space:nowrap;}
+.practice-item.active .practice-badge{background:rgba(255,255,255,0.2);color:#fff;}
+.practice-progress{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;margin-top:10px;text-align:center;}
+.practice-stage{color:var(--primary);font-weight:700;font-size:0.9em;margin-bottom:4px;}
+.practice-countdown{font-size:2em;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(100px);background:var(--text);color:var(--surface);padding:10px 18px;border-radius:999px;font-size:0.85em;font-weight:500;z-index:9999;opacity:0;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);box-shadow:var(--shadow-lg);}
+.toast.show{opacity:0.95;transform:translateX(-50%) translateY(0);}
+.footer-info{text-align:center;color:var(--text-secondary);font-size:0.75em;padding:16px 0 4px;opacity:0.7;}
+@media (max-width:380px){.bpm-display{font-size:4.2em;}.play-btn{width:96px;height:96px;}.beat-dot{width:36px;height:36px;font-size:0.85em;}.ts-grid{grid-template-columns:repeat(4,1fr);}.theme-grid{grid-template-columns:repeat(2,1fr);}}
+@media (min-height:720px){.app-container{padding:20px 12px;}}
+</style>
+</head>
+<body class="theme-minimal">
+<div class="app-container">
+  <header class="app-header">
+    <div class="app-title">
+      <svg style="width:22px;height:22px;color:var(--primary);" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6zm-2 16a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+      <span>节拍器</span>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="icon-btn" id="btnReset" title="重置">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+      </button>
+      <button class="icon-btn" id="btnSoundTest" title="试听">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="bpm-panel">
+    <div class="bpm-display" id="bpmDisplay">120</div>
+    <div class="bpm-label">BPM</div>
+    <div class="bpm-info"><strong id="tsDisplay">4/4</strong> · <span id="subDisplay">四分</span> · <span id="soundDisplay">点击</span></div>
+    <div class="bpm-controls">
+      <button class="bpm-step" data-step="-10">-10</button>
+      <button class="bpm-step" data-step="-1">-</button>
+      <input class="bpm-input" id="bpmInput" type="number" min="20" max="300" value="120" inputmode="numeric"/>
+      <button class="bpm-step" data-step="1">+</button>
+      <button class="bpm-step" data-step="10">+10</button>
+    </div>
+    <div class="bpm-slider-wrap"><input class="bpm-slider" id="bpmSlider" type="range" min="20" max="300" value="120"/></div>
+  </section>
+
+  <div class="play-wrap">
+    <div class="pulse-ring" id="pulseRing"></div>
+    <button class="play-btn" id="playBtn"><svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+  </div>
+
+  <section class="beat-panel">
+    <div class="beat-row" id="beatRow"></div>
+    <div class="beat-legend">
+      <span class="beat-legend-item"><span class="legend-dot accent"></span>重音</span>
+      <span class="beat-legend-item"><span class="legend-dot active"></span>普通</span>
+      <span class="beat-legend-item"><span class="legend-dot"></span>副拍</span>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2"/></svg>
+      <span>拍号 & 细分</span>
+    </div>
+    <div class="ts-grid" id="tsGrid"></div>
+    <div class="ts-subgrid" id="subGrid"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>音色 & 音量</span>
+    </div>
+    <div class="sound-grid" id="soundGrid"></div>
+    <div class="vol-row"><span class="vol-label">重音音量</span><input class="vol-slider" id="volAccent" type="range" min="0" max="100" value="85"/><span class="vol-val" id="volAccentVal">85</span></div>
+    <div class="vol-row"><span class="vol-label">普通音量</span><input class="vol-slider" id="volNormal" type="range" min="0" max="100" value="70"/><span class="vol-val" id="volNormalVal">70</span></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2"/></svg>
+      <span>主题 & 字体</span>
+    </div>
+    <div class="theme-grid" id="themeGrid"></div>
+    <div class="font-row"><span class="label">字体大小</span><input class="vol-slider" id="fontSlider" type="range" min="12" max="20" step="1" value="16"/><span class="vol-val" id="fontVal">16</span></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>
+      <span>渐进变速练习</span>
+    </div>
+    <div class="practice-list" id="practiceList"></div>
+    <div class="practice-progress" id="practiceProgress" style="display:none;">
+      <div class="practice-stage" id="practiceStage">热身阶段</div>
+      <div class="practice-countdown" id="practiceCountdown">--:--</div>
+      <button class="icon-btn" id="practiceStop" style="margin-top:8px;width:auto;padding:6px 14px;height:auto;border-radius:999px;">停止练习</button>
+    </div>
+  </section>
+
+  <div class="footer-info">Metronome · 单文件离线版 · 数据本地保存</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+  const DEFAULT_STATE = { bpm:120, beats:4, beatValue:4, subdivision:'quarter', soundType:'click', volumeAccent:85, volumeNormal:70, theme:'minimal', fontSize:16, accentBeats:[] };
+  const STORAGE_KEY = 'metronome_single_v1';
+  let state = loadState();
+
+  const THEMES = [
+    { id:'minimal', name:'简洁蓝', color:'#2563eb' },
+    { id:'tech', name:'科技橙', color:'#ff6b00' },
+    { id:'cute', name:'可爱粉', color:'#ec4899' },
+    { id:'nature', name:'自然绿', color:'#22c55e' },
+    { id:'ocean', name:'海洋蓝', color:'#0ea5e9' },
+    { id:'sunset', name:'日落橙', color:'#f97316' },
+    { id:'dark', name:'暗夜紫', color:'#a855f7' },
+    { id:'retro', name:'复古紫', color:'#d946ef' },
+    { id:'midnight', name:'午夜青', color:'#22d3ee' }
+  ];
+  const SUBDIVISIONS = [
+    { id:'quarter', name:'四分', symbol:'♩', mult:1 },
+    { id:'eighth', name:'八分', symbol:'♫', mult:2 },
+    { id:'sixteenth', name:'十六分', symbol:'♬', mult:4 },
+    { id:'triplet', name:'三连音', symbol:'3', mult:3 },
+    { id:'half', name:'二分', symbol:'♩', mult:0.5 },
+    { id:'quintuplet', name:'五连音', symbol:'5', mult:5 }
+  ];
+  const TIME_SIGS = [
+    { beats:2, beatValue:4, secondary:[] },
+    { beats:3, beatValue:4, secondary:[] },
+    { beats:4, beatValue:4, secondary:[] },
+    { beats:5, beatValue:4, secondary:[3] },
+    { beats:6, beatValue:8, secondary:[4] },
+    { beats:7, beatValue:8, secondary:[3,5] },
+    { beats:8, beatValue:8, secondary:[4] },
+    { beats:9, beatValue:8, secondary:[4,7] },
+    { beats:12, beatValue:8, secondary:[4,7,10] }
+  ];
+  const SOUNDS = [
+    { id:'click', name:'点击', accent:1800, normal:1200, duration:35, wave:'square' },
+    { id:'wood', name:'木鱼', accent:700, normal:500, duration:120, wave:'triangle' },
+    { id:'electronic', name:'电子', accent:1500, normal:900, duration:50, wave:'sine' },
+    { id:'metal', name:'金属', accent:2200, normal:1800, duration:60, wave:'sawtooth' },
+    { id:'drum', name:'鼓声', accent:350, normal:250, duration:150, wave:'square' }
+  ];
+  const PRACTICES = [
+    { id:'warmup', name:'慢速热身', sub:'40-60 BPM · 5分钟', stages:[{bpm:40,dur:60},{bpm:50,dur:90},{bpm:60,dur:150}] },
+    { id:'steady', name:'稳定提速', sub:'60 → 120 BPM · 10分钟', stages:[{bpm:60,dur:120},{bpm:80,dur:120},{bpm:100,dur:180},{bpm:120,dur:180}] },
+    { id:'progressive', name:'渐进挑战', sub:'80 → 160 BPM · 10分钟', stages:[{bpm:80,dur:120},{bpm:100,dur:120},{bpm:120,dur:120},{bpm:140,dur:120},{bpm:160,dur:120}] },
+    { id:'hiit', name:'高低变速', sub:'60 ⇄ 180 BPM · 8分钟', stages:[{bpm:60,dur:60},{bpm:180,dur:60},{bpm:80,dur:60},{bpm:160,dur:60},{bpm:100,dur:60},{bpm:150,dur:60},{bpm:120,dur:120}] },
+    { id:'sprint', name:'极限冲刺', sub:'120 → 220 BPM · 6分钟', stages:[{bpm:120,dur:60},{bpm:150,dur:60},{bpm:180,dur:90},{bpm:200,dur:90},{bpm:220,dur:60}] }
+  ];
+
+  // ---------- Audio ----------
+  let audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      try { const AC = window.AudioContext || window.webkitAudioContext; audioCtx = new AC(); } catch(e) { return null; }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume().catch(function(){}); }
+    return audioCtx;
+  }
+  function playTone(freq, volume, duration, wave) {
+    const ctx = ensureAudio(); if (!ctx) return;
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = wave || 'square';
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, volume / 120), now + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration / 1000);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + duration / 1000 + 0.02);
+      setTimeout(function() { try { osc.disconnect(); gain.disconnect(); } catch(e){} }, duration + 50);
+    } catch(e) {}
+  }
+  function playBeat(beatIndex, subIndex) {
+    const sound = SOUNDS.find(s => s.id === state.soundType) || SOUNDS[0];
+    const isAccent = (beatIndex === 0 && subIndex === 1);
+    const isSecondary = state.accentBeats.indexOf(beatIndex + 1) !== -1 && subIndex === 1;
+    const isMainBeat = subIndex === 1;
+    if (isAccent) playTone(sound.accent, state.volumeAccent * 1.2, sound.duration, sound.wave);
+    else if (isSecondary) playTone((sound.accent + sound.normal) / 2, state.volumeAccent * 0.9, sound.duration * 0.9, sound.wave);
+    else if (isMainBeat) playTone(sound.normal, state.volumeNormal, sound.duration, sound.wave);
+    else playTone(sound.normal * 0.8, state.volumeNormal * 0.55, sound.duration * 0.6, sound.wave);
+  }
+
+  // ---------- Timing ----------
+  let isPlaying = false, currentBeat = 0, currentSub = 1, timerId = null, expectedTime = 0;
+  function getBeatIntervalMs() { const sub = SUBDIVISIONS.find(s => s.id === state.subdivision) || SUBDIVISIONS[0]; return 60000 / state.bpm / sub.mult; }
+  function tick() {
+    if (!isPlaying) return;
+    playBeat(currentBeat, currentSub);
+    renderBeatIndicator(currentBeat, currentSub);
+    const sub = SUBDIVISIONS.find(s => s.id === state.subdivision) || SUBDIVISIONS[0];
+    const subsPerBeat = Math.max(1, Math.round(sub.mult));
+    if (subsPerBeat <= 1) { currentBeat = (currentBeat + 1) % state.beats; currentSub = 1; }
+    else if (currentSub >= subsPerBeat) { currentSub = 1; currentBeat = (currentBeat + 1) % state.beats; }
+    else { currentSub += 1; }
+    const interval = getBeatIntervalMs();
+    expectedTime += interval;
+    const now = performance.now();
+    const drift = now - expectedTime;
+    timerId = setTimeout(tick, Math.max(0, interval - drift - 10));
+  }
+  function startPlayback() {
+    ensureAudio();
+    if (isPlaying) return;
+    isPlaying = true; currentBeat = 0; currentSub = 1; expectedTime = performance.now();
+    document.getElementById('playBtn').classList.add('playing');
+    document.getElementById('playIcon').innerHTML = '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
+    tick();
+  }
+  function stopPlayback() {
+    if (!isPlaying) return;
+    isPlaying = false;
+    if (timerId) { clearTimeout(timerId); timerId = null; }
+    document.getElementById('playBtn').classList.remove('playing');
+    document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+    currentBeat = 0; currentSub = 1;
+    renderBeatIndicator(-1, 1);
+  }
+  function togglePlayback() { if (isPlaying) stopPlayback(); else startPlayback(); }
+
+  // ---------- Practice ----------
+  let practiceActive = null, practiceTimer = null;
+  function startPractice(practiceId) {
+    const practice = PRACTICES.find(p => p.id === practiceId); if (!practice) return;
+    practiceActive = { practice: practice, stageIndex: 0, stageStartTime: performance.now(), remainingInStage: practice.stages[0].dur * 1000 };
+    setBpm(practice.stages[0].bpm, true);
+    if (!isPlaying) startPlayback();
+    showToast('开始 ' + practice.name);
+    document.getElementById('practiceProgress').style.display = 'block';
+    updatePracticeUI();
+    practiceTimer = setInterval(updatePracticeUI, 250);
+  }
+  function stopPractice() {
+    if (practiceTimer) { clearInterval(practiceTimer); practiceTimer = null; }
+    practiceActive = null;
+    document.getElementById('practiceProgress').style.display = 'none';
+    showToast('已停止练习');
+    // Re-render practice list to clear active
+    renderPractice();
+  }
+  function updatePracticeUI() {
+    if (!practiceActive) return;
+    const now = performance.now();
+    const elapsedInStage = now - practiceActive.stageStartTime;
+    const stage = practiceActive.practice.stages[practiceActive.stageIndex];
+    let remaining = stage.dur * 1000 - elapsedInStage;
+    if (remaining <= 0) {
+      practiceActive.stageIndex += 1;
+      if (practiceActive.stageIndex >= practiceActive.practice.stages.length) {
+        showToast('练习完成！');
+        stopPractice(); return;
+      }
+      const nextStage = practiceActive.practice.stages[practiceActive.stageIndex];
+      practiceActive.stageStartTime = now;
+      practiceActive.remainingInStage = nextStage.dur * 1000;
+      setBpm(nextStage.bpm, true);
+      showToast('下一阶段: ' + nextStage.bpm + ' BPM');
+      return;
+    }
+    const totalSec = Math.ceil(remaining / 1000);
+    const mm = Math.floor(totalSec / 60), ss = totalSec % 60;
+    document.getElementById('practiceCountdown').textContent = (mm < 10 ? '0' + mm : mm) + ':' + (ss < 10 ? '0' + ss : ss);
+    document.getElementById('practiceStage').textContent = '阶段 ' + (practiceActive.stageIndex + 1) + '/' + practiceActive.practice.stages.length + ' · ' + stage.bpm + ' BPM';
+  }
+
+  // ---------- Rendering ----------
+  function renderBeatIndicator(activeBeatIdx, activeSub) {
+    const row = document.getElementById('beatRow');
+    if (!row) return;
+    const expectedCount = state.beats;
+    if (row.children.length !== expectedCount) {
+      row.innerHTML = '';
+      for (let i = 0; i < expectedCount; i++) {
+        const d = document.createElement('div');
+        d.className = 'beat-dot';
+        d.textContent = i + 1;
+        d.dataset.beatIndex = i;
+        (function(idx){
+          let pressTimer;
+          d.addEventListener('mousedown', function(){ pressTimer = setTimeout(function(){ toggleAccent(idx); }, 550); });
+          d.addEventListener('mouseup', function(){ clearTimeout(pressTimer); });
+          d.addEventListener('mouseleave', function(){ clearTimeout(pressTimer); });
+          d.addEventListener('touchstart', function(){ pressTimer = setTimeout(function(){ toggleAccent(idx); }, 550); }, { passive:true });
+          d.addEventListener('touchend', function(){ clearTimeout(pressTimer); });
+          d.addEventListener('click', function(e){ e.stopPropagation(); });
+        })(i);
+        row.appendChild(d);
+      }
+    }
+    function toggleAccent(idx) {
+      const beatNum = idx + 1;
+      if (beatNum === 1) { showToast('第一拍默认为重音'); return; }
+      const pos = state.accentBeats.indexOf(beatNum);
+      if (pos === -1) state.accentBeats.push(beatNum); else state.accentBeats.splice(pos, 1);
+      saveState();
+      renderBeatIndicator(currentBeat, currentSub);
+      showToast('切换重音: 第 ' + beatNum + ' 拍');
+    }
+    for (let i = 0; i < row.children.length; i++) {
+      const el = row.children[i];
+      el.classList.remove('active', 'accent', 'secondary');
+      if (i === activeBeatIdx) {
+        if (i === 0 || state.accentBeats.indexOf(i + 1) !== -1) el.classList.add('accent');
+        else el.classList.add('active');
+      } else if (state.accentBeats.indexOf(i + 1) !== -1) el.classList.add('secondary');
+    }
+    const bd = document.getElementById('bpmDisplay');
+    bd.classList.remove('beat-flash');
+    void bd.offsetWidth;
+    if (activeBeatIdx !== -1) bd.classList.add('beat-flash');
+    const ring = document.getElementById('pulseRing');
+    ring.classList.remove('pulse');
+    void ring.offsetWidth;
+    if (activeBeatIdx !== -1) ring.classList.add('pulse');
+  }
+  function renderTS() {
+    const grid = document.getElementById('tsGrid');
+    grid.innerHTML = '';
+    TIME_SIGS.forEach(function(ts) {
+      const el = document.createElement('div');
+      el.className = 'ts-item';
+      el.textContent = ts.beats + '/' + ts.beatValue;
+      if (ts.beats === state.beats && ts.beatValue === state.beatValue) el.classList.add('active');
+      el.addEventListener('click', function() {
+        state.beats = ts.beats; state.beatValue = ts.beatValue; state.accentBeats = ts.secondary.slice();
+        saveState(); renderTS(); renderBeatIndicator(currentBeat, currentSub); updateInfo();
+        if (isPlaying) { stopPlayback(); startPlayback(); }
+      });
+      grid.appendChild(el);
+    });
+  }
+  function renderSub() {
+    const grid = document.getElementById('subGrid');
+    grid.innerHTML = '';
+    SUBDIVISIONS.forEach(function(s) {
+      const el = document.createElement('div');
+      el.className = 'ts-subitem';
+      el.textContent = s.name + ' ' + s.symbol;
+      if (s.id === state.subdivision) el.classList.add('active');
+      el.addEventListener('click', function() {
+        state.subdivision = s.id; saveState(); renderSub(); updateInfo();
+        if (isPlaying) { stopPlayback(); startPlayback(); }
+      });
+      grid.appendChild(el);
+    });
+  }
+  function renderSound() {
+    const grid = document.getElementById('soundGrid');
+    grid.innerHTML = '';
+    SOUNDS.forEach(function(s) {
+      const el = document.createElement('div');
+      el.className = 'sound-item';
+      el.innerHTML = '<svg viewBox="0 0 24 24" style="width:22px;height:22px;color:var(--primary);fill:currentColor;"><circle cx="12" cy="12" r="8"/></svg><span>' + s.name + '</span>';
+      if (s.id === state.soundType) el.classList.add('active');
+      el.addEventListener('click', function() {
+        state.soundType = s.id; saveState(); renderSound(); updateInfo();
+        playBeat(0, 1);
+      });
+      grid.appendChild(el);
+    });
+  }
+  function renderThemes() {
+    const grid = document.getElementById('themeGrid');
+    grid.innerHTML = '';
+    THEMES.forEach(function(t) {
+      const el = document.createElement('div');
+      el.className = 'theme-item';
+      el.innerHTML = '<span class="swatch" style="background:' + t.color + '"></span>' + t.name;
+      if (t.id === state.theme) el.classList.add('active');
+      el.addEventListener('click', function() {
+        state.theme = t.id; saveState(); applyTheme(); renderThemes();
+      });
+      grid.appendChild(el);
+    });
+  }
+  function renderPractice() {
+    const list = document.getElementById('practiceList');
+    list.innerHTML = '';
+    PRACTICES.forEach(function(p) {
+      const el = document.createElement('div');
+      el.className = 'practice-item';
+      el.innerHTML = '<div><div class="practice-name">' + p.name + '</div><div class="practice-sub">' + p.sub + '</div></div><span class="practice-badge">' + p.stages.length + ' 阶段</span>';
+      if (practiceActive && practiceActive.practice.id === p.id) el.classList.add('active');
+      el.addEventListener('click', function() {
+        if (practiceActive && practiceActive.practice.id === p.id) { stopPractice(); return; }
+        startPractice(p.id); renderPractice();
+      });
+      list.appendChild(el);
+    });
+  }
+  function applyTheme() {
+    document.body.className = 'theme-' + state.theme;
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    const theme = THEMES.find(t => t.id === state.theme) || THEMES[0];
+    if (metaTheme) metaTheme.setAttribute('content', theme.color);
+  }
+  function applyFontSize() { document.documentElement.style.setProperty('--font-size-base', state.fontSize + 'px'); }
+  function updateInfo() {
+    document.getElementById('tsDisplay').textContent = state.beats + '/' + state.beatValue;
+    const sub = SUBDIVISIONS.find(s => s.id === state.subdivision) || SUBDIVISIONS[0];
+    document.getElementById('subDisplay').textContent = sub.name;
+    const sound = SOUNDS.find(s => s.id === state.soundType) || SOUNDS[0];
+    document.getElementById('soundDisplay').textContent = sound.name;
+  }
+  function setBpm(val, silent) {
+    val = Math.max(20, Math.min(300, Math.round(val)));
+    state.bpm = val;
+    document.getElementById('bpmDisplay').textContent = val;
+    document.getElementById('bpmInput').value = val;
+    document.getElementById('bpmSlider').value = val;
+    if (!silent) saveState();
+  }
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return Object.assign({}, DEFAULT_STATE);
+      const parsed = JSON.parse(raw);
+      return Object.assign({}, DEFAULT_STATE, parsed);
+    } catch (e) { return Object.assign({}, DEFAULT_STATE); }
+  }
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+  }
+  function resetState() {
+    state = Object.assign({}, DEFAULT_STATE);
+    saveState(); applyAll(); showToast('已恢复默认设置');
+  }
+  let toastTimer = null;
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 1800);
+  }
+  function applyAll() {
+    setBpm(state.bpm, true);
+    applyTheme(); applyFontSize();
+    document.getElementById('volAccent').value = state.volumeAccent;
+    document.getElementById('volAccentVal').textContent = state.volumeAccent;
+    document.getElementById('volNormal').value = state.volumeNormal;
+    document.getElementById('volNormalVal').textContent = state.volumeNormal;
+    document.getElementById('fontSlider').value = state.fontSize;
+    document.getElementById('fontVal').textContent = state.fontSize;
+    renderTS(); renderSub(); renderSound(); renderThemes(); renderPractice(); renderBeatIndicator(currentBeat, currentSub); updateInfo();
+    saveState();
+  }
+
+  function bindEvents() {
+    document.getElementById('playBtn').addEventListener('click', togglePlayback);
+    document.querySelectorAll('.bpm-step').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const delta = parseInt(btn.dataset.step, 10);
+        setBpm(state.bpm + delta);
+        if (isPlaying) { stopPlayback(); startPlayback(); }
+      });
+    });
+    document.getElementById('bpmInput').addEventListener('change', function(e) {
+      setBpm(parseInt(e.target.value, 10));
+    });
+    document.getElementById('bpmSlider').addEventListener('input', function(e) {
+      setBpm(parseInt(e.target.value, 10));
+      if (isPlaying && !timerId) { /* noop */ }
+    });
+    document.getElementById('volAccent').addEventListener('input', function(e) {
+      state.volumeAccent = parseInt(e.target.value, 10); document.getElementById('volAccentVal').textContent = state.volumeAccent; saveState();
+    });
+    document.getElementById('volNormal').addEventListener('input', function(e) {
+      state.volumeNormal = parseInt(e.target.value, 10); document.getElementById('volNormalVal').textContent = state.volumeNormal; saveState();
+    });
+    document.getElementById('fontSlider').addEventListener('input', function(e) {
+      state.fontSize = parseInt(e.target.value, 10); document.getElementById('fontVal').textContent = state.fontSize; applyFontSize(); saveState();
+    });
+    document.getElementById('btnReset').addEventListener('click', resetState);
+    document.getElementById('btnSoundTest').addEventListener('click', function() {
+      playBeat(0, 1); setTimeout(function(){ playBeat(1, 1); }, 300); setTimeout(function(){ playBeat(2, 1); }, 600); setTimeout(function(){ playBeat(3, 1); }, 900);
+    });
+    document.getElementById('practiceStop').addEventListener('click', stopPractice);
+    // Space bar toggles
+    document.addEventListener('keydown', function(e) {
+      if (e.code === 'Space' && e.target.tagName !== 'INPUT') { e.preventDefault(); togglePlayback(); }
+    });
+    // Visibility: pause when hidden
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden && isPlaying) stopPlayback();
+    });
+  }
+
+  // ---------- Init ----------
+  function init() {
+    bindEvents(); applyAll();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>

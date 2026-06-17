@@ -776,6 +776,98 @@ input[type="range"].slider::-moz-range-thumb {
 }
 .toast.show { opacity: 0.96; transform: translateX(-50%) translateY(0); }
 
+input.toggle {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 44px;
+  height: 26px;
+  background: var(--border);
+  border-radius: 999px;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: background var(--transition);
+  margin: 0;
+  padding: 0;
+}
+input.toggle::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  top: 3px;
+  left: 3px;
+  transition: all var(--transition);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+input.toggle:checked {
+  background: var(--primary);
+}
+input.toggle:checked::after {
+  left: 21px;
+  background: #ffffff;
+}
+
+.bpm-presets .preset-btn {
+  padding: 10px 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font-size: 0.9em;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.bpm-presets .preset-btn:active,
+.bpm-presets .preset-btn.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  transform: scale(0.97);
+  box-shadow: 0 4px 12px var(--glow);
+}
+
+.quick-swatch {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: transform var(--transition), border-color var(--transition);
+  padding: 0;
+}
+.quick-swatch:active {
+  transform: scale(0.9);
+}
+.quick-swatch.active {
+  border-color: var(--text);
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--primary);
+}
+
+.mode-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.mode-item.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.mode-item.active svg { stroke: #fff; color: #fff; }
+
+.wave-item.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+select.bpm-input {
+  font-family: inherit;
+  background: var(--surface);
+  color: var(--text);
+}
+option { color: var(--text); background: var(--surface); }
+
 @media (max-width: 380px) {
   .bpm-number { font-size: 3.8em; }
   .play-btn { width: 100px; height: 100px; }
@@ -874,23 +966,87 @@ input[type="range"].slider::-moz-range-thumb {
     <div class="page-title">参数设置</div>
   </div>
   <div class="page-content">
+
     <div class="section-card">
       <div class="section-title"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>拍号选择</div>
-      <div class="section-sub">选择常用拍号，第一拍为重音</div>
+      <div class="section-sub">常用拍号（第一拍为重音）</div>
       <div class="ts-grid" id="tsGrid"></div>
-    </div>
-    <div class="section-card">
-      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>节拍细分</div>
-      <div class="section-sub">细分音符会在主拍之间发出提示音</div>
-      <div class="sub-grid" id="subGrid"></div>
-    </div>
-    <div class="section-card">
-      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>自定义重音</div>
-      <div class="section-sub">回到主界面，长按任意节拍点可切换额外重音（第一拍除外）</div>
-      <div class="practice-status" style="padding:14px;">
-        <div style="font-size:0.95em;color:var(--text-secondary);font-weight:600;">在首页节拍点上长按切换 →</div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);">
+        <div style="font-size:0.9em;color:var(--text-secondary);font-weight:600;margin-bottom:8px;">自定义拍号</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input type="number" min="1" max="32" id="customBeats" class="bpm-input" style="width:60px;height:40px;font-size:1.1em;text-align:center;" />
+          <span style="font-size:1.3em;color:var(--text-secondary);font-weight:800;">/</span>
+          <select id="customBeatValue" class="bpm-input" style="width:70px;height:40px;font-size:1.05em;font-weight:700;text-align:center;">
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="8">8</option>
+            <option value="16">16</option>
+          </select>
+          <button class="step-btn" id="btnApplyCustomTS" style="flex:1;width:auto;border-radius:12px;padding:0 14px;font-weight:700;">应用</button>
+        </div>
       </div>
     </div>
+
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>节拍细分</div>
+      <div class="section-sub">在主拍之间插入细分提示音</div>
+      <div class="sub-grid" id="subGrid"></div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M12 2 2 22h20L12 2z"/></svg>摇摆 / Swing</div>
+      <div class="section-sub">切换为八分音符后，偶数细分会被延迟（爵士风格）</div>
+      <div class="vol-row">
+        <span class="vol-label">摇摆强度</span>
+        <input class="vol-slider slider" id="swingSlider" type="range" min="0" max="80" />
+        <span class="vol-val" id="swingVal">0</span>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4z"/></svg>TAP 测速</div>
+      <div class="section-sub">连续点击此按钮测量 BPM（至少 3 次）</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="btnTapTempo" class="play-btn" style="width:88px;height:88px;">TAP</button>
+        <div style="flex:1;">
+          <div style="font-size:0.85em;color:var(--text-secondary);">最近一次</div>
+          <div id="tapBpm" style="font-size:2.2em;font-weight:800;color:var(--primary);">–</div>
+          <div style="font-size:0.78em;color:var(--text-muted);">
+            点击次数：<span id="tapCount">0</span>
+            <button class="step-btn" id="btnTapReset" style="margin-left:6px;width:28px;height:28px;font-size:0.8em;border-radius:50%;">重</button>
+            <button class="step-btn" id="btnTapApply" style="margin-left:4px;width:56px;height:28px;font-size:0.78em;border-radius:14px;">应用</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>自定义重音</div>
+      <div class="section-sub">在首页长按任意节拍点切换额外重音。以下开关控制可视化行为：</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <label class="switch-row" style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+          <span style="font-size:0.92em;color:var(--text);font-weight:600;">首拍自动加重</span>
+          <input type="checkbox" id="toggleAccentFirst" class="toggle">
+        </label>
+        <label class="switch-row" style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+          <span style="font-size:0.92em;color:var(--text);font-weight:600;">播放时脉冲光环</span>
+          <input type="checkbox" id="togglePulseRing" class="toggle">
+        </label>
+        <label class="switch-row" style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+          <span style="font-size:0.92em;color:var(--text);font-weight:600;">BPM 数字闪烁动画</span>
+          <input type="checkbox" id="toggleFlashBig" class="toggle">
+        </label>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="step-btn" id="btnClearAccents" style="padding:0 14px;border-radius:12px;font-weight:700;width:auto;">清除额外重音</button>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M3 12h18M12 3v18"/></svg>常用 BPM 预设</div>
+      <div class="bpm-presets" id="bpmPresets" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;"></div>
+    </div>
+
   </div>
 </div>
 
@@ -903,9 +1059,41 @@ input[type="range"].slider::-moz-range-thumb {
   <div class="page-content">
     <div class="section-card">
       <div class="section-title"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>音色选择</div>
-      <div class="section-sub">点击可立即试听当前音色</div>
+      <div class="section-sub">点击立即试听</div>
       <div class="sound-grid" id="soundGrid"></div>
     </div>
+
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M3 17h3V7H3zM10 20h3V4h-3zM17 14h3v-4h-3z"/></svg>自定义音色</div>
+      <div class="section-sub">可自行调整频率、波形和音符时长，启用后会覆盖上方预设</div>
+      <label class="switch-row" style="display:flex;justify-content:space-between;align-items:center;padding:6px 0 12px;">
+        <span style="font-size:0.95em;color:var(--text);font-weight:700;">启用自定义音色</span>
+        <input type="checkbox" id="toggleCustomSound" class="toggle">
+      </label>
+      <div class="vol-row">
+        <span class="vol-label">频率 (Hz)</span>
+        <input class="vol-slider slider" id="customFreqSlider" type="range" min="100" max="3000" step="10" />
+        <span class="vol-val" id="customFreqVal">1400</span>
+      </div>
+      <div class="vol-row">
+        <span class="vol-label">音符时长</span>
+        <input class="vol-slider slider" id="customDurSlider" type="range" min="10" max="300" step="5" />
+        <span class="vol-val" id="customDurVal">35</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="font-size:0.85em;color:var(--text-secondary);font-weight:600;margin-bottom:8px;">波形类型</div>
+        <div class="sub-grid" id="waveGrid" style="grid-template-columns:repeat(4,1fr);">
+          <div class="sub-item wave-item" data-wave="square">方波</div>
+          <div class="sub-item wave-item" data-wave="triangle">三角</div>
+          <div class="sub-item wave-item" data-wave="sine">正弦</div>
+          <div class="sub-item wave-item" data-wave="sawtooth">锯齿</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;">
+        <button class="step-btn" id="btnPlayCustom" style="width:100%;height:44px;border-radius:14px;font-weight:700;font-size:1em;">试听当前自定义音色</button>
+      </div>
+    </div>
+
     <div class="section-card">
       <div class="section-title"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>音量调节</div>
       <div class="vol-row">
@@ -924,10 +1112,11 @@ input[type="range"].slider::-moz-range-thumb {
         <span class="vol-val" id="volSubVal">55</span>
       </div>
     </div>
+
     <div class="section-card">
       <div class="section-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>快速试听</div>
       <div class="practice-status" style="padding:14px;">
-        <button class="practice-stop-btn" id="btnPreview" style="background:rgba(var(--primary-rgb),0.12);color:var(--primary);border-color:rgba(var(--primary-rgb),0.35);">
+        <button class="practice-stop-btn" id="btnPreview" style="background:rgba(var(--primary-rgb),0.12);color:var(--primary);border-color:rgba(var(--primary-rgb),0.35);width:100%;padding:10px 0;">
           播放示例节奏
         </button>
       </div>
@@ -943,18 +1132,54 @@ input[type="range"].slider::-moz-range-thumb {
   </div>
   <div class="page-content">
     <div class="section-card">
-      <div class="section-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>配色主题</div>
+      <div class="section-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>预设主题</div>
       <div class="theme-grid" id="themeGrid"></div>
     </div>
+
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4 12H0M24 12h-4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>自定义主题色</div>
+      <div class="section-sub">选中任意主题后，在此微调主色并预览</div>
+      <label class="switch-row" style="display:flex;justify-content:space-between;align-items:center;padding:6px 0 10px;">
+        <span style="font-size:0.95em;color:var(--text);font-weight:700;">使用自定义主色</span>
+        <input type="checkbox" id="toggleCustomColor" class="toggle">
+      </label>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:6px;">
+        <input type="color" id="customColorPicker" value="#2563eb" style="width:56px;height:56px;border-radius:14px;border:2px solid var(--border);padding:0;background:transparent;"/>
+        <div style="flex:1;">
+          <div style="font-size:0.85em;color:var(--text-secondary);">当前色值</div>
+          <div id="customColorHex" style="font-size:1.3em;font-weight:800;color:var(--primary);text-transform:uppercase;">#2563eb</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:0.85em;color:var(--text-secondary);font-weight:600;margin-bottom:8px;">快速调色板</div>
+        <div id="quickPalette" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;"></div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM21 19a9 9 0 00-18 0"/></svg>外观模式</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:4px;">
+        <label class="sub-item mode-item" data-mode="light" style="padding:14px 8px;cursor:pointer;">
+          <svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:var(--text);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <span style="font-size:0.9em;color:var(--text);font-weight:700;margin-top:4px;">浅色</span>
+        </label>
+        <label class="sub-item mode-item" data-mode="dark" style="padding:14px 8px;cursor:pointer;">
+          <svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:var(--text);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 12.79A9 9 0 11 11.21 3 7 7 0 0021 12.79z"/></svg>
+          <span style="font-size:0.9em;color:var(--text);font-weight:700;margin-top:4px;">暗色</span>
+        </label>
+      </div>
+    </div>
+
     <div class="section-card">
       <div class="section-title"><svg viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>字体大小</div>
       <div class="font-row">
         <span class="label">全局字号</span>
-        <input class="vol-slider slider" id="fontSlider" type="range" min="12" max="20" step="1" value="15"/>
+        <input class="vol-slider slider" id="fontSlider" type="range" min="12" max="22" step="1" value="15"/>
         <span class="vol-val" id="fontVal">15</span>
       </div>
     </div>
-    <div class="info-block">提示：主题与字体大小会立即生效，并自动保存在本地。</div>
+
+    <div class="info-block">提示：主题与字体大小会立即生效，并自动保存在本地。自定义颜色会与当前主题融合。</div>
   </div>
 </div>
 
@@ -969,6 +1194,36 @@ input[type="range"].slider::-moz-range-thumb {
       <div class="section-title"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>变速训练模板</div>
       <div class="practice-list" id="practiceList"></div>
     </div>
+
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>自定义练习</div>
+      <div class="section-sub">可设置起始 BPM、步长和每阶段时长，最多 8 步</div>
+      <div class="vol-row">
+        <span class="vol-label">起始 BPM</span>
+        <input class="vol-slider slider" id="cpStart" type="range" min="40" max="240" value="60"/>
+        <span class="vol-val" id="cpStartVal">60</span>
+      </div>
+      <div class="vol-row">
+        <span class="vol-label">每步增量</span>
+        <input class="vol-slider slider" id="cpStep" type="range" min="5" max="40" value="10"/>
+        <span class="vol-val" id="cpStepVal">10</span>
+      </div>
+      <div class="vol-row">
+        <span class="vol-label">每段秒数</span>
+        <input class="vol-slider slider" id="cpDur" type="range" min="15" max="180" value="60"/>
+        <span class="vol-val" id="cpDurVal">60</span>
+      </div>
+      <div class="vol-row">
+        <span class="vol-label">阶段数量</span>
+        <input class="vol-slider slider" id="cpCount" type="range" min="2" max="8" value="5"/>
+        <span class="vol-val" id="cpCountVal">5</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="font-size:0.82em;color:var(--text-secondary);margin-bottom:6px;">预览路径：<span id="cpPath" style="color:var(--primary);font-weight:700;"></span></div>
+      </div>
+      <button class="step-btn" id="btnCustomPractice" style="margin-top:12px;width:100%;height:44px;border-radius:14px;font-weight:700;font-size:1em;">开始自定义练习</button>
+    </div>
+
     <div class="practice-status" id="practiceProgress" style="display:none;">
       <div class="practice-stage" id="practiceStage">热身 · 40 BPM</div>
       <div class="practice-countdown" id="practiceCountdown">00:60</div>
@@ -1062,7 +1317,18 @@ input[type="range"].slider::-moz-range-thumb {
     volumeSub: 55,
     theme: 'minimal',
     fontSize: 15,
-    accentBeats: []
+    accentBeats: [],
+    swing: 0,
+    customFreq: 1400,
+    customWave: 'square',
+    customDur: 0.035,
+    useCustomSound: false,
+    darkMode: false,
+    accentFirst: true,
+    showSub: true,
+    flashBig: true,
+    pulseRing: true,
+    practiceCustom: []
   };
   const STORAGE_KEY = 'metronome_single_v2';
   let state = loadState();
@@ -1178,15 +1444,19 @@ input[type="range"].slider::-moz-range-thumb {
   function scheduleClick(time, beatType) {
     const ctx = ensureAudio();
     if (!ctx) return;
-    const sound = SOUNDS.find(s => s.id === state.soundType) || SOUNDS[0];
-    let freq = sound.freq;
+    let sound;
+    if (state.useCustomSound) {
+      sound = { id: 'custom', name: '自定义', freq: state.customFreq, type: state.customWave, dur: state.customDur };
+    } else {
+      sound = SOUNDS.find(s => s.id === state.soundType) || SOUNDS[0];
+    }
     let vol;
     if (beatType === 'accent')      vol = state.volumeAccent / 100 * 0.8;
     else if (beatType === 'normal') vol = state.volumeNormal / 100 * 0.65;
     else                            vol = state.volumeSub    / 100 * 0.5;
-    let f = freq;
-    if (beatType === 'accent') f = freq * 1.1;
-    if (beatType === 'sub')    f = freq * 0.95;
+    let f = sound.freq;
+    if (beatType === 'accent') f = sound.freq * 1.12;
+    if (beatType === 'sub')    f = sound.freq * 0.95;
 
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -1217,24 +1487,29 @@ input[type="range"].slider::-moz-range-thumb {
     const interval = beatIntervalSec();
     const subMult = subdivisionMult();
     const subInterval = interval / subMult;
+    const swingAmount = Number(state.swing) || 0;
 
     while (scheduledTime < ctx.currentTime + lookAhead) {
       const isMainBeat = currentSub === 0;
       let type = 'normal';
       if (isMainBeat) {
         const beatIdx = currentBeat % state.beats;
-        if (beatIdx === 0) type = 'accent';
+        if (state.accentFirst && beatIdx === 0) type = 'accent';
         else if (state.accentBeats.includes(beatIdx)) type = 'accent';
         else type = 'normal';
       } else {
         type = 'sub';
       }
-      scheduleClick(scheduledTime, type);
-      const fireAt = scheduledTime;
-      const mainBeat = currentBeat;
-      const subIdx = currentSub;
-      const isMain = isMainBeat;
-      scheduledEvents.push({ time: fireAt, beat: mainBeat, sub: subIdx, isMain: isMain, type: type });
+
+      let fireOffset = 0;
+      if (swingAmount > 0 && subMult === 2) {
+        const evenInBeat = (currentSub % 2 === 0);
+        if (!evenInBeat) fireOffset = subInterval * (swingAmount / 100) * 0.6;
+      }
+
+      const fireTime = scheduledTime + fireOffset;
+      scheduleClick(fireTime, type);
+      scheduledEvents.push({ time: fireTime, beat: currentBeat, sub: currentSub, isMain: isMainBeat, type: type });
 
       scheduledTime += subInterval;
       currentSub++;
@@ -1478,12 +1753,140 @@ input[type="range"].slider::-moz-range-thumb {
       el.className = 'theme-item';
       if (t.id === state.theme) el.classList.add('active');
       el.innerHTML = '<div class="theme-swatch" style="background:' + t.color + '"></div><span>' + t.name + '</span>';
-      el.addEventListener('click', () => { state.theme = t.id; saveState(); applyTheme(); renderThemeGrid(); });
+      el.addEventListener('click', () => { state.theme = t.id; saveState(); applyTheme(); renderThemeGrid(); renderQuickPalette(); refreshSystemInfo(); });
       grid.appendChild(el);
+    });
+  }
+  function renderQuickPalette() {
+    const wrap = document.getElementById('quickPalette');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899', '#64748b', '#0f172a', '#f43f5e'];
+    colors.forEach(c => {
+      const el = document.createElement('button');
+      el.className = 'quick-swatch';
+      if (state.customColor === c && state.useCustomColor) el.classList.add('active');
+      el.style.backgroundColor = c;
+      el.addEventListener('click', () => {
+        state.customColor = c;
+        state.useCustomColor = true;
+        const t = document.getElementById('customColorPicker');
+        if (t) t.value = c;
+        const tx = document.getElementById('customColorHex');
+        if (tx) tx.textContent = c.toUpperCase();
+        const cb = document.getElementById('toggleCustomColor');
+        if (cb) cb.checked = true;
+        saveState();
+        applyTheme();
+        renderQuickPalette();
+      });
+      wrap.appendChild(el);
+    });
+  }
+  function renderWaveGrid() {
+    const grid = document.getElementById('waveGrid');
+    if (!grid) return;
+    grid.querySelectorAll('.wave-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.wave === state.customWave);
+      el.onclick = () => {
+        state.customWave = el.dataset.wave;
+        saveState();
+        renderWaveGrid();
+        const ctx = ensureAudio();
+        if (ctx) scheduleClick(ctx.currentTime + 0.02, 'normal');
+      };
+    });
+  }
+  function renderBpmPresets() {
+    const grid = document.getElementById('bpmPresets');
+    if (!grid) return;
+    grid.innerHTML = '';
+    const presets = [60, 76, 90, 100, 110, 120, 128, 140, 160, 180, 200, 240];
+    presets.forEach(bpm => {
+      const el = document.createElement('button');
+      el.className = 'preset-btn';
+      if (state.bpm === bpm) el.classList.add('active');
+      el.textContent = bpm;
+      el.addEventListener('click', () => {
+        setBpm(bpm);
+        renderBpmPresets();
+      });
+      grid.appendChild(el);
+    });
+  }
+  function renderModeItems() {
+    document.querySelectorAll('.mode-item').forEach(el => {
+      const mode = el.dataset.mode;
+      const isActive = (mode === 'dark' && state.darkMode) || (mode === 'light' && !state.darkMode);
+      el.classList.toggle('active', isActive);
+      el.onclick = () => {
+        state.darkMode = (mode === 'dark');
+        saveState();
+        applyTheme();
+        renderModeItems();
+      };
     });
   }
   function applyTheme() {
     document.body.className = 'theme-' + state.theme;
+    if (state.darkMode) {
+      document.body.classList.add('forced-dark');
+      document.documentElement.style.setProperty('--bg', '#0f172a');
+      document.documentElement.style.setProperty('--surface', '#1e293b');
+      document.documentElement.style.setProperty('--surface-2', '#172036');
+      document.documentElement.style.setProperty('--text', '#f1f5f9');
+      document.documentElement.style.setProperty('--text-secondary', '#cbd5e1');
+      document.documentElement.style.setProperty('--text-muted', '#94a3b8');
+      document.documentElement.style.setProperty('--border', 'rgba(255,255,255,0.08)');
+      document.documentElement.style.setProperty('--border-strong', 'rgba(255,255,255,0.18)');
+    } else {
+      document.documentElement.style.setProperty('--bg', '');
+      document.documentElement.style.setProperty('--surface', '');
+      document.documentElement.style.setProperty('--surface-2', '');
+      document.documentElement.style.setProperty('--text', '');
+      document.documentElement.style.setProperty('--text-secondary', '');
+      document.documentElement.style.setProperty('--text-muted', '');
+      document.documentElement.style.setProperty('--border', '');
+      document.documentElement.style.setProperty('--border-strong', '');
+    }
+    if (state.customColor && state.useCustomColor) {
+      document.documentElement.style.setProperty('--primary', state.customColor);
+      document.documentElement.style.setProperty('--primary-rgb', hexToRgb(state.customColor));
+      document.documentElement.style.setProperty('--primary-light', lighten(state.customColor, 0.15));
+      document.documentElement.style.setProperty('--primary-dark', darken(state.customColor, 0.2));
+      document.documentElement.style.setProperty('--glow', 'rgba(' + hexToRgb(state.customColor) + ', 0.35)');
+    } else {
+      document.documentElement.style.setProperty('--primary', '');
+      document.documentElement.style.setProperty('--primary-rgb', '');
+      document.documentElement.style.setProperty('--primary-light', '');
+      document.documentElement.style.setProperty('--primary-dark', '');
+      document.documentElement.style.setProperty('--glow', '');
+    }
+  }
+  function hexToRgb(hex) {
+    const h = (hex || '').replace('#', '');
+    if (h.length !== 6) return '37, 99, 235';
+    const r = parseInt(h.substring(0, 2), 16);
+    const g = parseInt(h.substring(2, 4), 16);
+    const b = parseInt(h.substring(4, 6), 16);
+    return r + ', ' + g + ', ' + b;
+  }
+  function clamp255(v) { return Math.max(0, Math.min(255, Math.round(v))); }
+  function lighten(hex, amt) {
+    const h = (hex || '').replace('#', '');
+    if (h.length !== 6) return '#60a5fa';
+    const r = clamp255(parseInt(h.substring(0,2),16) + (1 - parseInt(h.substring(0,2),16)/255) * 255 * amt);
+    const g = clamp255(parseInt(h.substring(2,4),16) + (1 - parseInt(h.substring(2,4),16)/255) * 255 * amt);
+    const b = clamp255(parseInt(h.substring(4,6),16) + (1 - parseInt(h.substring(4,6),16)/255) * 255 * amt);
+    return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+  }
+  function darken(hex, amt) {
+    const h = (hex || '').replace('#', '');
+    if (h.length !== 6) return '#1e40af';
+    const r = clamp255(parseInt(h.substring(0,2),16) * (1 - amt));
+    const g = clamp255(parseInt(h.substring(2,4),16) * (1 - amt));
+    const b = clamp255(parseInt(h.substring(4,6),16) * (1 - amt));
+    return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
   }
   function applyFontSize() {
     document.documentElement.style.setProperty('--font-size-base', state.fontSize + 'px');
@@ -1654,6 +2057,10 @@ input[type="range"].slider::-moz-range-thumb {
     renderSoundGrid();
     renderThemeGrid();
     renderBeats();
+    renderQuickPalette();
+    renderWaveGrid();
+    renderBpmPresets();
+    renderModeItems();
     updateChips();
     const fontSlider = document.getElementById('fontSlider');
     const fontVal = document.getElementById('fontVal');
@@ -1671,6 +2078,53 @@ input[type="range"].slider::-moz-range-thumb {
     if (vNV) vNV.textContent = state.volumeNormal;
     if (vS) { vS.value = state.volumeSub; updateSliderFill(vS); }
     if (vSV) vSV.textContent = state.volumeSub;
+
+    const swingSlider = document.getElementById('swingSlider');
+    const swingVal = document.getElementById('swingVal');
+    if (swingSlider) { swingSlider.value = state.swing || 0; updateSliderFill(swingSlider); }
+    if (swingVal) swingVal.textContent = state.swing || 0;
+
+    const tA = document.getElementById('toggleAccentFirst');
+    if (tA) tA.checked = !!state.accentFirst;
+    const tP = document.getElementById('togglePulseRing');
+    if (tP) tP.checked = !!state.pulseRing;
+    const tF = document.getElementById('toggleFlashBig');
+    if (tF) tF.checked = !!state.flashBig;
+
+    const toggleCustomSound = document.getElementById('toggleCustomSound');
+    if (toggleCustomSound) toggleCustomSound.checked = !!state.useCustomSound;
+    const cFreq = document.getElementById('customFreqSlider');
+    const cFreqV = document.getElementById('customFreqVal');
+    if (cFreq) { cFreq.value = state.customFreq || 1400; updateSliderFill(cFreq); }
+    if (cFreqV) cFreqV.textContent = state.customFreq || 1400;
+    const cDur = document.getElementById('customDurSlider');
+    const cDurV = document.getElementById('customDurVal');
+    const durVal = Math.round((state.customDur || 0.035) * 1000);
+    if (cDur) { cDur.value = durVal; updateSliderFill(cDur); }
+    if (cDurV) cDurV.textContent = durVal;
+
+    const colorPicker = document.getElementById('customColorPicker');
+    const colorHex = document.getElementById('customColorHex');
+    if (colorPicker) colorPicker.value = state.customColor || '#2563eb';
+    if (colorHex) colorHex.textContent = (state.customColor || '#2563eb').toUpperCase();
+    const toggleCustomColor = document.getElementById('toggleCustomColor');
+    if (toggleCustomColor) toggleCustomColor.checked = !!state.useCustomColor;
+
+    const cpS = document.getElementById('cpStart'), cpSV = document.getElementById('cpStartVal');
+    const cpSt = document.getElementById('cpStep'), cpStV = document.getElementById('cpStepVal');
+    const cpD = document.getElementById('cpDur'), cpDV = document.getElementById('cpDurVal');
+    const cpC = document.getElementById('cpCount'), cpCV = document.getElementById('cpCountVal');
+    if (cpS) { cpS.value = 60; updateSliderFill(cpS); } if (cpSV) cpSV.textContent = '60';
+    if (cpSt) { cpSt.value = 10; updateSliderFill(cpSt); } if (cpStV) cpStV.textContent = '10';
+    if (cpD) { cpD.value = 60; updateSliderFill(cpD); } if (cpDV) cpDV.textContent = '60';
+    if (cpC) { cpC.value = 5; updateSliderFill(cpC); } if (cpCV) cpCV.textContent = '5';
+    updateCustomPracticePreview();
+
+    const beatsInput = document.getElementById('customBeats');
+    const beatValueSel = document.getElementById('customBeatValue');
+    if (beatsInput) beatsInput.value = state.beats;
+    if (beatValueSel) beatValueSel.value = state.beatValue;
+
     updatePlayUI();
   }
 
@@ -1757,7 +2211,185 @@ input[type="range"].slider::-moz-range-thumb {
     document.getElementById('btnClearStorage').addEventListener('click', clearStorage);
     document.getElementById('practiceStop').addEventListener('click', () => { stopPractice(); showToast('已停止练习'); });
 
+    const btnApplyTS = document.getElementById('btnApplyCustomTS');
+    if (btnApplyTS) btnApplyTS.addEventListener('click', () => {
+      const beatsInput = document.getElementById('customBeats');
+      const beatValueSel = document.getElementById('customBeatValue');
+      const beats = Math.max(1, Math.min(32, Number(beatsInput ? beatsInput.value : 4) || 4));
+      const beatValue = Number(beatValueSel ? beatValueSel.value : 4) || 4;
+      state.beats = beats;
+      state.beatValue = beatValue;
+      state.accentBeats = state.accentBeats.filter(i => i < beats);
+      saveState();
+      renderTimeSigs();
+      renderBeats();
+      updateChips();
+      showToast('已应用 ' + beats + '/' + beatValue);
+    });
+
+    const swingSlider = document.getElementById('swingSlider');
+    if (swingSlider) swingSlider.addEventListener('input', () => {
+      updateSliderFill(swingSlider);
+      state.swing = Number(swingSlider.value);
+      document.getElementById('swingVal').textContent = state.swing;
+      saveState();
+    });
+
+    const tA = document.getElementById('toggleAccentFirst');
+    if (tA) tA.addEventListener('change', () => { state.accentFirst = tA.checked; saveState(); renderBeats(); });
+    const tP = document.getElementById('togglePulseRing');
+    if (tP) tP.addEventListener('change', () => { state.pulseRing = tP.checked; saveState(); });
+    const tF = document.getElementById('toggleFlashBig');
+    if (tF) tF.addEventListener('change', () => { state.flashBig = tF.checked; saveState(); });
+
+    const btnClearAccents = document.getElementById('btnClearAccents');
+    if (btnClearAccents) btnClearAccents.addEventListener('click', () => {
+      state.accentBeats = [];
+      saveState();
+      renderBeats();
+      showToast('已清除额外重音');
+    });
+
+    const btnPlayCustom = document.getElementById('btnPlayCustom');
+    if (btnPlayCustom) btnPlayCustom.addEventListener('click', () => {
+      ensureAudio();
+      const ctx = audioCtx;
+      if (ctx) scheduleClick(ctx.currentTime + 0.02, 'accent');
+    });
+
+    const toggleCustomSound = document.getElementById('toggleCustomSound');
+    if (toggleCustomSound) toggleCustomSound.addEventListener('change', () => {
+      state.useCustomSound = toggleCustomSound.checked;
+      saveState();
+      renderSoundGrid();
+    });
+    const customFreq = document.getElementById('customFreqSlider');
+    if (customFreq) customFreq.addEventListener('input', () => {
+      updateSliderFill(customFreq);
+      state.customFreq = Number(customFreq.value);
+      document.getElementById('customFreqVal').textContent = state.customFreq;
+      saveState();
+    });
+    const customDur = document.getElementById('customDurSlider');
+    if (customDur) customDur.addEventListener('input', () => {
+      updateSliderFill(customDur);
+      state.customDur = Number(customDur.value) / 1000;
+      document.getElementById('customDurVal').textContent = customDur.value;
+      saveState();
+    });
+
+    const colorPicker = document.getElementById('customColorPicker');
+    if (colorPicker) colorPicker.addEventListener('input', () => {
+      state.customColor = colorPicker.value;
+      state.useCustomColor = true;
+      document.getElementById('customColorHex').textContent = colorPicker.value.toUpperCase();
+      const cb = document.getElementById('toggleCustomColor');
+      if (cb) cb.checked = true;
+      saveState();
+      applyTheme();
+      renderQuickPalette();
+    });
+    const toggleCustomColor = document.getElementById('toggleCustomColor');
+    if (toggleCustomColor) toggleCustomColor.addEventListener('change', () => {
+      state.useCustomColor = toggleCustomColor.checked;
+      saveState();
+      applyTheme();
+      renderQuickPalette();
+    });
+
+    bindCustomPractice();
+    initTapTempo();
+
     window.addEventListener('hashchange', handleHashChange);
+  }
+
+  function updateCustomPracticePreview() {
+    const cpPath = document.getElementById('cpPath');
+    if (!cpPath) return;
+    const cpS = document.getElementById('cpStart');
+    const cpSt = document.getElementById('cpStep');
+    const cpD = document.getElementById('cpDur');
+    const cpC = document.getElementById('cpCount');
+    const start = Number(cpS ? cpS.value : 60);
+    const step = Number(cpSt ? cpSt.value : 10);
+    const count = Number(cpC ? cpC.value : 5);
+    const stages = [];
+    for (let i = 0; i < count; i++) stages.push(start + step * i);
+    cpPath.textContent = stages.join(' → ');
+  }
+
+  function bindCustomPractice() {
+    ['cpStart','cpStep','cpDur','cpCount'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', () => {
+        updateSliderFill(el);
+        const v = Number(el.value);
+        if (id === 'cpStart') { document.getElementById('cpStartVal').textContent = v; }
+        if (id === 'cpStep') { document.getElementById('cpStepVal').textContent = v; }
+        if (id === 'cpDur') { document.getElementById('cpDurVal').textContent = v; }
+        if (id === 'cpCount') { document.getElementById('cpCountVal').textContent = v; }
+        updateCustomPracticePreview();
+      });
+    });
+    const btn = document.getElementById('btnCustomPractice');
+    if (btn) btn.addEventListener('click', () => {
+      const cpS = document.getElementById('cpStart');
+      const cpSt = document.getElementById('cpStep');
+      const cpD = document.getElementById('cpDur');
+      const cpC = document.getElementById('cpCount');
+      const start = Number(cpS ? cpS.value : 60);
+      const step = Number(cpSt ? cpSt.value : 10);
+      const dur = Number(cpD ? cpD.value : 60);
+      const count = Number(cpC ? cpC.value : 5);
+      const stages = [];
+      for (let i = 0; i < count; i++) stages.push({ bpm: start + step * i, seconds: dur });
+      const tpl = { id: 'custom-' + Date.now(), name: '自定义练习', stages: stages };
+      practiceCurrentTemplate = tpl;
+      startPractice(tpl);
+      location.hash = 'page-practice';
+    });
+  }
+
+  let tapTimes = [];
+  function initTapTempo() {
+    const btn = document.getElementById('btnTapTempo');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const now = Date.now();
+      if (tapTimes.length && now - tapTimes[tapTimes.length - 1] > 2500) tapTimes = [];
+      tapTimes.push(now);
+      if (tapTimes.length > 8) tapTimes.shift();
+      const countEl = document.getElementById('tapCount');
+      if (countEl) countEl.textContent = tapTimes.length;
+      if (tapTimes.length >= 2) {
+        const intervals = [];
+        for (let i = 1; i < tapTimes.length; i++) intervals.push(tapTimes[i] - tapTimes[i - 1]);
+        const avg = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+        const bpm = Math.round(60000 / avg);
+        const display = document.getElementById('tapBpm');
+        if (display) display.textContent = bpm;
+      }
+    });
+    const btnApply = document.getElementById('btnTapApply');
+    if (btnApply) btnApply.addEventListener('click', () => {
+      const display = document.getElementById('tapBpm');
+      if (!display) return;
+      const bpm = Number(display.textContent);
+      if (!isNaN(bpm) && bpm >= 20 && bpm <= 300) {
+        setBpm(bpm);
+        renderBpmPresets();
+        showToast('应用 BPM ' + bpm);
+      }
+    });
+    const btnReset = document.getElementById('btnTapReset');
+    if (btnReset) btnReset.addEventListener('click', () => {
+      tapTimes = [];
+      const display = document.getElementById('tapBpm');
+      if (display) display.textContent = '–';
+      const countEl = document.getElementById('tapCount');
+      if (countEl) countEl.textContent = '0';
+    });
   }
 
   /* ===== Init ===== */

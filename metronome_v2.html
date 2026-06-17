@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#2563eb" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>节拍器 Metronome</title>
+<style>
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--text);
+  font-size: var(--font-size-base);
+}
+button { font-family: inherit; border: 0; cursor: pointer; }
+input { font-family: inherit; }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
+
+:root {
+  --primary: #2563eb;
+  --primary-rgb: 37, 99, 235;
+  --primary-light: #60a5fa;
+  --primary-dark: #1e40af;
+  --bg: #f1f5f9;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --text: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --border: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.15);
+  --glow: rgba(37, 99, 235, 0.35);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --font-size-base: 15px;
+  --header-h: 56px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.theme-minimal  { --primary:#2563eb;--primary-rgb:37,99,235;--primary-light:#60a5fa;--primary-dark:#1e40af;--bg:#f1f5f9;--surface:#ffffff;--surface-2:#f8fafc;--text:#0f172a;--text-secondary:#475569;--text-muted:#94a3b8;--border:rgba(15,23,42,0.08);--border-strong:rgba(15,23,42,0.15);--glow:rgba(37,99,235,0.35);}
+body.theme-nature   { --primary:#16a34a;--primary-rgb:22,163,74;--primary-light:#4ade80;--primary-dark:#166534;--bg:#f0fdf4;--surface:#ffffff;--surface-2:#f8fafc;--text:#14532d;--text-secondary:#166534;--text-muted:#65a30d;--border:rgba(22,101,52,0.08);--border-strong:rgba(22,101,52,0.15);--glow:rgba(22,163,74,0.35);}
+body.theme-ocean    { --primary:#0284c7;--primary-rgb:2,132,199;--primary-light:#38bdf8;--primary-dark:#075985;--bg:#f0f9ff;--surface:#ffffff;--surface-2:#e0f2fe;--text:#0c4a6e;--text-secondary:#0369a1;--text-muted:#0ea5e9;--border:rgba(3,105,161,0.1);--border-strong:rgba(3,105,161,0.18);--glow:rgba(2,132,199,0.35);}
+body.theme-sunset   { --primary:#ea580c;--primary-rgb:234,88,12;--primary-light:#fb923c;--primary-dark:#9a3412;--bg:#fff7ed;--surface:#ffffff;--surface-2:#ffedd5;--text:#7c2d12;--text-secondary:#9a3412;--text-muted:#f59e0b;--border:rgba(154,52,18,0.1);--border-strong:rgba(154,52,18,0.18);--glow:rgba(234,88,12,0.35);}
+body.theme-cute     { --primary:#db2777;--primary-rgb:219,39,119;--primary-light:#f472b6;--primary-dark:#831843;--bg:#fdf2f8;--surface:#ffffff;--surface-2:#fce7f3;--text:#831843;--text-secondary:#9d174d;--text-muted:#ec4899;--border:rgba(159,18,57,0.1);--border-strong:rgba(159,18,57,0.18);--glow:rgba(219,39,119,0.35);}
+body.theme-tech     { --primary:#f97316;--primary-rgb:249,115,22;--primary-light:#fb923c;--primary-dark:#7c2d12;--bg:#0f172a;--surface:#1e293b;--surface-2:#0f172a;--text:#f1f5f9;--text-secondary:#cbd5e1;--text-muted:#94a3b8;--border:rgba(255,255,255,0.08);--border-strong:rgba(255,255,255,0.15);--glow:rgba(249,115,22,0.45);}
+body.theme-dark     { --primary:#8b5cf6;--primary-rgb:139,92,246;--primary-light:#a78bfa;--primary-dark:#5b21b6;--bg:#0f172a;--surface:#1e1b3c;--surface-2:#18182b;--text:#f8fafc;--text-secondary:#cbd5e1;--text-muted:#94a3b8;--border:rgba(255,255,255,0.08);--border-strong:rgba(255,255,255,0.15);--glow:rgba(139,92,246,0.5);}
+body.theme-retro    { --primary:#c2410c;--primary-rgb:194,65,12;--primary-light:#f97316;--primary-dark:#7c2d12;--bg:#fef3c7;--surface:#fffbeb;--surface-2:#fde68a;--text:#78350f;--text-secondary:#92400e;--text-muted:#d97706;--border:rgba(124,45,18,0.12);--border-strong:rgba(124,45,18,0.2);--glow:rgba(194,65,12,0.4);}
+body.theme-midnight { --primary:#06b6d4;--primary-rgb:6,182,212;--primary-light:#22d3ee;--primary-dark:#155e75;--bg:#042f2e;--surface:#0f3a3a;--surface-2:#134e4a;--text:#ecfeff;--text-secondary:#a5f3fc;--text-muted:#67e8f9;--border:rgba(34,211,238,0.12);--border-strong:rgba(34,211,238,0.2);--glow:rgba(6,182,212,0.5);}
+
+.app-root {
+  max-width: 540px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  position: relative;
+}
+
+.page-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--header-h);
+  padding: 0 12px;
+  padding-top: env(safe-area-inset-top, 0);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+.page-title {
+  font-size: 1.05em;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.3px;
+}
+.page-back {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: calc(env(safe-area-inset-top, 0) / 2);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  transition: background var(--transition), transform var(--transition);
+}
+.page-back:active { transform: translateY(-50%) scale(0.9); background: var(--border); }
+.page-back svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.page-action {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: calc(env(safe-area-inset-top, 0) / 2);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+}
+.page-action:active { transform: translateY(-50%) scale(0.9); background: var(--border); }
+.page-action svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+.page-content {
+  flex: 1;
+  padding: 16px;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom, 0));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.page { display: none; }
+.page.active { display: block; animation: pageFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.bpm-card {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 20px 22px;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.bpm-card::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--primary-rgb),0.18) 0%, transparent 65%);
+  pointer-events: none;
+}
+.bpm-number {
+  font-size: 4.5em;
+  font-weight: 800;
+  line-height: 1.05;
+  color: var(--primary);
+  letter-spacing: -3px;
+  position: relative;
+  transition: transform 0.25s ease;
+  font-variant-numeric: tabular-nums;
+}
+.bpm-number.flash { transform: scale(1.05); }
+.bpm-unit {
+  color: var(--text-muted);
+  font-size: 0.8em;
+  letter-spacing: 4px;
+  margin-top: 8px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.bpm-info-row {
+  margin-top: 14px;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.bpm-info-row .chip {
+  background: var(--border);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.85em;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.bpm-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+.step-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 1.15em;
+  font-weight: 700;
+  transition: all var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+.step-btn:active { transform: scale(0.9); background: var(--primary); color: #fff; border-color: var(--primary); }
+.bpm-input {
+  width: 90px; height: 42px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--primary);
+  font-size: 1.35em;
+  font-weight: 800;
+  text-align: center;
+  outline: none;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition);
+}
+.bpm-input:focus { border-color: var(--primary); }
+
+.slider-row { margin-top: 14px; padding: 0 4px; }
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: transparent;
+  outline: none;
+  position: relative;
+}
+input[type="range"].slider::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%; transform: translateY(-50%);
+  width: var(--val, 50%);
+  height: 6px;
+  border-radius: 999px;
+  background: var(--primary);
+}
+input[type="range"].slider::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 50%; transform: translateY(-50%);
+  width: calc(100% - var(--val, 50%));
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border);
+}
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--primary);
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 2px 8px var(--glow);
+  transition: transform 0.15s ease;
+}
+input[type="range"].slider::-webkit-slider-thumb:active { transform: scale(1.15); }
+input[type="range"].slider::-moz-range-thumb {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--primary);
+  cursor: pointer;
+}
+
+.beat-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 14px;
+  box-shadow: var(--shadow-md);
+  margin-top: 16px;
+}
+.beat-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.beat-dot {
+  min-width: 40px;
+  min-height: 40px;
+  width: calc(100% / 8 - 8px);
+  max-width: 50px;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  border: 2px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95em;
+  transition: all 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  user-select: none;
+}
+.beat-dot.secondary { border-style: dashed; }
+.beat-dot.accent-flag {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 14px var(--glow);
+  transform: scale(1.12);
+}
+.beat-dot.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  transform: scale(1.15);
+  box-shadow: 0 4px 20px var(--glow);
+}
+.beat-dot.accent-flag.active,
+.beat-dot.accent-flash {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: scale(1.22);
+}
+
+.play-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px 0 6px;
+  position: relative;
+}
+.pulse-ring {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+}
+.pulse-ring.pulse { animation: pulseRing 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes pulseRing {
+  0%   { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0;   transform: translate(-50%, -50%) scale(1.55); }
+}
+.play-btn {
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 12px 32px var(--glow), inset 0 0 0 4px rgba(255,255,255,0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.play-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: rgba(255,255,255,0.35);
+  border-right-color: rgba(255,255,255,0.35);
+  transition: opacity 0.25s ease;
+  opacity: 0;
+}
+.play-btn.playing::after { animation: spin 1.2s linear infinite; opacity: 1; }
+.play-btn:active { transform: scale(0.93); }
+.play-btn svg { width: 46px; height: 46px; fill: currentColor; stroke: currentColor; stroke-width: 0; }
+
+@keyframes spin {
+  from { transform: rotate(0deg); } to { transform: rotate(360deg); }
+}
+
+.play-label {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85em;
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+.nav-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--text);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+  cursor: pointer;
+}
+.nav-card:active { transform: scale(0.95); background: var(--primary); color: #fff; border-color: var(--primary); }
+.nav-card:active .nav-icon { color: #fff; background: rgba(255,255,255,0.15); }
+.nav-icon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(var(--primary-rgb), 0.12);
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+.nav-icon svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.nav-title { font-weight: 700; font-size: 0.95em; }
+.nav-sub { color: var(--text-secondary); font-size: 0.75em; }
+
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.section-title {
+  font-size: 0.95em;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title svg { width: 18px; height: 18px; stroke: var(--primary); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.section-sub {
+  color: var(--text-secondary);
+  font-size: 0.82em;
+  margin-bottom: 12px;
+  margin-top: -4px;
+}
+
+.ts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.ts-item {
+  padding: 12px 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.95em;
+  font-weight: 700;
+  text-align: center;
+  transition: all var(--transition);
+}
+.ts-item.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 14px var(--glow);
+  transform: scale(1.04);
+}
+.ts-item:active { transform: scale(0.92); }
+
+.sub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+.sub-item {
+  padding: 12px 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font-size: 0.85em;
+  font-weight: 600;
+  text-align: center;
+  transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+.sub-item .symbol { font-size: 1.4em; }
+.sub-item.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.sound-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.sound-item {
+  padding: 14px 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font-size: 0.78em;
+  font-weight: 600;
+  text-align: center;
+  transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.sound-icon {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: rgba(var(--primary-rgb), 0.15);
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.sound-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.sound-item.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 14px var(--glow);
+}
+.sound-item.active .sound-icon { background: rgba(255,255,255,0.2); color: #fff; }
+.sound-item:active { transform: scale(0.94); }
+
+.vol-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.vol-label {
+  color: var(--text-secondary);
+  font-size: 0.85em;
+  font-weight: 600;
+  width: 80px;
+  flex-shrink: 0;
+}
+.vol-slider { flex: 1; }
+.vol-val {
+  width: 42px;
+  text-align: right;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.theme-item {
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.88em;
+  font-weight: 700;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all var(--transition);
+}
+.theme-swatch {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.6);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.theme-item.active { border-color: var(--primary); box-shadow: 0 4px 16px var(--glow); }
+.theme-item:active { transform: scale(0.97); }
+
+.font-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+.font-row .label { width: 80px; color: var(--text-secondary); font-size: 0.85em; font-weight: 600; }
+
+.practice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.practice-item {
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.practice-item:active { transform: scale(0.98); }
+.practice-item.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 16px var(--glow);
+}
+.practice-item.active .practice-sub { color: rgba(255,255,255,0.78); }
+.practice-item.active .practice-badge { background: rgba(255,255,255,0.22); color: #fff; }
+.practice-info { flex: 1; }
+.practice-name { font-weight: 700; font-size: 0.98em; }
+.practice-sub { color: var(--text-secondary); font-size: 0.8em; margin-top: 3px; }
+.practice-badge {
+  font-size: 0.72em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--border);
+  color: var(--text);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.practice-status {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 14px;
+  text-align: center;
+  margin-top: 4px;
+  box-shadow: var(--shadow-sm);
+}
+.practice-stage {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.95em;
+  letter-spacing: 1px;
+}
+.practice-countdown {
+  font-size: 3em;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -2px;
+  margin-top: 4px;
+}
+.practice-stop-btn {
+  margin-top: 12px;
+  padding: 8px 22px;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  font-weight: 700;
+  font-size: 0.85em;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  transition: all var(--transition);
+}
+.practice-stop-btn:active { transform: scale(0.94); background: #ef4444; color: #fff; }
+
+.sys-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.sys-row {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
+  cursor: pointer;
+}
+.sys-row:last-child { border-bottom: 0; }
+.sys-row:active { background: var(--border); }
+.sys-row .left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+.sys-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: rgba(var(--primary-rgb), 0.12);
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sys-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.sys-icon.danger { background: rgba(239,68,68,0.12); color: #ef4444; }
+.sys-text { display: flex; flex-direction: column; gap: 2px; }
+.sys-title { font-weight: 600; font-size: 0.95em; color: var(--text); }
+.sys-sub { color: var(--text-secondary); font-size: 0.8em; }
+.sys-right {
+  color: var(--text-secondary);
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.sys-right svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+.info-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  color: var(--text-secondary);
+  font-size: 0.82em;
+  line-height: 1.7;
+  box-shadow: var(--shadow-sm);
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(60px);
+  background: var(--text);
+  color: var(--surface);
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 0.85em;
+  font-weight: 600;
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+  max-width: 80%;
+  text-align: center;
+}
+.toast.show { opacity: 0.96; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 380px) {
+  .bpm-number { font-size: 3.8em; }
+  .play-btn { width: 100px; height: 100px; }
+  .beat-dot { min-width: 36px; min-height: 36px; font-size: 0.85em; }
+  .ts-grid { grid-template-columns: repeat(3, 1fr); }
+  .theme-grid { grid-template-columns: repeat(1, 1fr); }
+}
+
+@media (min-width: 540px) {
+  .app-root { margin-top: 8px; margin-bottom: 8px; border-radius: 28px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow-lg); }
+}
+</style>
+</head>
+<body class="theme-minimal">
+<div class="app-root" id="appRoot">
+
+<!-- ====== Home Page ====== -->
+<div class="page active" id="page-home">
+  <div class="page-header">
+    <div class="page-title">节拍器</div>
+    <button class="page-action" id="btnSoundTest" title="试听">
+      <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>
+    </button>
+  </div>
+  <div class="page-content">
+    <div class="bpm-card">
+      <div class="bpm-number" id="bpmDisplay">120</div>
+      <div class="bpm-unit">BPM</div>
+      <div class="bpm-info-row">
+        <span class="chip" id="chipTS">4/4</span>
+        <span class="chip" id="chipSub">四分音符</span>
+        <span class="chip" id="chipSound">点击</span>
+      </div>
+      <div class="bpm-controls">
+        <button class="step-btn" data-step="-10">-10</button>
+        <button class="step-btn" data-step="-1">−</button>
+        <input class="bpm-input" id="bpmInput" type="number" min="20" max="300" value="120" inputmode="numeric"/>
+        <button class="step-btn" data-step="1">+</button>
+        <button class="step-btn" data-step="10">+10</button>
+      </div>
+      <div class="slider-row">
+        <input class="slider" id="bpmSlider" type="range" min="20" max="300" value="120" />
+      </div>
+    </div>
+
+    <div class="beat-panel">
+      <div class="beat-row" id="beatRow"></div>
+      <div class="play-label" id="playStatus">点击播放</div>
+      <div class="play-wrap">
+        <div class="pulse-ring" id="pulseRing"></div>
+        <button class="play-btn" id="playBtn" title="播放/停止">
+          <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="nav-grid">
+      <a class="nav-card" href="#page-params">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
+        <span class="nav-title">参数</span>
+        <span class="nav-sub">拍号 · 细分</span>
+      </a>
+      <a class="nav-card" href="#page-sound">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><circle cx="17.5" cy="12" r="1.5"/></svg></div>
+        <span class="nav-title">声音</span>
+        <span class="nav-sub">音色 · 音量</span>
+      </a>
+      <a class="nav-card" href="#page-theme">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14 14 0 0 0 0 20"/></svg></div>
+        <span class="nav-title">主题</span>
+        <span class="nav-sub">配色 · 字体</span>
+      </a>
+      <a class="nav-card" href="#page-practice">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div>
+        <span class="nav-title">练习</span>
+        <span class="nav-sub">变速 · 模板</span>
+      </a>
+      <a class="nav-card" href="#page-system">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+        <span class="nav-title">系统</span>
+        <span class="nav-sub">重置 · 信息</span>
+      </a>
+      <a class="nav-card" id="btnTogglePlay">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg></div>
+        <span class="nav-title" id="navPlayLabel">播放</span>
+        <span class="nav-sub" id="navPlaySub">开始 / 停止</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ====== Parameters Page ====== -->
+<div class="page" id="page-params">
+  <div class="page-header">
+    <button class="page-back" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="page-title">参数设置</div>
+  </div>
+  <div class="page-content">
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>拍号选择</div>
+      <div class="section-sub">选择常用拍号，第一拍为重音</div>
+      <div class="ts-grid" id="tsGrid"></div>
+    </div>
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>节拍细分</div>
+      <div class="section-sub">细分音符会在主拍之间发出提示音</div>
+      <div class="sub-grid" id="subGrid"></div>
+    </div>
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>自定义重音</div>
+      <div class="section-sub">回到主界面，长按任意节拍点可切换额外重音（第一拍除外）</div>
+      <div class="practice-status" style="padding:14px;">
+        <div style="font-size:0.95em;color:var(--text-secondary);font-weight:600;">在首页节拍点上长按切换 →</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== Sound Page ====== -->
+<div class="page" id="page-sound">
+  <div class="page-header">
+    <button class="page-back" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="page-title">声音设置</div>
+  </div>
+  <div class="page-content">
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>音色选择</div>
+      <div class="section-sub">点击可立即试听当前音色</div>
+      <div class="sound-grid" id="soundGrid"></div>
+    </div>
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>音量调节</div>
+      <div class="vol-row">
+        <span class="vol-label">重音拍</span>
+        <input class="vol-slider slider" id="volAccent" type="range" min="0" max="100" value="85" />
+        <span class="vol-val" id="volAccentVal">85</span>
+      </div>
+      <div class="vol-row">
+        <span class="vol-label">普通拍</span>
+        <input class="vol-slider slider" id="volNormal" type="range" min="0" max="100" value="70" />
+        <span class="vol-val" id="volNormalVal">70</span>
+      </div>
+      <div class="vol-row">
+        <span class="vol-label">细分管</span>
+        <input class="vol-slider slider" id="volSub" type="range" min="0" max="100" value="55" />
+        <span class="vol-val" id="volSubVal">55</span>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>快速试听</div>
+      <div class="practice-status" style="padding:14px;">
+        <button class="practice-stop-btn" id="btnPreview" style="background:rgba(var(--primary-rgb),0.12);color:var(--primary);border-color:rgba(var(--primary-rgb),0.35);">
+          播放示例节奏
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== Theme Page ====== -->
+<div class="page" id="page-theme">
+  <div class="page-header">
+    <button class="page-back" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="page-title">主题与字体</div>
+  </div>
+  <div class="page-content">
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>配色主题</div>
+      <div class="theme-grid" id="themeGrid"></div>
+    </div>
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>字体大小</div>
+      <div class="font-row">
+        <span class="label">全局字号</span>
+        <input class="vol-slider slider" id="fontSlider" type="range" min="12" max="20" step="1" value="15"/>
+        <span class="vol-val" id="fontVal">15</span>
+      </div>
+    </div>
+    <div class="info-block">提示：主题与字体大小会立即生效，并自动保存在本地。</div>
+  </div>
+</div>
+
+<!-- ====== Practice Page ====== -->
+<div class="page" id="page-practice">
+  <div class="page-header">
+    <button class="page-back" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="page-title">练习模式</div>
+  </div>
+  <div class="page-content">
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>变速训练模板</div>
+      <div class="practice-list" id="practiceList"></div>
+    </div>
+    <div class="practice-status" id="practiceProgress" style="display:none;">
+      <div class="practice-stage" id="practiceStage">热身 · 40 BPM</div>
+      <div class="practice-countdown" id="practiceCountdown">00:60</div>
+      <button class="practice-stop-btn" id="practiceStop">停止练习</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== System Page ====== -->
+<div class="page" id="page-system">
+  <div class="page-header">
+    <button class="page-back" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="page-title">系统</div>
+  </div>
+  <div class="page-content">
+    <div class="section-card">
+      <div class="section-title"><svg viewBox="0 0 24 24"><path d="M19 9l-7-7-7 7 7 7zM5 13l7 7 7-7"/></svg>当前设置</div>
+      <div style="padding:0 16px;">
+        <div class="sys-row" style="padding:12px 0;">
+          <div class="left">
+            <div class="sys-icon"><svg viewBox="0 0 24 24"><path d="M8 3v3M16 3v3M3 11h18M5 6h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/></svg></div>
+            <div class="sys-text"><div class="sys-title">BPM</div><div class="sys-sub">当前每分钟节拍数</div></div>
+          </div>
+          <div class="sys-right"><span id="infoBPM">120</span></div>
+        </div>
+        <div class="sys-row" style="padding:12px 0;">
+          <div class="left">
+            <div class="sys-icon"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
+            <div class="sys-text"><div class="sys-title">拍号 / 细分</div><div class="sys-sub">小节配置</div></div>
+          </div>
+          <div class="sys-right" id="infoTS">4/4 · 四分</div>
+        </div>
+        <div class="sys-row" style="padding:12px 0;">
+          <div class="left">
+            <div class="sys-icon"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg></div>
+            <div class="sys-text"><div class="sys-title">音色</div><div class="sys-sub">节拍提示音</div></div>
+          </div>
+          <div class="sys-right" id="infoSound">点击</div>
+        </div>
+        <div class="sys-row" style="padding:12px 0;">
+          <div class="left">
+            <div class="sys-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div>
+            <div class="sys-text"><div class="sys-title">主题</div><div class="sys-sub">当前配色</div></div>
+          </div>
+          <div class="sys-right" id="infoTheme">简洁蓝</div>
+        </div>
+      </div>
+    </div>
+    <div class="sys-card" style="padding:0;">
+      <div class="sys-row" id="btnReset">
+        <div class="left">
+          <div class="sys-icon danger"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
+          <div class="sys-text"><div class="sys-title">恢复默认设置</div><div class="sys-sub">重置所有参数</div></div>
+        </div>
+        <div class="sys-right" style="color:#ef4444;"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+      </div>
+      <div class="sys-row" id="btnClearStorage">
+        <div class="left">
+          <div class="sys-icon danger"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></div>
+          <div class="sys-text"><div class="sys-title">清除本地存储</div><div class="sys-sub">移除保存项</div></div>
+        </div>
+        <div class="sys-right" style="color:#ef4444;"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+      </div>
+    </div>
+    <div class="info-block">
+      关于：本节拍器完全在本地浏览器运行，不读取或写入任何 Cookie，不依赖外部网络资源。
+      <br /><br />
+      版本：2.0 · 单文件离线版
+      <br />
+      支持 20 - 300 BPM · 5 种音色 · 9 套主题 · 5 套训练模板
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  const DEFAULT_STATE = {
+    bpm: 120,
+    beats: 4,
+    beatValue: 4,
+    subdivision: 'quarter',
+    soundType: 'click',
+    volumeAccent: 85,
+    volumeNormal: 70,
+    volumeSub: 55,
+    theme: 'minimal',
+    fontSize: 15,
+    accentBeats: []
+  };
+  const STORAGE_KEY = 'metronome_single_v2';
+  let state = loadState();
+
+  const THEMES = [
+    { id: 'minimal',  name: '简洁蓝',   color: '#2563eb' },
+    { id: 'nature',   name: '自然绿',   color: '#16a34a' },
+    { id: 'ocean',    name: '海洋青',   color: '#0284c7' },
+    { id: 'sunset',   name: '日落橙',   color: '#ea580c' },
+    { id: 'cute',     name: '可爱粉',   color: '#db2777' },
+    { id: 'tech',     name: '科技黑',   color: '#f97316' },
+    { id: 'dark',     name: '暗夜紫',   color: '#8b5cf6' },
+    { id: 'retro',    name: '复古黄',   color: '#c2410c' },
+    { id: 'midnight', name: '午夜青',   color: '#06b6d4' }
+  ];
+  const SUBDIVISIONS = [
+    { id: 'quarter',     name: '四分音符',    mult: 1,   symbol: '♩' },
+    { id: 'eighth',      name: '八分音符',    mult: 2,   symbol: '♫' },
+    { id: 'sixteenth',   name: '十六分音符',  mult: 4,   symbol: '♬' },
+    { id: 'triplet',     name: '三连音',      mult: 3,   symbol: '3' },
+    { id: 'half',        name: '二分音符',    mult: 0.5, symbol: '♩' },
+    { id: 'quintuplet',  name: '五连音',      mult: 5,   symbol: '5' }
+  ];
+  const TIME_SIGS = [
+    { beats: 2,  beatValue: 4 },
+    { beats: 3,  beatValue: 4 },
+    { beats: 4,  beatValue: 4 },
+    { beats: 5,  beatValue: 4 },
+    { beats: 6,  beatValue: 8 },
+    { beats: 7,  beatValue: 8 },
+    { beats: 8,  beatValue: 8 },
+    { beats: 9,  beatValue: 8 },
+    { beats: 12, beatValue: 8 }
+  ];
+  const SOUNDS = [
+    { id: 'click',    name: '点击',   freq: 1400, type: 'square',   dur: 0.035 },
+    { id: 'wood',     name: '木鱼',   freq: 350,  type: 'triangle', dur: 0.08  },
+    { id: 'electronic', name: '电子', freq: 880,  type: 'sawtooth', dur: 0.04  },
+    { id: 'metal',    name: '金属',   freq: 1200, type: 'sine',     dur: 0.12  },
+    { id: 'drum',     name: '鼓声',   freq: 220,  type: 'square',   dur: 0.10  }
+  ];
+  const PRACTICE_TEMPLATES = [
+    {
+      id: 'warmup', name: '慢速热身', stages: [
+        { bpm: 40,  seconds: 60 },
+        { bpm: 60,  seconds: 60 },
+        { bpm: 80,  seconds: 60 },
+        { bpm: 100, seconds: 60 }
+      ]
+    },
+    {
+      id: 'steady', name: '稳定提速', stages: [
+        { bpm: 80,  seconds: 60 },
+        { bpm: 100, seconds: 60 },
+        { bpm: 120, seconds: 90 },
+        { bpm: 140, seconds: 60 }
+      ]
+    },
+    {
+      id: 'progressive', name: '渐进挑战', stages: [
+        { bpm: 100, seconds: 45 },
+        { bpm: 120, seconds: 45 },
+        { bpm: 140, seconds: 45 },
+        { bpm: 160, seconds: 60 },
+        { bpm: 180, seconds: 60 }
+      ]
+    },
+    {
+      id: 'variable', name: '高低变速', stages: [
+        { bpm: 80,  seconds: 30 },
+        { bpm: 120, seconds: 30 },
+        { bpm: 160, seconds: 30 },
+        { bpm: 110, seconds: 60 },
+        { bpm: 150, seconds: 30 },
+        { bpm: 100, seconds: 60 }
+      ]
+    },
+    {
+      id: 'extreme', name: '极限冲刺', stages: [
+        { bpm: 180, seconds: 30 },
+        { bpm: 200, seconds: 30 },
+        { bpm: 220, seconds: 30 },
+        { bpm: 240, seconds: 30 }
+      ]
+    }
+  ];
+  /* ===== Audio Engine ===== */
+  let audioCtx = null;
+  let isPlaying = false;
+  let scheduledTime = 0;
+  let currentBeat = 0;
+  let currentSub = 0;
+  let scheduledEvents = [];
+  let animationFrame = null;
+
+  let previewTimer = null;
+
+  let practiceActive = false;
+  let practiceTimer = null;
+  let practiceCurrentTemplate = null;
+  let practiceStageIndex = 0;
+  let practiceStageEndsAt = 0;
+
+  function ensureAudio() {
+    if (!audioCtx) {
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch(e) { showToast('浏览器不支持音频'); }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function scheduleClick(time, beatType) {
+    const ctx = ensureAudio();
+    if (!ctx) return;
+    const sound = SOUNDS.find(s => s.id === state.soundType) || SOUNDS[0];
+    let freq = sound.freq;
+    let vol;
+    if (beatType === 'accent')      vol = state.volumeAccent / 100 * 0.8;
+    else if (beatType === 'normal') vol = state.volumeNormal / 100 * 0.65;
+    else                            vol = state.volumeSub    / 100 * 0.5;
+    let f = freq;
+    if (beatType === 'accent') f = freq * 1.1;
+    if (beatType === 'sub')    f = freq * 0.95;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = sound.type;
+    osc.frequency.setValueAtTime(f, time);
+
+    gain.gain.setValueAtTime(0.0001, time);
+    gain.gain.exponentialRampToValueAtTime(vol, time + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, time + sound.dur);
+
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(time);
+    osc.stop(time + sound.dur + 0.02);
+  }
+
+  function beatIntervalSec() {
+    return 60.0 / state.bpm;
+  }
+  function subdivisionMult() {
+    const s = SUBDIVISIONS.find(x => x.id === state.subdivision);
+    return s ? s.mult : 1;
+  }
+
+  function advanceScheduler() {
+    const ctx = ensureAudio();
+    if (!ctx) return;
+    const lookAhead = 0.1;
+    const interval = beatIntervalSec();
+    const subMult = subdivisionMult();
+    const subInterval = interval / subMult;
+
+    while (scheduledTime < ctx.currentTime + lookAhead) {
+      const isMainBeat = currentSub === 0;
+      let type = 'normal';
+      if (isMainBeat) {
+        const beatIdx = currentBeat % state.beats;
+        if (beatIdx === 0) type = 'accent';
+        else if (state.accentBeats.includes(beatIdx)) type = 'accent';
+        else type = 'normal';
+      } else {
+        type = 'sub';
+      }
+      scheduleClick(scheduledTime, type);
+      const fireAt = scheduledTime;
+      const mainBeat = currentBeat;
+      const subIdx = currentSub;
+      const isMain = isMainBeat;
+      scheduledEvents.push({ time: fireAt, beat: mainBeat, sub: subIdx, isMain: isMain, type: type });
+
+      scheduledTime += subInterval;
+      currentSub++;
+      if (currentSub >= subMult) {
+        currentSub = 0;
+        currentBeat++;
+      }
+    }
+  }
+
+  function schedulerLoop() {
+    if (!isPlaying) return;
+    advanceScheduler();
+    const now = audioCtx ? audioCtx.currentTime : 0;
+    while (scheduledEvents.length && scheduledEvents[0].time <= now) {
+      const ev = scheduledEvents.shift();
+      if (ev.isMain) {
+        flashBeat(ev.beat % state.beats, ev.type === 'accent');
+        flashPulse();
+      }
+    }
+    animationFrame = requestAnimationFrame(schedulerLoop);
+  }
+
+  function startPlayback() {
+    const ctx = ensureAudio();
+    if (!ctx) return;
+    isPlaying = true;
+    currentBeat = 0;
+    currentSub = 0;
+    scheduledTime = ctx.currentTime + 0.05;
+    scheduledEvents = [];
+    updatePlayUI();
+    schedulerLoop();
+  }
+  function stopPlayback() {
+    isPlaying = false;
+    if (animationFrame) cancelAnimationFrame(animationFrame);
+    animationFrame = null;
+    if (previewTimer) { clearTimeout(previewTimer); previewTimer = null; }
+    currentBeat = 0; currentSub = 0;
+    scheduledEvents = [];
+    clearActiveBeats();
+    updatePlayUI();
+  }
+  function togglePlayback() {
+    if (isPlaying) stopPlayback();
+    else startPlayback();
+  }
+
+  /* ===== UI Updates ===== */
+  function updatePlayUI() {
+    const btn = document.getElementById('playBtn');
+    const icon = document.getElementById('playIcon');
+    const status = document.getElementById('playStatus');
+    const navLabel = document.getElementById('navPlayLabel');
+    const navSub = document.getElementById('navPlaySub');
+    if (btn && icon) {
+      if (isPlaying) {
+        btn.classList.add('playing');
+        icon.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
+      } else {
+        btn.classList.remove('playing');
+        icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+      }
+    }
+    if (status) status.textContent = isPlaying ? '正在播放' : '点击播放';
+    if (navLabel) navLabel.textContent = isPlaying ? '停止' : '播放';
+    if (navSub)   navSub.textContent   = isPlaying ? '停止节拍' : '开始播放';
+  }
+
+  function renderBeats() {
+    const row = document.getElementById('beatRow');
+    if (!row) return;
+    row.innerHTML = '';
+    for (let i = 0; i < state.beats; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'beat-dot';
+      dot.dataset.beat = String(i);
+      if (state.accentBeats.includes(i)) dot.classList.add('accent-flag');
+      dot.textContent = String(i + 1);
+      addAccentToggle(dot, i);
+      row.appendChild(dot);
+    }
+  }
+  function flashBeat(index, isAccent) {
+    const dots = document.querySelectorAll('.beat-dot');
+    if (!dots.length) return;
+    dots.forEach(d => {
+      d.classList.remove('active', 'accent-flash');
+      const idx = Number(d.dataset.beat);
+      if (idx === index) {
+        if (isAccent || state.accentBeats.includes(idx)) d.classList.add('accent-flash');
+        else d.classList.add('active');
+      }
+    });
+    const bpmDisp = document.getElementById('bpmDisplay');
+    if (bpmDisp) {
+      bpmDisp.classList.remove('flash');
+      void bpmDisp.offsetWidth;
+      bpmDisp.classList.add('flash');
+    }
+  }
+  function flashPulse() {
+    const ring = document.getElementById('pulseRing');
+    if (!ring) return;
+    ring.classList.remove('pulse');
+    void ring.offsetWidth;
+    ring.classList.add('pulse');
+  }
+  function clearActiveBeats() {
+    document.querySelectorAll('.beat-dot.active, .beat-dot.accent-flash').forEach(d => {
+      d.classList.remove('active', 'accent-flash');
+    });
+  }
+  function addAccentToggle(el, index) {
+    let pressTimer = null;
+    let handled = false;
+    const start = () => {
+      handled = false;
+      pressTimer = setTimeout(() => {
+        if (index === 0) { showToast('第一拍始终重音'); return; }
+        const i = state.accentBeats.indexOf(index);
+        if (i >= 0) state.accentBeats.splice(i, 1);
+        else state.accentBeats.push(index);
+        saveState();
+        renderBeats();
+        showToast('已切换重音');
+        handled = true;
+      }, 450);
+    };
+    const cancel = () => { if (pressTimer) clearTimeout(pressTimer); pressTimer = null; };
+    el.addEventListener('touchstart', start, { passive: true });
+    el.addEventListener('touchend',   cancel);
+    el.addEventListener('touchmove',  cancel);
+    el.addEventListener('mousedown', start);
+    el.addEventListener('mouseup',   cancel);
+    el.addEventListener('mouseleave', cancel);
+    el.addEventListener('click', (e) => { if (handled) e.preventDefault(); });
+  }
+
+  /* ===== BPM / Value UI ===== */
+  function setBpm(value) {
+    value = Math.max(20, Math.min(300, Math.round(Number(value) || 20)));
+    state.bpm = value;
+    document.getElementById('bpmDisplay').textContent = value;
+    const input = document.getElementById('bpmInput');
+    if (input) input.value = value;
+    const slider = document.getElementById('bpmSlider');
+    if (slider) { slider.value = value; updateSliderFill(slider); }
+    const info = document.getElementById('infoBPM');
+    if (info) info.textContent = value;
+    saveState();
+  }
+  function updateSliderFill(el) {
+    const min = Number(el.min) || 0;
+    const max = Number(el.max) || 100;
+    const val = Number(el.value);
+    const pct = ((val - min) / (max - min)) * 100;
+    el.style.setProperty('--val', pct + '%');
+  }
+
+  /* ===== Navigation (Pages) ===== */
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) target.classList.add('active');
+    window.scrollTo(0, 0);
+    const content = target && target.querySelector('.page-content');
+    if (content) { content.scrollTop = 0; }
+    if (id === 'page-system') refreshSystemInfo();
+    if (id === 'page-practice') updatePracticeUI();
+  }
+  function handleHashChange() {
+    const h = (location.hash || '').replace('#', '');
+    if (!h) { showPage('page-home'); return; }
+    if (['page-home', 'page-params', 'page-sound', 'page-theme', 'page-practice', 'page-system'].includes(h)) {
+      showPage(h);
+    } else {
+      showPage('page-home');
+    }
+  }
+
+  /* ===== Data panels ===== */
+  function renderTimeSigs() {
+    const grid = document.getElementById('tsGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    TIME_SIGS.forEach(ts => {
+      const el = document.createElement('div');
+      el.className = 'ts-item';
+      if (ts.beats === state.beats && ts.beatValue === state.beatValue) el.classList.add('active');
+      el.textContent = ts.beats + '/' + ts.beatValue;
+      el.addEventListener('click', () => {
+        state.beats = ts.beats; state.beatValue = ts.beatValue;
+        state.accentBeats = state.accentBeats.filter(i => i < ts.beats);
+        saveState();
+        renderTimeSigs();
+        renderBeats();
+        updateChips();
+      });
+      grid.appendChild(el);
+    });
+  }
+  function renderSubGrid() {
+    const grid = document.getElementById('subGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    SUBDIVISIONS.forEach(s => {
+      const el = document.createElement('div');
+      el.className = 'sub-item';
+      if (s.id === state.subdivision) el.classList.add('active');
+      el.innerHTML = '<span class="symbol">' + s.symbol + '</span><span>' + s.name + '</span>';
+      el.addEventListener('click', () => { state.subdivision = s.id; saveState(); renderSubGrid(); updateChips(); });
+      grid.appendChild(el);
+    });
+  }
+  function renderSoundGrid() {
+    const grid = document.getElementById('soundGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    SOUNDS.forEach(s => {
+      const el = document.createElement('div');
+      el.className = 'sound-item';
+      if (s.id === state.soundType) el.classList.add('active');
+      el.innerHTML = '<div class="sound-icon"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg></div><span>' + s.name + '</span>';
+      el.addEventListener('click', () => {
+        state.soundType = s.id; saveState(); renderSoundGrid(); updateChips();
+        const ctx = ensureAudio();
+        if (ctx) scheduleClick(ctx.currentTime + 0.02, 'accent');
+      });
+      grid.appendChild(el);
+    });
+  }
+  function renderThemeGrid() {
+    const grid = document.getElementById('themeGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    THEMES.forEach(t => {
+      const el = document.createElement('div');
+      el.className = 'theme-item';
+      if (t.id === state.theme) el.classList.add('active');
+      el.innerHTML = '<div class="theme-swatch" style="background:' + t.color + '"></div><span>' + t.name + '</span>';
+      el.addEventListener('click', () => { state.theme = t.id; saveState(); applyTheme(); renderThemeGrid(); });
+      grid.appendChild(el);
+    });
+  }
+  function applyTheme() {
+    document.body.className = 'theme-' + state.theme;
+  }
+  function applyFontSize() {
+    document.documentElement.style.setProperty('--font-size-base', state.fontSize + 'px');
+  }
+  function updateChips() {
+    const chipTS = document.getElementById('chipTS');
+    const chipSub = document.getElementById('chipSub');
+    const chipSound = document.getElementById('chipSound');
+    const infoTS = document.getElementById('infoTS');
+    const infoSound = document.getElementById('infoSound');
+    const infoTheme = document.getElementById('infoTheme');
+    if (chipTS) chipTS.textContent = state.beats + '/' + state.beatValue;
+    if (chipSub) {
+      const s = SUBDIVISIONS.find(x => x.id === state.subdivision);
+      chipSub.textContent = s ? s.name : '四分音符';
+    }
+    if (chipSound) {
+      const s = SOUNDS.find(x => x.id === state.soundType);
+      chipSound.textContent = s ? s.name : '点击';
+    }
+    if (infoTS) {
+      const s = SUBDIVISIONS.find(x => x.id === state.subdivision);
+      const short = (s && s.name.indexOf('四分') === 0) ? '四分' : (s ? s.name.substring(0, 2) : '四分');
+      infoTS.textContent = state.beats + '/' + state.beatValue + ' · ' + short;
+    }
+    if (infoSound) {
+      const s = SOUNDS.find(x => x.id === state.soundType);
+      infoSound.textContent = s ? s.name : '点击';
+    }
+    if (infoTheme) {
+      const t = THEMES.find(x => x.id === state.theme);
+      infoTheme.textContent = t ? t.name : '简洁蓝';
+    }
+  }
+  function refreshSystemInfo() {
+    updateChips();
+    const bpmEl = document.getElementById('infoBPM');
+    if (bpmEl) bpmEl.textContent = state.bpm;
+  }
+
+  /* ===== Practice Template ===== */
+  function renderPracticeList() {
+    const grid = document.getElementById('practiceList');
+    if (!grid) return;
+    grid.innerHTML = '';
+    PRACTICE_TEMPLATES.forEach(tpl => {
+      const el = document.createElement('div');
+      el.className = 'practice-item';
+      if (practiceActive && practiceCurrentTemplate && practiceCurrentTemplate.id === tpl.id) el.classList.add('active');
+      const summary = tpl.stages.map(s => s.bpm).join(' → ');
+      const totalSec = tpl.stages.reduce((a, b) => a + b.seconds, 0);
+      el.innerHTML = '<div class="practice-info"><div class="practice-name">' + tpl.name + '</div><div class="practice-sub">' + summary + '</div></div><div class="practice-badge">' + totalSec + 's</div>';
+      el.addEventListener('click', () => startPractice(tpl));
+      grid.appendChild(el);
+    });
+  }
+  function startPractice(tpl) {
+    if (practiceActive) stopPractice();
+    practiceActive = true;
+    practiceCurrentTemplate = tpl;
+    practiceStageIndex = 0;
+    beginPracticeStage();
+    if (!isPlaying) startPlayback();
+    updatePracticeUI();
+  }
+  function beginPracticeStage() {
+    const stage = practiceCurrentTemplate.stages[practiceStageIndex];
+    state.bpm = stage.bpm;
+    setBpm(state.bpm);
+    practiceStageEndsAt = Date.now() + stage.seconds * 1000;
+    if (practiceTimer) clearInterval(practiceTimer);
+    practiceTimer = setInterval(updatePracticeTick, 200);
+  }
+  function updatePracticeTick() {
+    const remain = Math.max(0, practiceStageEndsAt - Date.now());
+    const totalSec = Math.ceil(remain / 1000);
+    const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
+    const ss = String(totalSec % 60).padStart(2, '0');
+    const elCountdown = document.getElementById('practiceCountdown');
+    const elStage = document.getElementById('practiceStage');
+    if (elCountdown) elCountdown.textContent = mm + ':' + ss;
+    if (elStage && practiceCurrentTemplate) {
+      const stage = practiceCurrentTemplate.stages[practiceStageIndex];
+      const idx = practiceStageIndex + 1;
+      const total = practiceCurrentTemplate.stages.length;
+      elStage.textContent = '阶段 ' + idx + '/' + total + ' · ' + stage.bpm + ' BPM';
+    }
+    if (remain <= 0) {
+      practiceStageIndex++;
+      if (practiceStageIndex >= practiceCurrentTemplate.stages.length) {
+        stopPractice();
+        showToast('练习完成');
+        return;
+      }
+      beginPracticeStage();
+      updatePracticeUI();
+    }
+  }
+  function stopPractice() {
+    if (practiceTimer) clearInterval(practiceTimer);
+    practiceTimer = null;
+    practiceActive = false;
+    practiceCurrentTemplate = null;
+    practiceStageIndex = 0;
+    const prog = document.getElementById('practiceProgress');
+    if (prog) prog.style.display = 'none';
+    renderPracticeList();
+  }
+  function updatePracticeUI() {
+    const prog = document.getElementById('practiceProgress');
+    if (!prog) return;
+    if (practiceActive) {
+      prog.style.display = 'block';
+      updatePracticeTick();
+    } else {
+      prog.style.display = 'none';
+    }
+    renderPracticeList();
+  }
+
+  /* ===== Storage ===== */
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return Object.assign({}, DEFAULT_STATE);
+      const data = JSON.parse(raw);
+      const merged = Object.assign({}, DEFAULT_STATE, data);
+      if (typeof merged.accentBeats === 'undefined') merged.accentBeats = [];
+      return merged;
+    } catch (e) {
+      return Object.assign({}, DEFAULT_STATE);
+    }
+  }
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  }
+  function resetAll() {
+    state = Object.assign({}, DEFAULT_STATE, { accentBeats: [] });
+    saveState();
+    setStateToUI();
+    showToast('已恢复默认');
+  }
+  function clearStorage() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+    state = Object.assign({}, DEFAULT_STATE, { accentBeats: [] });
+    setStateToUI();
+    showToast('本地存储已清除');
+  }
+
+  /* ===== Toast ===== */
+  let toastTimer = null;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1400);
+  }
+
+  /* ===== Init state to UI ===== */
+  function setStateToUI() {
+    setBpm(state.bpm);
+    applyTheme();
+    applyFontSize();
+    renderTimeSigs();
+    renderSubGrid();
+    renderSoundGrid();
+    renderThemeGrid();
+    renderBeats();
+    updateChips();
+    const fontSlider = document.getElementById('fontSlider');
+    const fontVal = document.getElementById('fontVal');
+    if (fontSlider) { fontSlider.value = state.fontSize; updateSliderFill(fontSlider); }
+    if (fontVal) fontVal.textContent = state.fontSize;
+    const vA = document.getElementById('volAccent');
+    const vAV = document.getElementById('volAccentVal');
+    const vN = document.getElementById('volNormal');
+    const vNV = document.getElementById('volNormalVal');
+    const vS = document.getElementById('volSub');
+    const vSV = document.getElementById('volSubVal');
+    if (vA) { vA.value = state.volumeAccent; updateSliderFill(vA); }
+    if (vAV) vAV.textContent = state.volumeAccent;
+    if (vN) { vN.value = state.volumeNormal; updateSliderFill(vN); }
+    if (vNV) vNV.textContent = state.volumeNormal;
+    if (vS) { vS.value = state.volumeSub; updateSliderFill(vS); }
+    if (vSV) vSV.textContent = state.volumeSub;
+    updatePlayUI();
+  }
+
+  /* ===== DOM Bindings ===== */
+  function bind() {
+    document.getElementById('playBtn').addEventListener('click', togglePlayback);
+    document.getElementById('btnTogglePlay').addEventListener('click', togglePlayback);
+
+    document.querySelectorAll('.step-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const step = Number(btn.dataset.step);
+        setBpm(state.bpm + step);
+      });
+    });
+    const bpmInput = document.getElementById('bpmInput');
+    bpmInput.addEventListener('input', (e) => {
+      const v = Math.max(20, Math.min(300, Number(e.target.value) || 20));
+      setBpm(v);
+    });
+    bpmInput.addEventListener('blur', (e) => { e.target.value = state.bpm; });
+
+    const bpmSlider = document.getElementById('bpmSlider');
+    bpmSlider.addEventListener('input', (e) => {
+      updateSliderFill(e.target);
+      document.getElementById('bpmDisplay').textContent = e.target.value;
+    });
+    bpmSlider.addEventListener('change', (e) => setBpm(e.target.value));
+
+    ['volAccent', 'volNormal', 'volSub'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', () => {
+        updateSliderFill(el);
+        const v = Number(el.value);
+        if (id === 'volAccent') { state.volumeAccent = v; document.getElementById('volAccentVal').textContent = v; }
+        if (id === 'volNormal') { state.volumeNormal = v; document.getElementById('volNormalVal').textContent = v; }
+        if (id === 'volSub')    { state.volumeSub    = v; document.getElementById('volSubVal').textContent    = v; }
+        saveState();
+      });
+    });
+
+    const fontSlider = document.getElementById('fontSlider');
+    fontSlider.addEventListener('input', () => {
+      updateSliderFill(fontSlider);
+      state.fontSize = Number(fontSlider.value);
+      document.getElementById('fontVal').textContent = state.fontSize;
+      applyFontSize();
+      saveState();
+    });
+
+    document.querySelectorAll('[data-back]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        location.hash = 'page-home';
+      });
+    });
+    document.querySelectorAll('.nav-card[href^="#"]').forEach(card => {
+      card.addEventListener('click', (e) => {
+        const href = card.getAttribute('href');
+        if (href && href.indexOf('#') === 0) {
+          e.preventDefault();
+          location.hash = href.substring(1);
+        }
+      });
+    });
+
+    document.getElementById('btnSoundTest').addEventListener('click', () => {
+      const ctx = ensureAudio();
+      if (ctx) scheduleClick(ctx.currentTime + 0.02, 'accent');
+    });
+    document.getElementById('btnPreview').addEventListener('click', () => {
+      const ctx = ensureAudio();
+      if (!ctx) return;
+      if (previewTimer) { clearTimeout(previewTimer); previewTimer = null; }
+      const base = ctx.currentTime + 0.05;
+      const interval = 60 / state.bpm;
+      for (let i = 0; i < 8; i++) {
+        scheduleClick(base + i * interval, i === 0 ? 'accent' : (i % 2 === 0 ? 'accent' : 'normal'));
+      }
+      showToast('预览播放');
+    });
+
+    document.getElementById('btnReset').addEventListener('click', resetAll);
+    document.getElementById('btnClearStorage').addEventListener('click', clearStorage);
+    document.getElementById('practiceStop').addEventListener('click', () => { stopPractice(); showToast('已停止练习'); });
+
+    window.addEventListener('hashchange', handleHashChange);
+  }
+
+  /* ===== Init ===== */
+  function init() {
+    setStateToUI();
+    bind();
+    handleHashChange();
+    if (!location.hash) location.hash = 'page-home';
+    setTimeout(handleHashChange, 0);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</div>
+</body>
+</html>

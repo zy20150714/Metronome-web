@@ -2,1901 +2,1909 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2563eb">
 <title>节拍器</title>
 <style>
-/* === RESET & BASE === */
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Helvetica,Arial,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
-button{font-family:inherit;border:0;cursor:pointer;outline:none}
-input{font-family:inherit}
+/* === RESET === */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow-x:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif;background:#f1f5f9;color:#0f172a;line-height:1.5;font-size:15px;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;border:0;cursor:pointer;outline:none;background:none}
+input{font-family:inherit;border:0;outline:none;background:none}
+a{text-decoration:none;color:inherit}
 ::-webkit-scrollbar{width:0;height:0}
-input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-input[type=number]{-moz-appearance:textfield}
 
-/* === ROOT TOKENS (default = minimal) === */
-:root{--fs:15px;--p:#2563eb;--pr:37,99,235;--pd:#1e40af;--pl:#60a5fa;--gl:rgba(37,99,235,.3);--bg:#f1f5f9;--srf:#fff;--sr2:#f8fafc;--tx:#0f172a;--ts:#475569;--tm:#94a3b8;--bd:rgba(15,23,42,.08);--bs:rgba(15,23,42,.15);--sh1:0 1px 3px rgba(0,0,0,.06);--sh2:0 4px 12px rgba(0,0,0,.1);--sh3:0 8px 32px rgba(0,0,0,.15);--rl:20px;--rm:14px;--rs:10px;--fh:56px;--tr:.2s}
+/* === CSS VARS (default = minimal light) === */
+:root{
+  --p:#2563eb; --p-rgb:37,99,235;
+  --bg:#f1f5f9; --srf:#ffffff; --sr2:#f8fafc;
+  --tx:#0f172a; --ts:#475569; --tm:#94a3b8;
+  --bd:rgba(15,23,42,.08); --bs:rgba(15,23,42,.15);
+  --gl:rgba(37,99,235,.3);
+  --sh1:0 1px 3px rgba(0,0,0,.06);
+  --sh2:0 4px 12px rgba(0,0,0,.1);
+  --sh3:0 8px 32px rgba(0,0,0,.15);
+  --rc:20px; --rm:14px; --rs:10px; --hr:56px;
+  --fs:15px;
+}
 
 /* === LAYOUT === */
-.app{max-width:540px;margin:0 auto;min-height:100vh;min-height:100dvh;background:var(--bg);position:relative}
+.app{width:100%;min-height:100%;min-height:100vh;background:var(--bg);position:relative;display:block}
 
 /* === HEADER === */
-.hdr{position:sticky;top:0;z-index:10;height:var(--fh);padding:0 12px;padding-top:env(safe-area-inset-top,0);background:var(--srf);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:center;box-shadow:var(--sh1)}
-.hdr-t{font-size:1.1em;font-weight:800;color:var(--tx);letter-spacing:.3px}
-.bk{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--tx);background:transparent}
-.bk:active{background:var(--bd)}
-.bk svg{width:22px;height:22px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.ac{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--tx);background:transparent}
-.ac:active{background:var(--bd)}
-.ac svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hd{position:sticky;top:0;left:0;width:100%;height:var(--hr);padding-top:env(safe-area-inset-top,0);background:var(--srf);border-bottom:1px solid var(--bd);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;z-index:30;box-shadow:var(--sh1)}
+.hd-t{font-size:1.1em;font-weight:800;color:var(--tx);letter-spacing:.3px}
+.hb{position:absolute;top:50%;-webkit-transform:translateY(-50%);-ms-transform:translateY(-50%);transform:translateY(-50%);width:40px;height:40px;border-radius:50%;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;color:var(--tx)}
+.hb:active{background:var(--bd)}
+.hb.l{left:8px}
+.hb.r{right:8px}
+.hb svg{width:22px;height:22px;stroke:currentColor;stroke-width:2.3;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
-/* === CONTENT AREA === */
-.cn{padding:14px 14px 90px}
+/* === PAGES === */
+.pg{display:none;width:100%}
+.pg-on{display:block}
+.ct{padding:14px 14px 90px}
 
-/* === PAGE === */
-.pg{display:none}
-.pg.ac{display:block}
-.pg.ac .cn{}
-
-/* === BPM DISPLAY === */
-.bm{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rl);padding:24px 16px 18px;text-align:center;margin-bottom:12px;box-shadow:var(--sh2)}
-.bn{font-size:4.5em;font-weight:900;color:var(--p);line-height:1;letter-spacing:-4px;font-variant-numeric:tabular-nums;display:block}
-.bn.fl{animation:bnF .15s ease forwards}
-@keyframes bnF{0%{transform:scale(1)}100%{transform:scale(1.08)}}
-.bu{color:var(--tm);font-size:.75em;letter-spacing:5px;text-transform:uppercase;font-weight:700;display:block;margin-top:4px}
-.chips{margin-top:10px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
-.ch{background:var(--bd);padding:3px 10px;border-radius:999px;font-size:.8em;color:var(--tx);font-weight:600}
-.bc2{margin-top:14px;display:flex;gap:8px;justify-content:center;align-items:center}
-.nb{width:40px;height:40px;border-radius:50%;background:var(--srf);border:1px solid var(--bd);color:var(--tx);font-size:1.05em;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh1)}
-.nb:active{background:var(--p);color:#fff;border-color:var(--p);transform:scale(.92)}
-.bi{width:86px;height:42px;border:1px solid var(--bd);border-radius:var(--rm);background:var(--srf);color:var(--p);font-size:1.3em;font-weight:900;text-align:center;box-shadow:var(--sh1)}
-.bi:focus{border-color:var(--p)}
-.sr{margin-top:12px;padding:0 4px}
-.rg{-webkit-appearance:none;width:100%;height:6px;background:var(--bd);border-radius:999px;outline:none;cursor:pointer;position:relative}
-.rg::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--srf);border:3px solid var(--p);box-shadow:0 2px 6px var(--gl);cursor:pointer}
-.rg::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--srf);border:3px solid var(--p)}
+/* === BPM CARD === */
+.bc{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rc);padding:22px 14px 16px;text-align:center;margin-bottom:12px;box-shadow:var(--sh2)}
+.bv{font-size:4.5em;font-weight:900;color:var(--p);line-height:1;letter-spacing:-4px;font-variant-numeric:tabular-nums;display:block}
+.bu{color:var(--tm);font-size:.78em;letter-spacing:5px;text-transform:uppercase;font-weight:700;display:block;margin-top:4px}
+.cs{margin-top:10px;display:-webkit-box;display:-ms-flexbox;display:flex;gap:5px;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-ms-flex-wrap:wrap;flex-wrap:wrap}
+.cp{background:var(--bd);padding:3px 9px;border-radius:999px;font-size:.78em;color:var(--tx);font-weight:700}
+.bc-r{margin-top:14px;display:-webkit-box;display:-ms-flexbox;display:flex;gap:6px;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-wrap:wrap;flex-wrap:wrap}
+.bc-b{width:40px;height:40px;border-radius:50%;background:var(--srf);border:1px solid var(--bd);color:var(--tx);font-size:1em;font-weight:800;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;box-shadow:var(--sh1);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+.bc-b:active{background:var(--p);color:#fff;border-color:var(--p);-webkit-transform:scale(.92);-ms-transform:scale(.92);transform:scale(.92)}
+.bc-i{width:84px;height:34px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--srf);color:var(--p);font-size:1.25em;font-weight:900;text-align:center;box-shadow:var(--sh1);font-variant-numeric:tabular-nums}
+.bc-i:focus{border-color:var(--p)}
+.sl{margin-top:12px;padding:0 4px}
+.sli{-webkit-appearance:none;width:100%;height:6px;background:var(--bd);border-radius:999px;outline:none;cursor:pointer}
+.sli::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--srf);border:3px solid var(--p);box-shadow:0 2px 6px var(--gl);cursor:pointer}
+.sli::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--srf);border:3px solid var(--p)}
 
 /* === BEAT PANEL === */
-.bp{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 10px;margin-top:12px;box-shadow:var(--sh2)}
-.br{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;min-height:48px;margin-bottom:8px}
-.bd{min-width:42px;height:42px;border-radius:12px;border:2px solid var(--bs);background:var(--sr2);color:var(--tm);font-size:.95em;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation;user-select:none;transition:all .15s}
+.bp{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rc);padding:14px 10px;margin-top:12px;box-shadow:var(--sh2)}
+.bdr{display:-webkit-box;display:-ms-flexbox;display:flex;gap:6px;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-wrap:wrap;flex-wrap:wrap;min-height:48px;margin-bottom:8px}
+.bd{min-width:40px;height:40px;padding:0 6px;border-radius:10px;border:2px solid var(--bs);background:var(--sr2);color:var(--tm);font-size:.9em;font-weight:800;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-transition:all .15s;-o-transition:all .15s;transition:all .15s}
 .bd[data-ac="1"]{background:var(--p);color:#fff;border-color:var(--p);box-shadow:0 3px 10px var(--gl)}
-.bd.fl{background:var(--pd);border-color:var(--pd);color:#fff;transform:scale(1.15);box-shadow:0 4px 14px var(--gl)}
-.pl2{text-align:center;color:var(--ts);font-size:.84em;margin-top:4px}
-.pw{position:relative;display:flex;justify-content:center;align-items:center;margin:10px 0 4px}
-.pr2{position:absolute;width:116px;height:116px;border-radius:50%;border:2px solid var(--p);opacity:0;pointer-events:none}
-.pr2.pk{animation:prAn .55s ease forwards}
-@keyframes prAn{0%{opacity:.6;transform:translate(-50%,-50%) scale(.8)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.7)}}
-.pb2{width:108px;height:108px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px var(--gl),inset 0 0 0 3px rgba(255,255,255,.12);cursor:pointer}
-.pb2:active{transform:scale(.93)}
-.pb2 svg{width:44px;height:44px;fill:currentColor;stroke:currentColor;stroke-width:0}
+.bd.bt{background:var(--p);color:#fff;border-color:var(--p);-webkit-transform:scale(1.15);-ms-transform:scale(1.15);transform:scale(1.15);box-shadow:0 4px 14px var(--gl)}
+.pl{text-align:center;color:var(--ts);font-size:.82em;margin-top:4px}
+.pw{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;margin:10px 0 4px}
+.pw-r{position:absolute;top:50%;left:50%;width:116px;height:116px;margin:-58px 0 0 -58px;border-radius:50%;border:2px solid var(--p);opacity:0;pointer-events:none}
+.pw-r.bt{opacity:.8;-webkit-animation:pwA .55s ease forwards;-o-animation:pwA .55s ease forwards;animation:pwA .55s ease forwards}
+@-webkit-keyframes pwA{0%{opacity:.7;-webkit-transform:scale(.8);transform:scale(.8)}100%{opacity:0;-webkit-transform:scale(1.7);transform:scale(1.7)}}
+@keyframes pwA{0%{opacity:.7;-webkit-transform:scale(.8);transform:scale(.8)}100%{opacity:0;-webkit-transform:scale(1.7);transform:scale(1.7)}}
+.pw-b{width:108px;height:108px;border-radius:50%;background:var(--p);color:#fff;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;box-shadow:0 10px 28px var(--gl);cursor:pointer;z-index:2;position:relative}
+.pw-b:active{-webkit-transform:scale(.93);-ms-transform:scale(.93);transform:scale(.93)}
+.pw-b svg{width:44px;height:44px;fill:currentColor;stroke:currentColor;stroke-width:0}
 
-/* === NAV GRID === */
-.ng{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-.nc{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);padding:13px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;cursor:pointer;box-shadow:var(--sh1);text-decoration:none;color:var(--tx)}
-.nc:active,.nc.pk{background:var(--p);color:#fff;border-color:var(--p);transform:scale(.97)}
-.ni{width:40px;height:40px;border-radius:50%;background:rgba(var(--pr),.1);color:var(--p);display:flex;align-items:center;justify-content:center;transition:background .2s}
-.nc:active .ni,.nc.pk .ni{background:rgba(255,255,255,.2);color:#fff}
-.ni svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.nt{font-weight:800;font-size:.9em}
-.ns{color:var(--ts);font-size:.72em}
-.nc:active .ns,.nc.pk .ns{color:rgba(255,255,255,.7)}
+/* === NAV CARDS === */
+.ng{display:-ms-grid;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.nc{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);padding:12px 6px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:5px;text-align:center;cursor:pointer;box-shadow:var(--sh1);color:var(--tx)}
+.nc:active{background:var(--p);color:#fff;border-color:var(--p);-webkit-transform:scale(.97);-ms-transform:scale(.97);transform:scale(.97)}
+.nc-i{width:40px;height:40px;border-radius:50%;background:rgba(var(--p-rgb),.1);color:var(--p);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center}
+.nc:active .nc-i{background:rgba(255,255,255,.2);color:#fff}
+.nc-i svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.nc-t{font-weight:800;font-size:.88em}
+.nc-s{color:var(--ts);font-size:.7em}
+.nc:active .nc-s{color:rgba(255,255,255,.75)}
 
 /* === CARD === */
 .cd{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);padding:14px;margin-bottom:10px;box-shadow:var(--sh1)}
-.cd-t{font-size:.93em;font-weight:800;color:var(--tx);margin-bottom:2px;display:flex;align-items:center;gap:7px}
-.cd-t svg{width:16px;height:16px;stroke:var(--p);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.cd-s{color:var(--ts);font-size:.79em;margin-bottom:10px}
+.cd-t{font-size:.92em;font-weight:800;color:var(--tx);margin-bottom:3px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:7px}
+.cd-t svg{width:16px;height:16px;stroke:var(--p);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cd-s{color:var(--ts);font-size:.78em;margin-bottom:10px}
 
 /* === SELECTOR GRIDS === */
-.tsg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.ti{padding:10px 4px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--tx);font-size:.92em;font-weight:800;text-align:center;cursor:pointer;transition:all .15s}
-.ti:active{transform:scale(.95)}
-.ti.sel{background:var(--p);color:#fff;border-color:var(--p);box-shadow:0 3px 10px var(--gl);transform:scale(1.04)}
+.tsg{display:-ms-grid;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tsg-i{padding:10px 4px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--tx);font-size:.9em;font-weight:800;text-align:center;cursor:pointer}
+.tsg-i:active{-webkit-transform:scale(.96);-ms-transform:scale(.96);transform:scale(.96)}
+.tsg-i.on{background:var(--p);color:#fff;border-color:var(--p);box-shadow:0 3px 10px var(--gl);-webkit-transform:scale(1.04);-ms-transform:scale(1.04);transform:scale(1.04)}
 
-.sug{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.si{padding:10px 4px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--ts);font-size:.78em;font-weight:700;text-align:center;cursor:pointer;display:flex;flex-direction:column;gap:3px;align-items:center}
-.si .sm{font-size:1.2em;color:var(--tx);font-weight:900}
-.si.sel{background:var(--p);color:#fff;border-color:var(--p)}
-.si.sel .sm{color:#fff}
+.subg{display:-ms-grid;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sub-i{padding:10px 4px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--ts);font-size:.78em;font-weight:700;text-align:center;cursor:pointer;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;gap:3px;-webkit-box-align:center;-ms-flex-align:center;align-items:center}
+.sub-i .sm{font-size:1.15em;color:var(--tx);font-weight:900}
+.sub-i.on{background:var(--p);color:#fff;border-color:var(--p)}
+.sub-i.on .sm{color:#fff}
 
-.sng{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.sni{padding:10px 4px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--ts);font-size:.75em;font-weight:700;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
-.sni .si3{width:28px;height:28px;border-radius:8px;background:rgba(var(--pr),.12);color:var(--p);display:flex;align-items:center;justify-content:center}
-.sni .si3 svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none}
-.sni.sel{background:var(--p);color:#fff;border-color:var(--p);box-shadow:0 3px 10px var(--gl)}
-.sni.sel .si3{background:rgba(255,255,255,.18);color:#fff}
+.sng{display:-ms-grid;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sn-i{padding:10px 4px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--ts);font-size:.75em;font-weight:700;text-align:center;cursor:pointer;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:4px}
+.sn-i .sn-ic{width:28px;height:28px;border-radius:8px;background:rgba(var(--p-rgb),.12);color:var(--p);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center}
+.sn-i .sn-ic svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none}
+.sn-i.on{background:var(--p);color:#fff;border-color:var(--p);box-shadow:0 3px 10px var(--gl)}
+.sn-i.on .sn-ic{background:rgba(255,255,255,.18);color:#fff}
 
-.tgg{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
-.tgi{padding:11px;border-radius:var(--rm);border:2px solid var(--bd);background:var(--srf);color:var(--tx);font-size:.85em;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .15s}
-.tgi:active{transform:scale(.98)}
-.tgi.sel{border-color:var(--p);box-shadow:0 3px 12px var(--gl)}
-.tsw2{width:24px;height:24px;border-radius:50%;flex-shrink:0;border:2px solid rgba(255,255,255,.6);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.tg-g{display:-ms-grid;display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.tg-i{padding:10px;border-radius:var(--rm);border:2px solid var(--bd);background:var(--srf);color:var(--tx);font-size:.84em;font-weight:800;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:8px;cursor:pointer}
+.tg-i:active{-webkit-transform:scale(.98);-ms-transform:scale(.98);transform:scale(.98)}
+.tg-i.on{border-color:var(--p);box-shadow:0 3px 12px var(--gl)}
+.tg-sw{width:24px;height:24px;border-radius:50%;-ms-flex-negative:0;flex-shrink:0;border:2px solid rgba(255,255,255,.5);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 
-/* === MODE GRID === */
-.mg{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:4px}
-.mi{padding:12px 8px;border-radius:var(--rm);border:1px solid var(--bd);background:var(--sr2);cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:5px}
-.mi svg{width:24px;height:24px;stroke:var(--ts);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.mi span{font-size:.84em;font-weight:800;color:var(--ts)}
-.mi.sel{background:var(--p);border-color:var(--p);box-shadow:0 3px 10px var(--gl)}
-.mi.sel svg{stroke:#fff}
-.mi.sel span{color:#fff}
+/* === SLIDER ROWS === */
+.vr{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:10px;margin-top:8px}
+.vl{color:var(--ts);font-size:.8em;font-weight:700;width:68px;-ms-flex-negative:0;flex-shrink:0}
+.vv{width:44px;text-align:right;color:var(--p);font-weight:900;font-size:.82em;font-variant-numeric:tabular-nums}
 
-/* === SLIDER ROW === */
-.vr{display:flex;align-items:center;gap:10px;margin-top:8px}
-.vl{color:var(--ts);font-size:.82em;font-weight:700;width:68px;flex-shrink:0}
-.vv{width:38px;text-align:right;color:var(--p);font-weight:900;font-size:.82em;font-variant-numeric:tabular-nums}
-
-/* === TOGGLE === */
-.tg{-webkit-appearance:none;width:42px;height:24px;background:var(--bs);border-radius:999px;position:relative;cursor:pointer;flex-shrink:0;outline:none;transition:background .2s}
-.tg::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
-.tg:checked{background:var(--p)}
-.tg:checked::after{left:21px}
-.tgl{display:flex;justify-content:space-between;align-items:center;padding:5px 0}
-.tgl span{font-size:.89em;color:var(--tx);font-weight:700}
-
-/* === TAP TEMPO === */
-.ta{display:flex;align-items:center;gap:12px}
-.ta-b{width:88px;height:88px;border-radius:50%;background:var(--p);color:#fff;font-size:.95em;font-weight:900;letter-spacing:2px;box-shadow:0 8px 22px var(--gl);cursor:pointer;flex-shrink:0}
-.ta-b:active{transform:scale(.92);box-shadow:0 4px 12px var(--gl)}
-.ta-b.dk2{animation:taAn .12s ease}
-@keyframes taAn{0%{transform:scale(.92)}50%{transform:scale(1.06)}100%{transform:scale(.92)}}
-.ta-i{flex:1}
-.ta-lbl{font-size:.8em;color:var(--ts)}
-.ta-v{font-size:2em;font-weight:900;color:var(--p);font-variant-numeric:tabular-nums;line-height:1.1}
-.tb2{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap}
-.tb2 .nb{width:auto;padding:0 9px;font-size:.75em;height:28px}
+/* === TOGGLE ROWS === */
+.tgr{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;padding:5px 0}
+.tgr span{font-size:.88em;color:var(--tx);font-weight:700}
+.swc{-webkit-appearance:none;width:42px;height:24px;background:var(--bs);border-radius:999px;position:relative;cursor:pointer;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:background .2s;-o-transition:background .2s;transition:background .2s}
+.swc::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;-webkit-transition:all .2s;-o-transition:all .2s;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.swc:checked{background:var(--p)}
+.swc:checked::after{left:21px}
 
 /* === CUSTOM TIME SIG === */
-.ct{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--bd);flex-wrap:wrap}
-.ct-lbl{font-size:.84em;color:var(--ts);font-weight:700;white-space:nowrap}
-.ct-row{display:flex;align-items:center;gap:4px;flex:1;justify-content:center}
-.ct-btn2{width:32px;height:32px;border-radius:50%;background:var(--sr2);border:1px solid var(--bd);color:var(--tx);font-size:1em;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ct-btn2:active{background:var(--p);color:#fff;border-color:var(--p);transform:scale(.9)}
-.ct-n{width:50px;height:34px;background:var(--srf);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);font-weight:900;text-align:center;font-size:1.05em}
-.ct-n:focus{border-color:var(--p);outline:none}
-.ct-sep{font-size:1.4em;color:var(--ts);font-weight:800}
+.tsc{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--bd)}
+.tsc-lb{font-size:.82em;color:var(--ts);font-weight:700;white-space:nowrap}
+.tsc-r{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:4px;-webkit-box-flex:1;-ms-flex:1;flex:1;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center}
+.tsc-b{width:32px;height:32px;border-radius:50%;background:var(--sr2);border:1px solid var(--bd);color:var(--tx);font-size:1em;font-weight:800;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-ms-flex-negative:0;flex-shrink:0}
+.tsc-b:active{background:var(--p);color:#fff;border-color:var(--p);-webkit-transform:scale(.9);-ms-transform:scale(.9);transform:scale(.9)}
+.tsc-i{width:48px;height:34px;background:var(--srf);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);font-weight:900;text-align:center;font-size:1em}
+.tsc-i:focus{border-color:var(--p);outline:none}
+.tsc-sp{font-size:1.4em;color:var(--ts);font-weight:800}
 
 /* === WAVE GRID === */
-.wg{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:8px}
-.wi{padding:9px 3px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--ts);font-size:.78em;font-weight:700;text-align:center;cursor:pointer}
-.wi.sel{background:var(--p);color:#fff;border-color:var(--p)}
+.wg{display:-ms-grid;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:8px}
+.wg-i{padding:8px 3px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--ts);font-size:.78em;font-weight:700;text-align:center;cursor:pointer}
+.wg-i.on{background:var(--p);color:#fff;border-color:var(--p)}
 
-/* === PRESET GRID === */
-.bpp{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.pbtn{padding:9px 3px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--ts);font-size:.86em;font-weight:800;text-align:center;cursor:pointer;transition:all .15s}
-.pbtn .lb{display:block;font-size:.65em;color:var(--tm);font-weight:600;margin-top:1px;letter-spacing:.3px}
-.pbtn.sel,.pbtn:active{background:var(--p);color:#fff;border-color:var(--p);box-shadow:0 3px 8px var(--gl)}
-.pbtn.sel .lb,.pbtn:active .lb{color:rgba(255,255,255,.75)}
-
-/* === PRACTICE LIST === */
-.plst{display:flex;flex-direction:column;gap:7px}
-.pi{padding:11px;border-radius:var(--rm);border:1px solid var(--bd);background:var(--srf);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.pi:active{transform:scale(.98)}
-.pi.sel{border-color:var(--p);background:var(--p);color:#fff;box-shadow:0 3px 12px var(--gl)}
-.pi.sel .ps2{color:rgba(255,255,255,.7)}
-.pi.sel .pb3{background:rgba(255,255,255,.18);color:#fff}
-.pif2{flex:1}
-.pn2{font-weight:800;font-size:.94em}
-.ps2{color:var(--ts);font-size:.78em;margin-top:1px}
-.pb3{font-size:.68em;padding:3px 8px;border-radius:999px;background:var(--bd);color:var(--tx);font-weight:800;white-space:nowrap}
-
-.pst-box{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);padding:16px 12px;text-align:center;margin-top:6px;box-shadow:var(--sh1)}
-.pst-ttl{color:var(--p);font-weight:800;font-size:.9em;letter-spacing:.4px}
-.pst-ct{font-size:2.8em;font-weight:900;color:var(--tx);font-variant-numeric:tabular-nums;letter-spacing:-2px;margin-top:2px}
-.pst-btn{margin-top:10px;padding:8px 18px;border-radius:999px;background:rgba(239,68,68,.08);color:#ef4444;font-weight:800;font-size:.82em;border:1px solid rgba(239,68,68,.25);cursor:pointer;display:inline-block}
-.pst-btn:active{background:#ef4444;color:#fff;border-color:#ef4444;transform:scale(.96)}
-
-/* === SYS LIST === */
-.sl{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);overflow:hidden;margin-bottom:10px;box-shadow:var(--sh1)}
-.sl2{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--bd);transition:background .15s}
-.sl2:last-child{border-bottom:0}
-.sl2:active{background:var(--bd)}
-.sl2.noc{pointer-events:none;cursor:default}
-.sl2.noc:active{background:transparent}
-.sri2{width:32px;height:32px;border-radius:8px;background:rgba(var(--pr),.1);color:var(--p);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sri2 svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.sri2.dk3{background:rgba(239,68,68,.1);color:#ef4444}
-.srt2{flex:1}
-.srn2{font-weight:700;font-size:.89em;color:var(--tx)}
-.srd2{color:var(--ts);font-size:.76em}
-.srv2{color:var(--ts);font-size:.82em;font-weight:800;font-variant-numeric:tabular-nums}
+/* === BPM PRESETS === */
+.bpp{display:-ms-grid;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.bp-i{padding:10px 4px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--ts);font-size:.84em;font-weight:800;text-align:center;cursor:pointer}
+.bp-i .lb{display:block;font-size:.65em;color:var(--tm);font-weight:600;margin-top:1px;letter-spacing:.3px}
+.bp-i.on,.bp-i:active{background:var(--p);color:#fff;border-color:var(--p);box-shadow:0 3px 8px var(--gl)}
+.bp-i.on .lb,.bp-i:active .lb{color:rgba(255,255,255,.75)}
 
 /* === SWATCH === */
-.sw{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:8px}
-.swb2{aspect-ratio:1;border-radius:var(--rs);border:2px solid var(--bd);cursor:pointer;transition:transform .15s}
-.swb2:active{transform:scale(.9)}
-.swb2.on{border-color:var(--tx);box-shadow:0 0 0 2px var(--srf),0 0 0 4px var(--p);transform:scale(1.06)}
+.sw{display:-ms-grid;display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:8px}
+.sw-b{width:100%;padding-top:100%;border-radius:var(--rs);border:2px solid var(--bd);cursor:pointer;position:relative;-webkit-transition:all .15s;-o-transition:all .15s;transition:all .15s}
+.sw-b:active{-webkit-transform:scale(.9);-ms-transform:scale(.9);transform:scale(.9)}
+.sw-b.on{border-color:var(--tx);box-shadow:0 0 0 2px var(--srf),0 0 0 4px var(--p);-webkit-transform:scale(1.06);-ms-transform:scale(1.06);transform:scale(1.06)}
+
+/* === TAP === */
+.tp{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:12px;margin-top:6px}
+.tp-b{width:88px;height:88px;border-radius:50%;background:var(--p);color:#fff;font-size:.9em;font-weight:900;letter-spacing:2px;box-shadow:0 8px 22px var(--gl);cursor:pointer;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:all .12s;-o-transition:all .12s;transition:all .12s}
+.tp-b:active{-webkit-transform:scale(.92);-ms-transform:scale(.92);transform:scale(.92);box-shadow:0 4px 12px var(--gl)}
+.tp-i{-webkit-box-flex:1;-ms-flex:1;flex:1}
+.tp-lb{font-size:.8em;color:var(--ts)}
+.tp-v{font-size:2em;font-weight:900;color:var(--p);font-variant-numeric:tabular-nums;line-height:1.1}
+
+/* === PRACTICE LIST === */
+.pl-l{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;gap:7px}
+.pl-i{padding:11px;border-radius:var(--rm);border:1px solid var(--bd);background:var(--srf);cursor:pointer;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;gap:8px}
+.pl-i:active{-webkit-transform:scale(.98);-ms-transform:scale(.98);transform:scale(.98)}
+.pl-i.on{border-color:var(--p);background:var(--p);color:#fff;box-shadow:0 3px 12px var(--gl)}
+.pl-i.on .pl-d{color:rgba(255,255,255,.7)}
+.pl-i.on .pl-tg{background:rgba(255,255,255,.18);color:#fff}
+.pl-if{-webkit-box-flex:1;-ms-flex:1;flex:1}
+.pl-t{font-weight:800;font-size:.92em}
+.pl-d{color:var(--ts);font-size:.78em;margin-top:1px}
+.pl-tg{font-size:.68em;padding:3px 8px;border-radius:999px;background:var(--bd);color:var(--tx);font-weight:800;white-space:nowrap}
+
+.pl-box{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);padding:14px 12px;text-align:center;margin-top:6px;box-shadow:var(--sh1)}
+.pl-bt{color:var(--p);font-weight:800;font-size:.88em;letter-spacing:.4px}
+.pl-bv{font-size:2.8em;font-weight:900;color:var(--tx);font-variant-numeric:tabular-nums;letter-spacing:-2px;margin-top:2px}
+.pl-bn{margin-top:10px;padding:8px 18px;border-radius:999px;background:rgba(239,68,68,.08);color:#ef4444;font-weight:800;font-size:.82em;border:1px solid rgba(239,68,68,.25);cursor:pointer;display:inline-block}
+.pl-bn:active{background:#ef4444;color:#fff;border-color:#ef4444;-webkit-transform:scale(.96);-ms-transform:scale(.96);transform:scale(.96)}
+
+/* === SYS LIST === */
+.sl-l{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);overflow:hidden;margin-bottom:10px;box-shadow:var(--sh1)}
+.sl-i{padding:11px 14px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;gap:10px;border-bottom:1px solid var(--bd);-webkit-transition:background .15s;-o-transition:background .15s;transition:background .15s;cursor:pointer}
+.sl-i:last-child{border-bottom:0}
+.sl-i:active{background:var(--bd)}
+.sl-i.no{pointer-events:none;cursor:default}
+.sl-i.no:active{background:transparent}
+.sl-ic{width:32px;height:32px;border-radius:8px;background:rgba(var(--p-rgb),.1);color:var(--p);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-ms-flex-negative:0;flex-shrink:0}
+.sl-ic.d{background:rgba(239,68,68,.1);color:#ef4444}
+.sl-ic svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sl-tx{-webkit-box-flex:1;-ms-flex:1;flex:1}
+.sl-tt{font-weight:700;font-size:.88em;color:var(--tx)}
+.sl-ds{color:var(--ts);font-size:.76em;margin-top:1px}
+.sl-vv{color:var(--ts);font-size:.8em;font-weight:800;font-variant-numeric:tabular-nums}
 
 /* === HINT BAR === */
-.hb{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:540px;width:100%;padding:0 12px 10px;background:var(--srf);border-top:1px solid var(--bd);z-index:50;display:flex;align-items:center;gap:9px;box-shadow:0 -2px 12px rgba(0,0,0,.04);pointer-events:none}
-.hb.hi{transform:translateX(-50%) translateY(110%);opacity:0}
-.hi2{width:28px;height:28px;border-radius:50%;background:rgba(var(--pr),.1);color:var(--p);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.hi2 svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none}
-.ht{flex:1;font-size:.79em;color:var(--ts);line-height:1.45}
-.ht strong{color:var(--p);font-weight:800}
-.hc2{width:28px;height:28px;border-radius:50%;color:var(--tm);display:flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:auto;flex-shrink:0}
-.hc2 svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.5;fill:none}
-.hc2:hover{color:var(--tx)}
+.hb{position:fixed;bottom:0;left:0;width:100%;padding:0 12px 10px;background:var(--srf);border-top:1px solid var(--bd);z-index:50;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:9px;box-shadow:0 -2px 12px rgba(0,0,0,.04);pointer-events:none;padding-bottom:calc(10px + env(safe-area-inset-bottom,0))}
+.hb.hi{-webkit-transform:translateY(110%);-ms-transform:translateY(110%);transform:translateY(110%);opacity:0}
+.hb-ic{width:28px;height:28px;border-radius:50%;background:rgba(var(--p-rgb),.1);color:var(--p);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-ms-flex-negative:0;flex-shrink:0}
+.hb-ic svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none}
+.hb-tx{-webkit-box-flex:1;-ms-flex:1;flex:1;font-size:.78em;color:var(--ts);line-height:1.45}
+.hb-tx strong{color:var(--p);font-weight:800}
+.hb-x{width:28px;height:28px;border-radius:50%;color:var(--tm);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;cursor:pointer;pointer-events:auto;-ms-flex-negative:0;flex-shrink:0}
+.hb-x svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.5;fill:none}
 
-/* === MODAL OVERLAY === */
-.mo{position:fixed;inset:0;background:rgba(5,10,20,.55);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
-.mo.hi{display:none}
-.mc{background:var(--srf);border-radius:var(--rl);padding:24px 20px;max-width:360px;width:100%;box-shadow:var(--sh3);text-align:center;max-height:85vh;overflow-y:auto}
-.gic2{width:58px;height:58px;border-radius:50%;background:rgba(var(--pr),.12);color:var(--p);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
-.gic2 svg{width:28px;height:28px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.gt2{font-size:1.1em;font-weight:900;color:var(--tx);margin-bottom:7px}
-.gd2{color:var(--ts);font-size:.85em;line-height:1.6;margin-bottom:14px}
-.gst2{display:flex;justify-content:center;gap:5px;margin-bottom:14px}
-.gs2{width:7px;height:7px;border-radius:50%;background:var(--bs);transition:background .2s,transform .2s}
-.gs2.on{background:var(--p);transform:scale(1.3)}
-.gb2{width:100%;padding:12px;border-radius:var(--rm);background:var(--p);color:#fff;font-size:.94em;font-weight:800;cursor:pointer;box-shadow:0 4px 14px var(--gl)}
-.gb2:active{transform:scale(.97);opacity:.88}
-.gb2.sk2{background:transparent;color:var(--ts);font-size:.81em;font-weight:700;margin-top:6px;box-shadow:none}
-.gb2[disabled]{opacity:.4;cursor:not-allowed}
+/* === MODAL === */
+.md{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(5,10,20,.6);z-index:200;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;padding:20px}
+.md.hi{display:none}
+.md-c{background:var(--srf);border-radius:var(--rc);padding:22px 18px;max-width:380px;width:100%;box-shadow:var(--sh3);text-align:center;max-height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.md-ic{width:56px;height:56px;border-radius:50%;background:rgba(var(--p-rgb),.12);color:var(--p);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;margin:0 auto 12px}
+.md-ic svg{width:28px;height:28px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.md-tt{font-size:1.08em;font-weight:900;color:var(--tx);margin-bottom:6px}
+.md-ds{color:var(--ts);font-size:.84em;line-height:1.6;margin-bottom:14px}
+.md-st{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;gap:5px;margin-bottom:14px}
+.md-st-i{width:7px;height:7px;border-radius:50%;background:var(--bs);-webkit-transition:background .2s;-o-transition:background .2s;transition:background .2s}
+.md-st-i.on{background:var(--p);-webkit-transform:scale(1.3);-ms-transform:scale(1.3);transform:scale(1.3)}
+.md-b{width:100%;padding:12px;border-radius:var(--rm);background:var(--p);color:#fff;font-size:.92em;font-weight:800;cursor:pointer;box-shadow:0 4px 14px var(--gl)}
+.md-b:active{-webkit-transform:scale(.97);-ms-transform:scale(.97);transform:scale(.97);opacity:.88}
+.md-b.sk{background:transparent;color:var(--ts);font-size:.8em;font-weight:700;margin-top:6px;box-shadow:none}
+.md-b[disabled]{opacity:.4;cursor:not-allowed}
 
-/* === AGREEMENT === */
-.ag{background:var(--srf);border-radius:var(--rl);padding:22px 18px;max-width:380px;width:100%;box-shadow:var(--sh3);text-align:center;max-height:85vh;overflow-y:auto}
-.ag-t2{font-size:1.25em;font-weight:900;color:var(--tx);margin-bottom:4px}
-.ag-s2{color:var(--ts);font-size:.83em;margin-bottom:12px}
-.ag-tx{background:var(--sr2);border:1px solid var(--bd);border-radius:var(--rm);padding:12px;text-align:left;max-height:180px;overflow-y:auto;font-size:.79em;color:var(--ts);line-height:1.7;margin-bottom:12px}
-.ag-tx h3{color:var(--tx);font-size:.97em;font-weight:800;margin-bottom:4px;margin-top:8px}
+/* === AGREE MODAL === */
+.ag-tx{background:var(--sr2);border:1px solid var(--bd);border-radius:var(--rm);padding:12px;text-align:left;max-height:220px;overflow-y:auto;-webkit-overflow-scrolling:touch;font-size:.78em;color:var(--ts);line-height:1.7;margin-bottom:12px}
+.ag-tx h3{color:var(--tx);font-size:1em;font-weight:800;margin-bottom:4px;margin-top:8px}
 .ag-tx h3:first-child{margin-top:0}
 .ag-tx p{margin-bottom:6px}
-.ag-cb{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:12px;font-size:.82em;color:var(--ts);cursor:pointer}
-input[type=checkbox]{width:17px;height:17px;accent-color:var(--p);cursor:pointer}
-.ag-b2{width:100%;padding:12px;border-radius:var(--rm);background:var(--p);color:#fff;font-size:.94em;font-weight:800;cursor:pointer;box-shadow:0 4px 14px var(--gl)}
-.ag-b2:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
-.ag-b2:not(:disabled):active{transform:scale(.97);opacity:.88}
+.ag-cb{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;gap:7px;margin-bottom:12px;font-size:.84em;color:var(--ts);cursor:pointer}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--p);cursor:pointer}
 
-/* === THEME PICKER === */
-.tp{background:var(--srf);border-radius:var(--rl);padding:22px 18px;max-width:400px;width:100%;box-shadow:var(--sh3);text-align:center;max-height:85vh;overflow-y:auto}
-.tp-t2{font-size:1.05em;font-weight:900;color:var(--tx);margin-bottom:3px}
-.tp-s2{color:var(--ts);font-size:.8em;margin-bottom:12px}
-.tp-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-.tp-i{padding:10px 6px;border-radius:var(--rm);border:2px solid var(--bd);background:var(--sr2);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .15s}
-.tp-i:active{transform:scale(.96)}
-.tp-i.sel{border-color:var(--p);box-shadow:0 3px 10px var(--gl);transform:scale(1.04)}
-.tp-s3{width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.6);box-shadow:0 1px 4px rgba(0,0,0,.1)}
-.tp-n2{font-size:.75em;font-weight:800;color:var(--tx)}
+/* === THEME PICKER MODAL === */
+.tp-g2{display:-ms-grid;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.tp-i{padding:10px 6px;border-radius:var(--rm);border:2px solid var(--bd);background:var(--sr2);cursor:pointer;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:6px}
+.tp-i:active{-webkit-transform:scale(.96);-ms-transform:scale(.96);transform:scale(.96)}
+.tp-i.on{border-color:var(--p);box-shadow:0 3px 10px var(--gl);-webkit-transform:scale(1.04);-ms-transform:scale(1.04);transform:scale(1.04)}
+.tp-sw{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.5);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.tp-nm{font-size:.78em;font-weight:800;color:var(--tx)}
 
 /* === TOAST === */
-.toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(10px);background:var(--tx);color:var(--srf);padding:8px 16px;border-radius:999px;font-size:.82em;font-weight:700;z-index:999;opacity:0;transition:all .35s cubic-bezier(.2,.8,.2,1);box-shadow:var(--sh2);pointer-events:none;max-width:78%;text-align:center}
-.toast.on{opacity:.95;transform:translateX(-50%) translateY(0)}
+.tst{position:fixed;left:50%;bottom:80px;-webkit-transform:translateX(-50%) translateY(10px);-ms-transform:translateX(-50%) translateY(10px);transform:translateX(-50%) translateY(10px);background:var(--tx);color:var(--srf);padding:8px 16px;border-radius:999px;font-size:.82em;font-weight:700;z-index:999;opacity:0;-webkit-transition:all .35s ease;-o-transition:all .35s ease;transition:all .35s ease;box-shadow:var(--sh2);pointer-events:none;max-width:80%;text-align:center}
+.tst.on{opacity:.95;-webkit-transform:translateX(-50%) translateY(0);-ms-transform:translateX(-50%) translateY(0);transform:translateX(-50%) translateY(0)}
 
 /* === INFO BOX === */
-.ib{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);padding:12px 14px;color:var(--ts);font-size:.79em;line-height:1.7;box-shadow:var(--sh1)}
+.ib{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);padding:12px 14px;color:var(--ts);font-size:.78em;line-height:1.7;box-shadow:var(--sh1)}
+
+/* === DARK MODE === */
+body.dk{--bg:#0b1020;--srf:#151b30;--sr2:#111628;--tx:#e2e8f0;--ts:#94a3b8;--tm:#64748b;--bd:rgba(255,255,255,.06);--bs:rgba(255,255,255,.12);--sh1:0 1px 3px rgba(0,0,0,.4);--sh2:0 4px 12px rgba(0,0,0,.45);--sh3:0 8px 32px rgba(0,0,0,.55)}
 
 /* === RESPONSIVE === */
-@media(max-width:360px){
-  .bn{font-size:3.6em;letter-spacing:-3px}
+@media (max-width:360px){
+  body{font-size:14px}
+  .bv{font-size:3.6em;letter-spacing:-3px}
   .ng{grid-template-columns:repeat(3,1fr);gap:6px}
-  .nc{padding:11px 4px}
+  .nc{padding:10px 4px}
   .tsg{grid-template-columns:repeat(3,1fr)}
   .bpp{grid-template-columns:repeat(3,1fr)}
+  .tg-g{grid-template-columns:repeat(1,1fr)}
 }
-@media(min-width:540px){
-  .app{margin-top:6px;margin-bottom:6px;border-radius:24px;border:1px solid var(--bd);overflow:hidden}
+@media (min-width:720px){
+  .app{max-width:720px;margin:0 auto}
 }
 </style>
 </head>
 <body>
 <div class="app" id="app">
 
-<!-- ========== HOME ========== -->
-<div class="pg ac" id="pg-home">
-  <div class="hdr">
-    <button class="ac" id="btn-test" title="试听">
-      <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>
+<!-- ========== HOME PAGE ========== -->
+<div class="pg pg-on" id="pg-home">
+  <div class="hd">
+    <button class="hb l" data-nav="settings" title="设置">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.83 1.04 1.51 1.1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
-    <div class="hdr-t">节拍器</div>
+    <div class="hd-t">节拍器</div>
+    <button class="hb r" data-nav="sound" title="试听">
+      <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><circle cx="18" cy="18" r="2"/></svg>
+    </button>
   </div>
-  <div class="cn">
-    <div class="bm">
-      <span class="bn" id="bpm-d">120</span>
+  <div class="ct">
+    <div class="bc">
+      <span class="bv" id="bpm-val">120</span>
       <span class="bu">BPM</span>
-      <div class="chips">
-        <span class="ch" id="chip-ts">4/4</span>
-        <span class="ch" id="chip-sub">四分音符</span>
-        <span class="ch" id="chip-snd">点击</span>
+      <div class="cs" id="chips">
+        <span class="cp" id="chip-ts">4/4</span>
+        <span class="cp" id="chip-sub">四分</span>
+        <span class="cp" id="chip-snd">点击</span>
       </div>
-      <div class="bc2">
-        <button class="nb" id="nb-m10">-10</button>
-        <button class="nb" id="nb-m1">-</button>
-        <input class="bi" id="bpm-in" type="number" min="20" max="300" value="120">
-        <button class="nb" id="nb-p1">+</button>
-        <button class="nb" id="nb-p10">+10</button>
+      <div class="bc-r">
+        <button class="bc-b" data-bpm-dn="10">-10</button>
+        <button class="bc-b" data-bpm-dn="1">-1</button>
+        <input class="bc-i" id="bpm-inp" type="number" min="20" max="300" value="120">
+        <button class="bc-b" data-bpm-up="1">+1</button>
+        <button class="bc-b" data-bpm-up="10">+10</button>
       </div>
-      <div class="sr">
-        <input class="rg" id="bpm-r" type="range" min="20" max="300" value="120">
+      <div class="sl">
+        <input class="sli" id="bpm-sl" type="range" min="20" max="300" value="120" step="1">
       </div>
     </div>
 
     <div class="bp">
-      <div class="br" id="beat-r"></div>
-      <div class="pl2" id="play-lbl">点击播放</div>
+      <div class="bdr" id="dots"></div>
+      <div class="pl" id="play-info">点击播放按钮开始</div>
       <div class="pw">
-        <div class="pr2" id="pulse-r"></div>
-        <button class="pb2" id="play-b">
+        <div class="pw-r" id="ring"></div>
+        <button class="pw-b" id="play-btn" title="播放/停止">
           <svg id="play-ic" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         </button>
       </div>
     </div>
 
     <div class="ng">
-      <a class="nc" href="#pg-params">
-        <div class="ni"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
-        <span class="nt">参数</span>
-        <span class="ns">拍号 · 细分</span>
-      </a>
-      <a class="nc" href="#pg-sound">
-        <div class="ni"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><circle cx="17.5" cy="12" r="1.5"/></svg></div>
-        <span class="nt">声音</span>
-        <span class="ns">音色 · 音量</span>
-      </a>
-      <a class="nc" href="#pg-theme">
-        <div class="ni"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14 14 0 0 0 0 20"/></svg></div>
-        <span class="nt">主题</span>
-        <span class="ns">配色 · 字体</span>
-      </a>
-      <a class="nc" href="#pg-practice">
-        <div class="ni"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div>
-        <span class="nt">练习</span>
-        <span class="ns">变速 · 模板</span>
-      </a>
-      <a class="nc" href="#pg-system">
-        <div class="ni"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-        <span class="nt">系统</span>
-        <span class="ns">信息 · 重置</span>
-      </a>
-      <a class="nc" id="nav-pb">
-        <div class="ni"><svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg></div>
-        <span class="nt" id="nav-pl">播放</span>
-        <span class="ns" id="nav-ps">开始 / 停止</span>
-      </a>
+      <div class="nc" data-nav="params">
+        <div class="nc-i"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="4"/></svg></div>
+        <div class="nc-t">节拍</div>
+        <div class="nc-s">拍号 细分 摇摆</div>
+      </div>
+      <div class="nc" data-nav="sound">
+        <div class="nc-i"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg></div>
+        <div class="nc-t">声音</div>
+        <div class="nc-s">音色 频率 音量</div>
+      </div>
+      <div class="nc" data-nav="theme">
+        <div class="nc-i"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg></div>
+        <div class="nc-t">主题</div>
+        <div class="nc-s">配色 深色 字号</div>
+      </div>
+      <div class="nc" data-nav="practice">
+        <div class="nc-i"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div>
+        <div class="nc-t">练习</div>
+        <div class="nc-s">变速 分段</div>
+      </div>
+      <div class="nc" id="tap-card">
+        <div class="nc-i"><svg viewBox="0 0 24 24"><path d="M12 2v6M4.93 4.93l4.24 4.24M2 12h6M14.83 14.83l4.24 4.24M22 12h-6M14.83 9.17l4.24-4.24"/></svg></div>
+        <div class="nc-t">TAP</div>
+        <div class="nc-s">测速</div>
+      </div>
+      <div class="nc" data-nav="settings">
+        <div class="nc-i"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+        <div class="nc-t">更多</div>
+        <div class="nc-s">关于 重置</div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ========== PARAMS ========== -->
+<!-- ========== PARAMS PAGE ========== -->
 <div class="pg" id="pg-params">
-  <div class="hdr">
-    <button class="bk" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <div class="hdr-t">参数设置</div>
+  <div class="hd">
+    <button class="hb l" data-nav-back><svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg></button>
+    <div class="hd-t">节拍设置</div>
   </div>
-  <div class="cn">
+  <div class="ct">
     <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>拍号</div>
-      <div class="cd-s">点击选择常用拍号，或自定义任意组合</div>
-      <div class="tsg" id="ts-g"></div>
-      <div class="ct">
-        <span class="ct-lbl">自定义</span>
-        <div class="ct-row">
-          <button class="ct-btn2" id="ctb-dec-b">-</button>
-          <input class="ct-n" id="ctn-b" type="number" min="1" max="32" value="4">
-          <button class="ct-btn2" id="ctb-inc-b">+</button>
-          <span class="ct-sep">/</span>
-          <button class="ct-btn2" id="ctb-dec-bv">-</button>
-          <input class="ct-n" id="ctn-bv" type="number" min="1" max="32" value="4">
-          <button class="ct-btn2" id="ctb-inc-bv">+</button>
+      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>拍号</div>
+      <div class="cd-s">选择常用拍号，或自定义任意组合</div>
+      <div class="tsg" id="tsg-grid"></div>
+      <div class="tsc">
+        <span class="tsc-lb">自定义</span>
+        <div class="tsc-r">
+          <button class="tsc-b" id="ts-b-b">-</button>
+          <input class="tsc-i" id="ts-b-in" type="number" min="1" max="32" value="4">
+          <button class="tsc-b" id="ts-b-a">+</button>
+          <span class="tsc-sp">/</span>
+          <button class="tsc-b" id="ts-v-b">-</button>
+          <input class="tsc-i" id="ts-v-in" type="number" min="1" max="32" value="4">
+          <button class="tsc-b" id="ts-v-a">+</button>
         </div>
       </div>
+    </div>
+
+    <div class="cd">
+      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>BPM 预设</div>
+      <div class="cd-s">点击快速切换到常用速度</div>
+      <div class="bpp" id="bpm-presets"></div>
     </div>
 
     <div class="cd">
       <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>节拍细分</div>
       <div class="cd-s">在主拍之间插入提示音，丰富节奏层次</div>
-      <div class="sug" id="sub-g"></div>
+      <div class="subg" id="sub-grid"></div>
     </div>
 
     <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M12 2 2 22h20L12 2z"/></svg>摇摆 / Swing</div>
+      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg>摇摆 / Swing</div>
       <div class="cd-s">开启八分音符细分后，偶数细分自动延迟产生摇摆感</div>
       <div class="vr">
-        <span class="vl">摇摆强度</span>
-        <input class="rg" id="swing-r" type="range" min="0" max="80" value="0">
-        <span class="vv" id="swing-v">0</span>
+        <span class="vl">摇摆量</span>
+        <input class="sli" id="swing-sl" type="range" min="0" max="80" value="0">
+        <span class="vv" id="swing-vv">0</span>
       </div>
-    </div>
-
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4z"/></svg>TAP 测速</div>
-      <div class="cd-s">跟随音乐节奏连续点击至少 2 次，自动计算 BPM</div>
-      <div class="ta">
-        <button class="ta-b" id="tap-b">TAP</button>
-        <div class="ta-i">
-          <div class="ta-lbl">测量结果</div>
-          <div class="ta-v" id="tap-v">- -</div>
-          <div class="tb2">
-            <button class="nb" id="tap-ap" style="width:auto;padding:0 9px;font-size:.75em;height:28px;">应用</button>
-            <button class="nb" id="tap-cl" style="width:auto;padding:0 7px;font-size:.74em;height:28px;color:var(--ts);">重置</button>
-          </div>
-          <div class="ta-lbl" style="margin-top:3px">已点击 <span id="tap-c">0</span> 次</div>
-        </div>
+      <div class="tgr">
+        <span>首拍加重</span>
+        <input class="swc" id="first-sw" type="checkbox" checked>
       </div>
-    </div>
-
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>重音与反馈</div>
-      <div class="cd-s">首页长按节拍点切换额外重音。首拍重音默认开启。</div>
-      <div class="tgl"><span>首拍自动加重</span><input type="checkbox" id="t-fst" class="tg" checked></div>
-      <div class="tgl"><span>播放脉冲光环</span><input type="checkbox" id="t-pulse" class="tg" checked></div>
-      <div class="tgl"><span>BPM 数字闪烁</span><input type="checkbox" id="t-flash" class="tg" checked></div>
-      <div style="margin-top:8px">
-        <button class="nb" id="ct-clr-acc" style="width:auto;padding:0 12px;font-size:.82em;height:32px;border-radius:8px;background:rgba(239,68,68,.08);color:#ef4444;border-color:rgba(239,68,68,.2);">清除所有额外重音</button>
-      </div>
-    </div>
-
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M3 12h18M12 3v18"/></svg>常用 BPM 预设</div>
-      <div class="bpp" id="bp-g"></div>
     </div>
   </div>
 </div>
 
-<!-- ========== SOUND ========== -->
+<!-- ========== SOUND PAGE ========== -->
 <div class="pg" id="pg-sound">
-  <div class="hdr">
-    <button class="bk" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <div class="hdr-t">声音设置</div>
+  <div class="hd">
+    <button class="hb l" data-nav-back><svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg></button>
+    <div class="hd-t">声音设置</div>
   </div>
-  <div class="cn">
+  <div class="ct">
     <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>音色选择</div>
-      <div class="cd-s">点击立即试听当前音色</div>
-      <div class="sng" id="snd-g"></div>
-    </div>
-
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M3 17h3V7H3zM10 20h3V4h-3zM17 14h3v-4h-3z"/></svg>自定义音色</div>
-      <div class="cd-s">启用后以自定义参数替代上方预设音色</div>
-      <div class="tgl" style="margin-bottom:6px"><span>启用自定义音色</span><input type="checkbox" id="t-csound" class="tg"></div>
-      <div class="vr"><span class="vl">频率 Hz</span><input class="rg" id="cfreq-r" type="range" min="80" max="3200" step="10" value="1400"><span class="vv" id="cfreq-v">1400</span></div>
-      <div class="vr"><span class="vl">时长 ms</span><input class="rg" id="cdur-r" type="range" min="10" max="300" step="5" value="35"><span class="vv" id="cdur-v">35</span></div>
-      <div style="font-size:.8em;color:var(--ts);font-weight:700;margin:8px 0 4px">波形类型</div>
-      <div class="wg" id="wave-g">
-        <div class="wi" data-wave="square">方波</div>
-        <div class="wi" data-wave="triangle">三角</div>
-        <div class="wi" data-wave="sine">正弦</div>
-        <div class="wi" data-wave="sawtooth">锯齿</div>
+      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>音色</div>
+      <div class="cd-s">选择预设音色或开启自定义调节</div>
+      <div class="sng" id="snd-grid"></div>
+      <div class="tgr" style="margin-top:10px">
+        <span>自定义音色</span>
+        <input class="swc" id="custom-sw" type="checkbox">
       </div>
-      <button class="nb" id="ct-play-cs" style="width:100%;padding:0 12px;height:36px;border-radius:10px;margin-top:10px;font-size:.88em;font-weight:800;background:var(--p);color:#fff;border-color:var(--p)">试听自定义音色</button>
+    </div>
+
+    <div class="cd" id="custom-box" style="display:none">
+      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>自定义参数</div>
+      <div class="cd-s">开启自定义后可手动调节频率与波形</div>
+      <div class="vr">
+        <span class="vl">频率 Hz</span>
+        <input class="sli" id="freq-sl" type="range" min="80" max="3200" step="10" value="1400">
+        <span class="vv" id="freq-vv">1400</span>
+      </div>
+      <div class="vr">
+        <span class="vl">时长 ms</span>
+        <input class="sli" id="dur-sl" type="range" min="10" max="300" step="5" value="35">
+        <span class="vv" id="dur-vv">35</span>
+      </div>
+      <div class="cd-t" style="margin-top:12px"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>波形</div>
+      <div class="wg" id="wave-grid"></div>
     </div>
 
     <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>音量调节</div>
-      <div class="vr"><span class="vl">重音拍</span><input class="rg" id="vol-a" type="range" min="0" max="100" value="85"><span class="vv" id="vol-a-v">85</span></div>
-      <div class="vr"><span class="vl">普通拍</span><input class="rg" id="vol-n" type="range" min="0" max="100" value="70"><span class="vv" id="vol-n-v">70</span></div>
-      <div class="vr"><span class="vl">细分音</span><input class="rg" id="vol-s" type="range" min="0" max="100" value="55"><span class="vv" id="vol-s-v">55</span></div>
-    </div>
-
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>快速试听</div>
-      <div class="pst-box">
-        <button class="nb" id="ct-pv" style="width:100%;padding:0 12px;height:36px;border-radius:10px;font-size:.88em;font-weight:800;background:rgba(var(--pr),.08);color:var(--p);border-color:rgba(var(--pr),.2)">播放示例节奏</button>
+      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>音量</div>
+      <div class="cd-s">分别调节重音拍、普通拍和细分音的音量</div>
+      <div class="vr">
+        <span class="vl">重音拍</span>
+        <input class="sli" id="vol-a-sl" type="range" min="0" max="100" value="85">
+        <span class="vv" id="vol-a-vv">85</span>
+      </div>
+      <div class="vr">
+        <span class="vl">普通拍</span>
+        <input class="sli" id="vol-n-sl" type="range" min="0" max="100" value="70">
+        <span class="vv" id="vol-n-vv">70</span>
+      </div>
+      <div class="vr">
+        <span class="vl">细分音</span>
+        <input class="sli" id="vol-s-sl" type="range" min="0" max="100" value="55">
+        <span class="vv" id="vol-s-vv">55</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ========== THEME ========== -->
+<!-- ========== THEME PAGE ========== -->
 <div class="pg" id="pg-theme">
-  <div class="hdr">
-    <button class="bk" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <div class="hdr-t">主题与字体</div>
+  <div class="hd">
+    <button class="hb l" data-nav-back><svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg></button>
+    <div class="hd-t">主题设置</div>
   </div>
-  <div class="cn">
+  <div class="ct">
     <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>预设主题</div>
-      <div class="tgg" id="thm-g"></div>
+      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>主题配色</div>
+      <div class="cd-s">选择你喜欢的主色调</div>
+      <div class="tg-g" id="theme-grid"></div>
     </div>
 
     <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4 12H0M24 12h-4"/></svg>自定义主题色</div>
-      <div class="cd-s">开启后以自定义颜色替换当前主题的主色</div>
-      <div class="tgl" style="margin-bottom:6px"><span>启用自定义色</span><input type="checkbox" id="t-cc" class="tg"></div>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
-        <input type="color" id="c-pk" value="#2563eb" style="width:50px;height:50px;border-radius:12px;border:2px solid var(--bd);padding:0;background:transparent;cursor:pointer">
-        <div style="flex:1">
-          <div style="font-size:.79em;color:var(--ts)">当前色值</div>
-          <div id="c-hx" style="font-size:1.1em;font-weight:900;color:var(--p)">#2563EB</div>
-        </div>
+      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg>自定义颜色</div>
+      <div class="cd-s">开启后可选择任意颜色作为主色调</div>
+      <div class="tgr">
+        <span>启用自定义颜色</span>
+        <input class="swc" id="cu-sw" type="checkbox">
       </div>
-      <div class="sw" id="sw-g"></div>
+      <div class="sw" id="swatch"></div>
     </div>
 
     <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM21 19a9 9 0 00-18 0"/></svg>外观模式</div>
-      <div class="mg">
-        <div class="mi" data-md="light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><span>浅色</span></div>
-        <div class="mi" data-md="dark"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><span>暗色</span></div>
+      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>深色模式</div>
+      <div class="cd-s">降低亮度，适合夜间使用</div>
+      <div class="tgr">
+        <span>启用深色模式</span>
+        <input class="swc" id="dk-sw" type="checkbox">
       </div>
     </div>
 
     <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>字体大小</div>
-      <div class="vr"><span class="vl">全局字号</span><input class="rg" id="font-r" type="range" min="12" max="22" value="15"><span class="vv" id="font-v">15</span></div>
+      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>字号</div>
+      <div class="cd-s">调整全局文字大小</div>
+      <div class="vr">
+        <span class="vl">字号</span>
+        <input class="sli" id="fs-sl" type="range" min="12" max="22" value="15">
+        <span class="vv" id="fs-vv">15</span>
+      </div>
     </div>
-
-    <div class="ib">所有设置自动保存在本地，重新打开自动恢复。</div>
   </div>
 </div>
 
-<!-- ========== PRACTICE ========== -->
+<!-- ========== PRACTICE PAGE ========== -->
 <div class="pg" id="pg-practice">
-  <div class="hdr">
-    <button class="bk" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <div class="hdr-t">练习模式</div>
+  <div class="hd">
+    <button class="hb l" data-nav-back><svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg></button>
+    <div class="hd-t">变速练习</div>
   </div>
-  <div class="cn">
+  <div class="ct">
     <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>变速训练模板</div>
-      <div class="plst" id="prac-l"></div>
+      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>练习模板</div>
+      <div class="cd-s">选择一个模板开始变速练习</div>
+      <div class="pl-l" id="pr-list"></div>
     </div>
 
     <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>自定义练习</div>
-      <div class="cd-s">设置参数后自动生成练习路径并立即开始</div>
-      <div class="vr"><span class="vl">起始 BPM</span><input class="rg" id="pr-s" type="range" min="40" max="240" value="60"><span class="vv" id="pr-s-v">60</span></div>
-      <div class="vr"><span class="vl">每步增量</span><input class="rg" id="pr-st" type="range" min="5" max="40" value="10"><span class="vv" id="pr-st-v">10</span></div>
-      <div class="vr"><span class="vl">每段秒数</span><input class="rg" id="pr-d" type="range" min="15" max="180" value="60"><span class="vv" id="pr-d-v">60</span></div>
-      <div class="vr"><span class="vl">阶段数量</span><input class="rg" id="pr-c" type="range" min="2" max="8" value="5"><span class="vv" id="pr-c-v">5</span></div>
-      <div style="margin-top:8px;font-size:.79em;color:var(--ts)">路径预览：<strong id="pr-path" style="color:var(--p)"></strong></div>
-      <button class="nb" id="ct-prac-st" style="width:100%;padding:0 12px;height:38px;border-radius:10px;margin-top:10px;font-size:.88em;font-weight:800;background:var(--p);color:#fff;border-color:var(--p)">开始自定义练习</button>
-    </div>
-
-    <div class="pst-box" id="prac-ps" style="display:none">
-      <div class="pst-ttl" id="prac-pt">热身 · 60 BPM</div>
-      <div class="pst-ct" id="prac-cd">01:00</div>
-      <button class="pst-btn" id="ct-prac-sp">停止练习</button>
+      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>自定义练习</div>
+      <div class="cd-s">调节参数手动创建变速方案</div>
+      <div class="pl-box" id="pr-box">
+        <div class="pl-bt">起始速度</div>
+        <div class="pl-bv" id="pr-start-v">60 BPM</div>
+        <div class="vr">
+          <span class="vl">起始 BPM</span>
+          <input class="sli" id="pr-start-sl" type="range" min="40" max="240" value="60">
+          <span class="vv" id="pr-start-vv">60</span>
+        </div>
+        <div class="vr">
+          <span class="vl">每段秒数</span>
+          <input class="sli" id="pr-dur-sl" type="range" min="15" max="180" value="60">
+          <span class="vv" id="pr-dur-vv">60</span>
+        </div>
+        <div class="vr">
+          <span class="vl">阶段数量</span>
+          <input class="sli" id="pr-steps-sl" type="range" min="2" max="8" value="5">
+          <span class="vv" id="pr-steps-vv">5</span>
+        </div>
+        <button class="pl-bn" id="pr-start">开始自定义练习</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ========== SYSTEM ========== -->
-<div class="pg" id="pg-system">
-  <div class="hdr">
-    <button class="bk" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <div class="hdr-t">系统</div>
+<!-- ========== SETTINGS PAGE ========== -->
+<div class="pg" id="pg-settings">
+  <div class="hd">
+    <button class="hb l" data-nav-back><svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg></button>
+    <div class="hd-t">更多</div>
   </div>
-  <div class="cn">
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M19 9l-7-7-7 7 7 7zM5 13l7 7 7-7"/></svg>当前设置</div>
-      <div class="sl">
-        <div class="sl2 noc">
-          <div class="sri2"><svg viewBox="0 0 24 24"><path d="M8 3v3M16 3v3M3 11h18M5 6h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/></svg></div>
-          <div class="srt2"><div class="srn2">BPM</div><div class="srd2">每分钟节拍数</div></div>
-          <div class="srv2" id="info-bpm">120</div>
+  <div class="ct">
+    <div class="sl-l">
+      <div class="sl-i" id="abt-row">
+        <div class="sl-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+        <div class="sl-tx">
+          <div class="sl-tt">关于</div>
+          <div class="sl-ds">版本信息与用户协议</div>
         </div>
-        <div class="sl2 noc">
-          <div class="sri2"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
-          <div class="srt2"><div class="srn2">拍号 / 细分</div><div class="srd2">小节配置</div></div>
-          <div class="srv2" id="info-ts">4/4 · 四分</div>
+        <div class="sl-vv">&rsaquo;</div>
+      </div>
+      <div class="sl-i" id="agree-row">
+        <div class="sl-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div class="sl-tx">
+          <div class="sl-tt">用户协议</div>
+          <div class="sl-ds" id="agree-status">已同意</div>
         </div>
-        <div class="sl2 noc">
-          <div class="sri2"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg></div>
-          <div class="srt2"><div class="srn2">音色</div><div class="srd2">当前节拍提示音</div></div>
-          <div class="srv2" id="info-snd">点击</div>
+        <div class="sl-vv">&rsaquo;</div>
+      </div>
+      <div class="sl-i" id="rst-row">
+        <div class="sl-ic d"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg></div>
+        <div class="sl-tx">
+          <div class="sl-tt">重置设置</div>
+          <div class="sl-ds">清除所有保存的偏好</div>
         </div>
-        <div class="sl2 noc">
-          <div class="sri2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div>
-          <div class="srt2"><div class="srn2">主题</div><div class="srd2">当前配色方案</div></div>
-          <div class="srv2" id="info-thm">简洁蓝</div>
-        </div>
+        <div class="sl-vv">&rsaquo;</div>
       </div>
     </div>
 
-    <div class="sl">
-      <div class="sl2" id="ct-reset">
-        <div class="sri2 dk3"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
-        <div class="srt2"><div class="srn2">恢复默认设置</div><div class="srd2">重置所有参数为初始状态</div></div>
-      </div>
-      <div class="sl2" id="ct-clear">
-        <div class="sri2 dk3"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></div>
-        <div class="srt2"><div class="srn2">清除本地存储</div><div class="srd2">移除所有已保存数据</div></div>
-      </div>
+    <div class="ib">
+      节拍器 v6.0 &middot; 使用 Web Audio API 提供精准节拍调度<br>
+      所有设置均保存在浏览器本地（localStorage），不上传任何数据。
     </div>
-
-    <div class="ib">本节拍器完全在本地浏览器运行，不读取或写入任何 Cookie，不依赖外部网络资源。<br><br>版本：v6 · 单文件离线版<br>支持 20-300 BPM · 5 种音色 · 12 套主题 · 自定义音色 · 摇摆 · TAP 测速 · 变速练习</div>
   </div>
 </div>
 
+
+<!-- ========== HINT BAR ========== -->
+<div class="hb hi" id="hint-bar">
+  <div class="hb-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+  <div class="hb-tx" id="hint-txt">点击播放按钮开始</div>
+  <div class="hb-x" id="hint-close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
 </div>
 
-<!-- Hint bar -->
-<div class="hb hi" id="hint-b">
-  <div class="hi2"><svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4M12 16h.01"/></svg></div>
-  <div class="ht" id="hint-t"></div>
-  <button class="hc2" id="hint-c"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-</div>
-
-<!-- Guide overlay -->
-<div class="mo hi" id="guide-ov">
-  <div class="mc">
-    <div class="gic2" id="g-ic"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
-    <div class="gt2" id="g-tt"></div>
-    <div class="gd2" id="g-ds"></div>
-    <div class="gst2" id="g-st"></div>
-    <button class="gb2" id="g-nx">下一步</button>
-    <button class="gb2 sk2" id="g-sk">跳过引导</button>
+<!-- ========== GUIDE OVERLAY MODAL ========== -->
+<div class="md hi" id="guide-modal">
+  <div class="md-c">
+    <div class="md-ic" id="guide-ic"></div>
+    <div class="md-tt" id="guide-tt">欢迎使用节拍器</div>
+    <div class="md-ds" id="guide-ds">一款完全本地运行、无网络依赖的精准节拍器，支持丰富的个性化设置与练习模板。</div>
+    <div class="md-st" id="guide-st"></div>
+    <button class="md-b" id="guide-next">下一步</button>
+    <button class="md-b sk" id="guide-skip">跳过引导</button>
   </div>
 </div>
 
-<!-- Theme picker -->
-<div class="mo hi" id="guide-theme">
-  <div class="tp">
-    <div class="tp-t2">选择你喜欢的主题</div>
-    <div class="tp-s2">共 12 套精心设计的配色方案，进入后可随时更换</div>
-    <div class="tp-g" id="gt-g"></div>
-    <button class="gb2" id="gt-nx">进入应用</button>
-  </div>
-</div>
-
-<!-- Agreement -->
-<div class="mo hi" id="guide-agree">
-  <div class="ag">
-    <div class="ag-t2">用户协议</div>
-    <div class="ag-s2">首次进入请阅读并同意以下条款</div>
+<!-- ========== AGREE MODAL ========== -->
+<div class="md hi" id="agree-modal">
+  <div class="md-c">
+    <div class="md-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+    <div class="md-tt">用户协议与隐私声明</div>
     <div class="ag-tx">
-      <h3>一、使用说明</h3>
-      <p>本节拍器是一款纯本地运行的 Web 应用，无需网络连接即可使用全部功能。所有数据均保存在您的设备本地，不会上传至任何服务器。</p>
-      <h3>二、隐私声明</h3>
-      <p>本应用不收集、不存储、不传输任何个人隐私信息。不使用 Cookie，不追踪用户行为，不包含任何第三方分析工具。</p>
-      <h3>三、数据存储</h3>
-      <p>您的设置（主题、BPM、音色偏好等）保存在浏览器本地存储（localStorage）中。清除浏览器数据将同步清除这些设置。</p>
-      <h3>四、使用限制</h3>
-      <p>本应用仅作为音乐练习辅助工具，请合理安排练习时间，保护听力健康。</p>
-      <h3>五、免责声明</h3>
-      <p>本应用按"现状"提供，不提供任何明示或暗示的保证。因使用本应用造成的任何直接或间接损失，作者不承担任何责任。</p>
+      <h3>使用说明</h3>
+      <p>本应用为纯前端单文件应用，打开后即可使用，无需安装、无需注册账号。</p>
+      <h3>数据与隐私</h3>
+      <p>您的设置（BPM、主题、音色偏好等）保存在浏览器本地存储（localStorage）中，不会上传到任何服务器。清除浏览器数据或使用隐私浏览模式，这些设置将被清除。</p>
+      <h3>权限说明</h3>
+      <p>本应用仅需要音频播放能力，使用浏览器内置的 Web Audio API 合成节拍声音，不请求任何麦克风、摄像头或定位权限。</p>
+      <h3>免责声明</h3>
+      <p>本应用按"现状"提供，不提供任何明示或暗示的保证。因使用本应用造成的任何直接或间接损失，作者不承担任何责任。长时间使用耳机请适度降低音量，保护听力。</p>
     </div>
-    <label class="ag-cb"><input type="checkbox" id="agree-cb"><span>我已阅读并同意上述协议</span></label>
-    <button class="ag-b2" id="agree-nx" disabled>继续</button>
+    <label class="ag-cb"><input type="checkbox" id="agree-chk">我已阅读并同意上述协议</label>
+    <button class="md-b" id="agree-next" disabled>继续</button>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- ========== THEME PICKER MODAL ========== -->
+<div class="md hi" id="theme-modal">
+  <div class="md-c">
+    <div class="md-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg></div>
+    <div class="md-tt">选择你喜欢的主题</div>
+    <div class="md-ds">首次进入可选择主题配色，稍后可随时在「主题」页面更改</div>
+    <div class="tp-g2" id="tp-grid"></div>
+    <div class="tgr">
+      <span>启用深色模式</span>
+      <input class="swc" id="tp-dk" type="checkbox">
+    </div>
+    <button class="md-b" id="tp-next">开始使用</button>
+    <button class="md-b sk" id="tp-skip">使用默认</button>
+  </div>
+</div>
+
+<!-- ========== TOAST ========== -->
+<div class="tst" id="toast"></div>
+
 
 <script>
 (function(){
 'use strict';
 
-var SK = 'metro_v6';
-var DFLT = {
-  bpm:120, beats:4, beatValue:4, subdivision:'quarter', soundType:'click',
-  vA:85, vN:70, vS:55,
-  theme:'minimal', fs:15,
-  acc:[], swing:0,
-  uCS:false, cF:1400, cW:'square', cD:0.035,
-  dk:false, uCC:false, cC:'#2563eb',
-  fst:true, pls:true, fls:true,
-  agreed:false, gSeen:false
+var STORE_KEY = 'metro_v6';
+var DEFAULT = {
+  bpm: 120, beats: 4, beatValue: 4, subdivision: 'quarter',
+  soundType: 'click',
+  volA: 85, volN: 70, volS: 55,
+  theme: 'minimal', fontSize: 15,
+  accented: [], swing: 0,
+  useCustom: false, customFreq: 1400, customWave: 'square', customDur: 35,
+  dark: false, useCustomColor: false, customColor: '#2563eb',
+  firstBeatAccent: true,
+  agreed: false, guideSeen: false
 };
 
 var THEMES = [
-  {id:'minimal', n:'简洁蓝', c:'#2563eb'},
-  {id:'nature',  n:'自然绿', c:'#16a34a'},
-  {id:'ocean',   n:'海洋青', c:'#0284c7'},
-  {id:'sunset',  n:'日落橙', c:'#ea580c'},
-  {id:'cute',    n:'可爱粉', c:'#db2777'},
-  {id:'tech',    n:'科技黑', c:'#64748b'},
-  {id:'dark',    n:'深邃紫', c:'#8b5cf6'},
-  {id:'retro',   n:'复古棕', c:'#b45309'},
-  {id:'midnight',n:'午夜蓝', c:'#1e40af'},
-  {id:'forest',  n:'森林绿', c:'#4d7c0f'},
-  {id:'berry',   n:'浆果紫', c:'#7c3aed'},
-  {id:'warm',    n:'温暖灰', c:'#57534e'}
+  { id: 'minimal', name: '经典蓝', color: '#2563eb' },
+  { id: 'nature',  name: '自然绿', color: '#16a34a' },
+  { id: 'ocean',   name: '海洋青', color: '#0284c7' },
+  { id: 'sunset',  name: '日落橙', color: '#ea580c' },
+  { id: 'berry',   name: '樱桃粉', color: '#db2777' },
+  { id: 'violet',  name: '紫罗兰', color: '#8b5cf6' },
+  { id: 'graphite',name: '石墨灰', color: '#64748b' },
+  { id: 'amber',   name: '琥珀黄', color: '#b45309' },
+  { id: 'crimson', name: '深红', color: '#dc2626' },
+  { id: 'forest',  name: '森林绿', color: '#4d7c0f' },
+  { id: 'midnight',name: '午夜蓝', color: '#1e3a8a' },
+  { id: 'teal',    name: '青碧', color: '#0d9488' }
 ];
 
-var SUBS = [
-  {id:'quarter', n:'四分音符', m:1},
-  {id:'eighth',  n:'八分音符', m:2},
-  {id:'sixteenth', n:'十六分音', m:4},
-  {id:'triplet', n:'三连音', m:3},
-  {id:'half',   n:'二分音符', m:0.5},
-  {id:'quintuplet', n:'五连音', m:5}
+var SUBDIVS = [
+  { id: 'quarter', name: '四分音符', mult: 1 },
+  { id: 'eighth',  name: '八分音符', mult: 2 },
+  { id: 'sixteenth', name: '十六分音', mult: 4 },
+  { id: 'triplet', name: '三连音', mult: 3 },
+  { id: 'half',    name: '二分音符', mult: 0.5 },
+  { id: 'quintuplet', name: '五连音', mult: 5 }
 ];
 
-var TSIGS = [
-  {b:2,bv:4},{b:3,bv:4},{b:4,bv:4},{b:5,bv:4},
-  {b:6,bv:8},{b:7,bv:8},{b:8,bv:8},{b:9,bv:8},{b:12,bv:8}
+var TIMESIGS = [
+  { b: 2, v: 4 }, { b: 3, v: 4 }, { b: 4, v: 4 }, { b: 5, v: 4 },
+  { b: 6, v: 8 }, { b: 7, v: 8 }, { b: 8, v: 8 }, { b: 9, v: 8 },
+  { b: 12, v: 8 }, { b: 2, v: 2 }, { b: 3, v: 2 }, { b: 6, v: 4 }
 ];
 
-var SNDS = [
-  {id:'click', n:'点击', f:1400, t:'square', d:0.035},
-  {id:'wood', n:'木鱼', f:350, t:'triangle', d:0.08},
-  {id:'electronic', n:'电子', f:880, t:'sawtooth', d:0.04},
-  {id:'metal', n:'金属', f:1200, t:'sine', d:0.12},
-  {id:'drum', n:'鼓声', f:220, t:'square', d:0.10}
+var SOUNDS = [
+  { id: 'click', name: '点击', freq: 1400, wave: 'square',   dur: 0.035 },
+  { id: 'beep',  name: '蜂鸣', freq: 880,  wave: 'sine',     dur: 0.080 },
+  { id: 'wood',  name: '木鱼', freq: 350,  wave: 'triangle', dur: 0.100 },
+  { id: 'drum',  name: '鼓点', freq: 220,  wave: 'sawtooth', dur: 0.120 },
+  { id: 'bright',name: '明亮', freq: 2000, wave: 'square',   dur: 0.030 },
+  { id: 'warm',  name: '温暖', freq: 440,  wave: 'sine',     dur: 0.100 }
 ];
 
-var PR_TMPLS = [
-  {id:'warmup', n:'慢速热身', st:[{b:40,s:60},{b:60,s:60},{b:80,s:60},{b:100,s:60}]},
-  {id:'steady', n:'稳定提速', st:[{b:80,s:60},{b:100,s:60},{b:120,s:90},{b:140,s:60}]},
-  {id:'progressive', n:'渐进挑战', st:[{b:100,s:45},{b:120,s:45},{b:140,s:45},{b:160,s:60},{b:180,s:60}]},
-  {id:'variable', n:'高低变速', st:[{b:80,s:30},{b:120,s:30},{b:160,s:30},{b:110,s:60},{b:150,s:30},{b:100,s:60}]},
-  {id:'extreme', n:'极限冲刺', st:[{b:180,s:30},{b:200,s:30},{b:220,s:30},{b:240,s:30}]}
+var WAVES = [
+  { id: 'square', name: '方波' },
+  { id: 'sine', name: '正弦' },
+  { id: 'triangle', name: '三角' },
+  { id: 'sawtooth', name: '锯齿' }
 ];
 
-var SW_COLS = ['#ef4444','#f97316','#eab308','#22c55e','#14b8a6','#06b6d4','#0ea5e9','#3b82f6','#6366f1','#8b5cf6','#ec4899','#db2777','#be185d','#7c3aed'];
-var TAP_TMO = 2500;
+var COLOR_SWATCHES = [
+  '#dc2626','#ea580c','#d97706','#b45309','#65a30d','#16a34a',
+  '#0d9488','#0284c7','#2563eb','#1e40af','#312e81','#6366f1',
+  '#8b5cf6','#7c3aed','#db2777','#be185d','#9f1239','#64748b'
+];
+
 var BPM_PRESETS = [
-  {b:60,n:'Largo'},{b:76,n:'Adagio'},{b:90,n:'Andante'},
-  {b:108,n:'Moderato'},{b:120,n:'Allegro'},{b:138,n:'Vivace'},
-  {b:156,n:'Presto'},{b:180,n:'Prestissimo'}
+  { bpm: 60,  name: 'Largo 慢板' },
+  { bpm: 80,  name: 'Andante 行板' },
+  { bpm: 100, name: 'Moderato 中板' },
+  { bpm: 120, name: 'Allegro 快板' },
+  { bpm: 140, name: 'Vivace 急板' },
+  { bpm: 168, name: 'Presto 速板' },
+  { bpm: 180, name: 'Prestissimo' },
+  { bpm: 200, name: '极限' }
 ];
 
-var G_STEPS = [
-  {ic:'<svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>',
-   tt:'欢迎使用节拍器', ds:'一款完全本地运行、无网络依赖的精准节拍器，支持丰富的个性化设置与练习模板。'},
-  {ic:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>',
-   tt:'调节 BPM', ds:'拖动滑块、点击按钮或直接输入数值，范围 20-300 BPM。也可使用 TAP 跟随音乐自动测速。'},
-  {ic:'<svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>',
-   tt:'节拍与重音', ds:'每个圆点代表一拍，第一拍自动加重。长按任意节拍点可切换额外重音。'},
-  {ic:'<svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>',
-   tt:'自定义声音', ds:'进入「声音」页面可选择多种预设音色，或开启自定义音色并调节频率和波形。'},
-  {ic:'<svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>',
-   tt:'变速练习', ds:'使用练习模板自动分段变速训练，或自定义参数逐步提升演奏速度。'}
+var GUIDE_STEPS = [
+  { icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
+    title: '欢迎使用节拍器',
+    desc: '一款完全本地运行、无网络依赖的精准节拍器。支持丰富的个性化设置与变速练习模板。' },
+  { icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+    title: '调节 BPM',
+    desc: '通过滑块、按钮或直接输入数值来调整节拍速度，范围 20-300 BPM。也可使用 TAP 功能跟随音乐自动测速。' },
+  { icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>',
+    title: '节拍点与重音',
+    desc: '每个圆点代表一拍。首拍默认加重。点击任一圆点可切换其重音标记。在节拍页面自定义拍号和细分。' },
+  { icon: '<svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>',
+    title: '自定义声音',
+    desc: '进入「声音」页面选择不同的预设音色，或开启自定义模式调节频率、波形与音量。' },
+  { icon: '<svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>',
+    title: '变速练习',
+    desc: '使用练习模板进行自动分段变速训练。设置起始 BPM 与阶段数，每段结束后自动加速。' }
 ];
 
-// ---- STATE ----
-var S = Object.assign({}, DFLT);
+var PRACTICE_TEMPLATES = [
+  { id: 'warmup',   name: '慢速热身', desc: '从 60 BPM 开始，每 60 秒增加 20 BPM', steps: [60, 80, 100, 120] },
+  { id: 'steady',   name: '稳定提速', desc: '从 80 BPM 起步，逐步推进至 140', steps: [80, 100, 120, 140] },
+  { id: 'intense',  name: '高强度',   desc: '中高速区间，考验节奏稳定性', steps: [120, 140, 160, 180] },
+  { id: 'variable', name: '高低变速', desc: '交替高低速度，提升节奏感', steps: [80, 130, 100, 160, 120] },
+  { id: 'extreme',  name: '极限冲刺', desc: '高速区间挑战', steps: [160, 180, 200, 220] }
+];
 
-function load() {
-  try {
-    var raw = localStorage.getItem(SK);
-    if (!raw) return;
+
+// === STATE ===
+var S = {};
+for (var k in DEFAULT) S[k] = DEFAULT[k];
+
+function loadState(){
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return;
     var d = JSON.parse(raw);
-    for (var k in DFLT) {
-      if (d[k] !== undefined) {
-        if (k === 'acc' && !Array.isArray(d[k])) continue;
-        S[k] = d[k];
-      }
+    for (var k in DEFAULT){
+      if (d[k] !== undefined) S[k] = d[k];
     }
-  } catch(e) {}
+    // sanity checks
+    S.bpm = Math.max(20, Math.min(300, Math.round(S.bpm)));
+    S.beats = Math.max(1, Math.min(32, Math.round(S.beats)));
+    S.beatValue = Math.max(1, Math.min(32, Math.round(S.beatValue)));
+    if (!Array.isArray(S.accented)) S.accented = [];
+  } catch(e){}
 }
 
-function save() {
-  try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
+function saveState(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch(e){}
 }
 
-// ---- AUDIO ENGINE ----
+function hexToRgb(hex){
+  var h = (hex || '').replace('#','');
+  if (h.length !== 6) return '37,99,235';
+  var r = parseInt(h.slice(0,2),16);
+  var g = parseInt(h.slice(2,4),16);
+  var b = parseInt(h.slice(4,6),16);
+  return r + ',' + g + ',' + b;
+}
+
+// === AUDIO ENGINE ===
 var actx = null;
 var isPlaying = false;
 var nextBeatTime = 0;
 var curBeat = 0;
 var curSub = 0;
 var rafId = null;
+var lookAhead = 25; // ms
+var scheduleAhead = 0.1; // s
 
-function ensureCtx() {
-  if (!actx) {
-    try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return false; }
+function ensureAudio(){
+  if (!actx){
+    try{
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) actx = new AC();
+    } catch(e){ actx = null; }
   }
-  if (actx.state === 'suspended') {
-    try { actx.resume(); } catch(e) {}
+  if (actx && actx.state === 'suspended'){
+    try{ actx.resume(); } catch(e){}
   }
   return !!actx;
 }
 
-function getSubMult() {
-  for (var i = 0; i < SUBS.length; i++) {
-    if (SUBS[i].id === S.subdivision) return SUBS[i].m;
+function getSubMult(){
+  for (var i=0;i<SUBDIVS.length;i++){
+    if (SUBDIVS[i].id === S.subdivision) return SUBDIVS[i].mult;
   }
   return 1;
 }
 
-function currentSound() {
-  if (S.uCS) return { f: S.cF, t: S.cW, d: S.cD };
-  for (var i = 0; i < SNDS.length; i++) {
-    if (SNDS[i].id === S.soundType) return SNDS[i];
+function getSoundConfig(){
+  if (S.useCustom){
+    return { freq: S.customFreq, wave: S.customWave, dur: S.customDur / 1000 };
   }
-  return SNDS[0];
+  for (var i=0;i<SOUNDS.length;i++){
+    if (SOUNDS[i].id === S.soundType) return SOUNDS[i];
+  }
+  return SOUNDS[0];
 }
 
-function scheduleTone(when, kind) {
+function scheduleClick(when, kind){
   if (!actx) return;
-  var snd = currentSound();
-  var vol;
-  if (kind === 'a') vol = (S.vA / 100) * 0.8;
-  else if (kind === 'n') vol = (S.vN / 100) * 0.65;
-  else vol = (S.vS / 100) * 0.5;
-  var freq = snd.f;
-  if (kind === 'a') freq = snd.f * 1.12;
-  else if (kind === 's') freq = snd.f * 0.95;
-  try {
+  var snd = getSoundConfig();
+  var vol, freq;
+  if (kind === 'a'){
+    vol = (S.volA / 100) * 0.7;
+    freq = snd.freq * 1.15;
+  } else if (kind === 'n'){
+    vol = (S.volN / 100) * 0.55;
+    freq = snd.freq;
+  } else {
+    vol = (S.volS / 100) * 0.4;
+    freq = snd.freq * 0.95;
+  }
+  try{
     var osc = actx.createOscillator();
-    var gain = actx.createGain();
-    osc.type = snd.t;
+    var g = actx.createGain();
+    osc.type = snd.wave;
     osc.frequency.setValueAtTime(freq, when);
-    gain.gain.setValueAtTime(0.0001, when);
-    gain.gain.exponentialRampToValueAtTime(Math.max(0.001, vol), when + 0.005);
-    gain.gain.exponentialRampToValueAtTime(0.0001, when + snd.d);
-    osc.connect(gain).connect(actx.destination);
+    g.gain.setValueAtTime(0.0001, when);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, vol), when + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, when + snd.dur);
+    osc.connect(g);
+    g.connect(actx.destination);
     osc.start(when);
-    osc.stop(when + snd.d + 0.03);
-  } catch(e) {}
+    osc.stop(when + snd.dur + 0.04);
+  } catch(e){}
 }
 
-function tick() {
+function scheduler(){
   if (!actx || !isPlaying) return;
   var mult = getSubMult();
-  var interval = 60 / S.bpm;
-  var subInterval = interval / mult;
-  var now = actx.currentTime;
-  while (nextBeatTime < now + 0.25) {
-    var isMain = (curSub === 0);
+  var subInterval;
+  if (mult >= 1) subInterval = (60 / S.bpm) / mult;
+  else subInterval = (60 / S.bpm) / mult; // same calc, safety
+
+  var horizon = actx.currentTime + scheduleAhead;
+  while (nextBeatTime < horizon){
+    var isMainBeat = (curSub === 0);
     var kind;
-    if (isMain) {
-      var bi = curBeat % S.beats;
-      if (S.fst && bi === 0) kind = 'a';
-      else if (S.acc.indexOf(bi) >= 0) kind = 'a';
-      else kind = 'n';
+    if (isMainBeat){
+      var bIdx = curBeat % S.beats;
+      var isAccent = (S.firstBeatAccent && bIdx === 0) || (S.accented.indexOf(bIdx) >= 0);
+      kind = isAccent ? 'a' : 'n';
     } else {
       kind = 's';
     }
-    var offset = 0;
-    if (S.swing > 0 && mult === 2 && !isMain && curSub === 1) {
-      offset = subInterval * (S.swing / 100) * 0.65;
+    var playTime = nextBeatTime;
+    // swing: shift even subdivisions when mult=2
+    if (S.swing > 0 && mult === 2 && !isMainBeat && curSub === 1){
+      playTime = playTime + (subInterval * (S.swing / 100) * 0.55);
     }
-    scheduleTone(nextBeatTime + offset, kind);
-    if (isMain) {
-      flashDot(curBeat % S.beats, kind === 'a');
-    }
+    scheduleClick(playTime, kind);
+    queueVisual(isMainBeat ? (curBeat % S.beats) : -1, kind);
+
     curSub++;
-    if (curSub >= Math.max(1, Math.round(mult))) {
-      curSub = 0;
-      curBeat++;
-    }
+    var subCount = Math.max(1, Math.round(mult));
+    if (curSub >= subCount){ curSub = 0; curBeat++; }
     nextBeatTime += subInterval;
   }
-  rafId = requestAnimationFrame(tick);
+  rafId = setTimeout(scheduler, lookAhead);
 }
 
-function startPlayback() {
-  if (!ensureCtx()) return;
+function startPlayback(){
+  if (!ensureAudio()){ showToast('浏览器不支持音频'); return; }
   if (isPlaying) return;
   isPlaying = true;
   curBeat = 0;
   curSub = 0;
   nextBeatTime = actx.currentTime + 0.05;
-  rafId = requestAnimationFrame(tick);
+  // unlock on iOS: play a silent click
+  try{
+    var o = actx.createOscillator();
+    var g = actx.createGain();
+    g.gain.value = 0.0001;
+    o.connect(g); g.connect(actx.destination);
+    o.start(actx.currentTime);
+    o.stop(actx.currentTime + 0.02);
+  } catch(e){}
+  scheduler();
   updatePlayUI();
 }
 
-function stopPlayback() {
+function stopPlayback(){
   isPlaying = false;
-  if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  if (rafId){ clearTimeout(rafId); rafId = null; }
   curBeat = 0;
   curSub = 0;
-  clearDots();
+  clearVisuals();
   updatePlayUI();
 }
 
-function togglePlayback() {
-  if (isPlaying) stopPlayback(); else startPlayback();
+function togglePlayback(){
+  if (isPlaying) stopPlayback();
+  else startPlayback();
 }
 
-// ---- UI HELPERS ----
-function setSlider(el, val) {
-  if (!el) return;
-  var min = parseFloat(el.min) || 0;
-  var max = parseFloat(el.max) || 100;
-  el.value = val;
+// === VISUAL CUE QUEUE ===
+var visualQueue = [];
+var lastVisualTime = 0;
+
+function queueVisual(dotIdx, kind){
+  visualQueue.push({ time: nextBeatTime, idx: dotIdx, kind: kind });
 }
 
-function setBpm(val) {
+function clearVisuals(){
+  visualQueue = [];
+  var dots = document.querySelectorAll('.bd');
+  for (var i=0;i<dots.length;i++) dots[i].classList.remove('bt');
+  var ring = document.getElementById('ring');
+  if (ring) ring.classList.remove('bt');
+}
+
+function visualLoop(){
+  if (actx && isPlaying && visualQueue.length > 0){
+    var now = actx.currentTime;
+    while (visualQueue.length > 0 && visualQueue[0].time <= now + 0.02){
+      var q = visualQueue.shift();
+      if (q.idx >= 0) flashDot(q.idx, q.kind === 'a');
+      else flashSub();
+    }
+  }
+  requestAnimationFrame(visualLoop);
+}
+
+function flashDot(idx, strong){
+  var dots = document.querySelectorAll('#dots .bd');
+  if (dots[idx]){
+    dots[idx].classList.add('bt');
+    (function(el){ setTimeout(function(){ el.classList.remove('bt'); }, 180); })(dots[idx]);
+  }
+  // pulse ring always
+  var ring = document.getElementById('ring');
+  if (ring){
+    ring.classList.remove('bt');
+    void ring.offsetWidth;
+    ring.classList.add('bt');
+  }
+  var bpmVal = document.getElementById('bpm-val');
+  if (bpmVal){
+    bpmVal.style.transform = 'scale(1.06)';
+    setTimeout(function(){ if (bpmVal) bpmVal.style.transform = ''; }, 120);
+  }
+}
+
+function flashSub(){
+  // subtle: nothing big, could add small pulse
+  var ring = document.getElementById('ring');
+  if (ring){
+    ring.classList.remove('bt');
+    void ring.offsetWidth;
+    ring.classList.add('bt');
+  }
+}
+
+function updatePlayUI(){
+  var btn = document.getElementById('play-btn');
+  var ic = document.getElementById('play-ic');
+  var info = document.getElementById('play-info');
+  if (!btn) return;
+  if (isPlaying){
+    ic.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
+    if (info) info.textContent = S.beats + '/' + S.beatValue + '  &middot;  ' + S.bpm + ' BPM';
+  } else {
+    ic.innerHTML = '<path d="M8 5v14l11-7z"/>';
+    if (info) info.textContent = '点击播放按钮开始';
+  }
+}
+
+
+// === RENDER HELPERS ===
+function renderDots(){
+  var wrap = document.getElementById('dots');
+  if (!wrap) return;
+  var html = '';
+  for (var i=0;i<S.beats;i++){
+    var isAccent = (S.firstBeatAccent && i === 0) || (S.accented.indexOf(i) >= 0);
+    html += '<div class="bd" data-idx="' + i + '" data-ac="' + (isAccent ? '1' : '0') + '">' + (i+1) + '</div>';
+  }
+  wrap.innerHTML = html;
+  var dots = wrap.querySelectorAll('.bd');
+  for (var j=0;j<dots.length;j++){
+    dots[j].addEventListener('click', onDotClick);
+  }
+}
+
+function onDotClick(e){
+  var idx = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
+  if (idx === 0) return; // first beat handled by firstBeatAccent toggle only
+  var pos = S.accented.indexOf(idx);
+  if (pos >= 0) S.accented.splice(pos, 1);
+  else S.accented.push(idx);
+  saveState();
+  renderDots();
+}
+
+function renderTimeSigs(){
+  var grid = document.getElementById('tsg-grid');
+  if (!grid) return;
+  var html = '';
+  for (var i=0;i<TIMESIGS.length;i++){
+    var t = TIMESIGS[i];
+    var on = (t.b === S.beats && t.v === S.beatValue);
+    html += '<div class="tsg-i' + (on ? ' on' : '') + '" data-b="' + t.b + '" data-v="' + t.v + '">' + t.b + '/' + t.v + '</div>';
+  }
+  grid.innerHTML = html;
+  var items = grid.querySelectorAll('.tsg-i');
+  for (var j=0;j<items.length;j++){
+    items[j].addEventListener('click', function(el){
+      return function(){
+        var b = parseInt(el.getAttribute('data-b'),10);
+        var v = parseInt(el.getAttribute('data-v'),10);
+        S.beats = b; S.beatValue = v;
+        saveState();
+        refreshAll();
+      };
+    }(items[j]));
+  }
+  var bi = document.getElementById('ts-b-in');
+  var vi = document.getElementById('ts-v-in');
+  if (bi) bi.value = S.beats;
+  if (vi) vi.value = S.beatValue;
+}
+
+function renderSubdivs(){
+  var grid = document.getElementById('sub-grid');
+  if (!grid) return;
+  var html = '';
+  for (var i=0;i<SUBDIVS.length;i++){
+    var s = SUBDIVS[i];
+    var on = (s.id === S.subdivision);
+    html += '<div class="sub-i' + (on ? ' on' : '') + '" data-id="' + s.id + '">';
+    html += '<div class="sm">' + s.name + '</div>';
+    if (s.mult === 0.5) html += '<div style="font-size:.72em;color:var(--ts)">x&frac12;</div>';
+    else html += '<div style="font-size:.72em;color:var(--ts)">x' + s.mult + '</div>';
+    html += '</div>';
+  }
+  grid.innerHTML = html;
+  var items = grid.querySelectorAll('.sub-i');
+  for (var j=0;j<items.length;j++){
+    items[j].addEventListener('click', function(el){
+      return function(){
+        S.subdivision = el.getAttribute('data-id');
+        saveState();
+        refreshAll();
+      };
+    }(items[j]));
+  }
+}
+
+function renderSounds(){
+  var grid = document.getElementById('snd-grid');
+  if (!grid) return;
+  var html = '';
+  for (var i=0;i<SOUNDS.length;i++){
+    var s = SOUNDS[i];
+    var on = (!S.useCustom && s.id === S.soundType);
+    html += '<div class="sn-i' + (on ? ' on' : '') + '" data-id="' + s.id + '">';
+    html += '<div class="sn-ic"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg></div>';
+    html += '<div style="font-size:.82em;font-weight:800;color:var(--tx);margin-top:4px">' + s.name + '</div>';
+    html += '</div>';
+  }
+  grid.innerHTML = html;
+  var items = grid.querySelectorAll('.sn-i');
+  for (var j=0;j<items.length;j++){
+    items[j].addEventListener('click', function(el){
+      return function(){
+        S.soundType = el.getAttribute('data-id');
+        S.useCustom = false;
+        saveState();
+        refreshAll();
+        if (ensureAudio()){
+          var o = actx.createOscillator();
+          var g = actx.createGain();
+          var cfg = getSoundConfig();
+          o.type = cfg.wave; o.frequency.value = cfg.freq;
+          g.gain.value = 0.0001;
+          o.connect(g); g.connect(actx.destination);
+          var now = actx.currentTime;
+          g.gain.exponentialRampToValueAtTime(0.3, now + 0.005);
+          g.gain.exponentialRampToValueAtTime(0.0001, now + cfg.dur);
+          o.start(now); o.stop(now + cfg.dur + 0.04);
+        }
+      };
+    }(items[j]));
+  }
+  var cb = document.getElementById('custom-sw');
+  if (cb) cb.checked = !!S.useCustom;
+  var cbox = document.getElementById('custom-box');
+  if (cbox) cbox.style.display = S.useCustom ? 'block' : 'none';
+}
+
+function renderWaves(){
+  var grid = document.getElementById('wave-grid');
+  if (!grid) return;
+  var html = '';
+  for (var i=0;i<WAVES.length;i++){
+    var on = (WAVES[i].id === S.customWave);
+    html += '<div class="wg-i' + (on ? ' on' : '') + '" data-id="' + WAVES[i].id + '">' + WAVES[i].name + '</div>';
+  }
+  grid.innerHTML = html;
+  var items = grid.querySelectorAll('.wg-i');
+  for (var j=0;j<items.length;j++){
+    items[j].addEventListener('click', function(el){
+      return function(){
+        S.customWave = el.getAttribute('data-id');
+        saveState();
+        refreshAll();
+      };
+    }(items[j]));
+  }
+}
+
+function renderThemes(){
+  var grid = document.getElementById('theme-grid');
+  if (!grid) return;
+  var html = '';
+  for (var i=0;i<THEMES.length;i++){
+    var t = THEMES[i];
+    var on = (!S.useCustomColor && t.id === S.theme);
+    var rgb = hexToRgb(t.color);
+    html += '<div class="tg-i' + (on ? ' on' : '') + '" data-id="' + t.id + '" style="--p:' + t.color + ';--p-rgb:' + rgb + '">';
+    html += '<div class="tg-sw" style="width:24px;height:24px;border-radius:50%;background:' + t.color + ';border:2px solid rgba(255,255,255,.5);box-shadow:0 1px 3px rgba(0,0,0,.1)"></div>';
+    html += '<span style="font-weight:800;font-size:.88em;color:var(--tx);margin-left:8px">' + t.name + '</span>';
+    html += '</div>';
+  }
+  grid.innerHTML = html;
+  var items = grid.querySelectorAll('.tg-i');
+  for (var j=0;j<items.length;j++){
+    items[j].addEventListener('click', function(el){
+      return function(){
+        S.theme = el.getAttribute('data-id');
+        S.useCustomColor = false;
+        saveState();
+        refreshAll();
+      };
+    }(items[j]));
+  }
+}
+
+function renderThemePicker(){
+  var grid = document.getElementById('tp-grid');
+  if (!grid) return;
+  var html = '';
+  for (var i=0;i<THEMES.length;i++){
+    var t = THEMES[i];
+    var on = (t.id === S.theme);
+    html += '<div class="tp-i' + (on ? ' on' : '') + '" data-id="' + t.id + '">';
+    html += '<div class="tp-sw" style="background:' + t.color + '"></div>';
+    html += '<div class="tp-nm">' + t.name + '</div>';
+    html += '</div>';
+  }
+  grid.innerHTML = html;
+  var items = grid.querySelectorAll('.tp-i');
+  for (var j=0;j<items.length;j++){
+    items[j].addEventListener('click', function(el){
+      return function(){
+        S.theme = el.getAttribute('data-id');
+        S.useCustomColor = false;
+        saveState();
+        refreshAll();
+      };
+    }(items[j]));
+  }
+}
+
+function renderSwatch(){
+  var sw = document.getElementById('swatch');
+  if (!sw) return;
+  var html = '';
+  for (var i=0;i<COLOR_SWATCHES.length;i++){
+    var c = COLOR_SWATCHES[i];
+    var on = (S.useCustomColor && S.customColor === c);
+    html += '<div class="sw-b' + (on ? ' on' : '') + '" data-c="' + c + '" style="background:' + c + '"></div>';
+  }
+  sw.innerHTML = html;
+  var items = sw.querySelectorAll('.sw-b');
+  for (var j=0;j<items.length;j++){
+    items[j].addEventListener('click', function(el){
+      return function(){
+        S.customColor = el.getAttribute('data-c');
+        S.useCustomColor = true;
+        saveState();
+        refreshAll();
+      };
+    }(items[j]));
+  }
+  var cu = document.getElementById('cu-sw');
+  if (cu) cu.checked = !!S.useCustomColor;
+}
+
+function renderBpmPresets(){
+  var grid = document.getElementById('bpm-presets');
+  if (!grid) return;
+  var html = '';
+  for (var i=0;i<BPM_PRESETS.length;i++){
+    var b = BPM_PRESETS[i];
+    var on = (b.bpm === S.bpm);
+    html += '<div class="bp-i' + (on ? ' on' : '') + '" data-bpm="' + b.bpm + '">';
+    html += '<span style="font-weight:900;font-size:1.05em;color:var(--tx)">' + b.bpm + '</span>';
+    html += '<span class="lb" style="font-size:.65em;color:var(--tm);font-weight:600;margin-top:2px;letter-spacing:.3px;display:block">' + b.name + '</span>';
+    html += '</div>';
+  }
+  grid.innerHTML = html;
+  var items = grid.querySelectorAll('.bp-i');
+  for (var j=0;j<items.length;j++){
+    items[j].addEventListener('click', function(el){
+      return function(){
+        var b = parseInt(el.getAttribute('data-bpm'),10);
+        setBpm(b);
+      };
+    }(items[j]));
+  }
+}
+
+function renderPracticeList(){
+  var list = document.getElementById('pr-list');
+  if (!list) return;
+  var html = '';
+  for (var i=0;i<PRACTICE_TEMPLATES.length;i++){
+    var p = PRACTICE_TEMPLATES[i];
+    html += '<div class="pl-i" data-id="' + p.id + '">';
+    html += '<div class="pl-if"><div class="pl-t" style="font-weight:800;font-size:.94em">' + p.name + '</div><div class="pl-d" style="color:var(--ts);font-size:.78em;margin-top:1px">' + p.desc + '</div></div>';
+    html += '<div class="pl-tg" style="font-size:.7em;padding:3px 10px;border-radius:999px;background:var(--bd);color:var(--tx);font-weight:800;white-space:nowrap">开始</div>';
+    html += '</div>';
+  }
+  list.innerHTML = html;
+  var items = list.querySelectorAll('.pl-i');
+  for (var j=0;j<items.length;j++){
+    items[j].addEventListener('click', function(el){
+      return function(){ startPractice(el.getAttribute('data-id')); };
+    }(items[j]));
+  }
+}
+
+function refreshAll(){
+  // theme first (css vars)
+  applyTheme();
+
+  // bpm display
+  var bv = document.getElementById('bpm-val');
+  if (bv) bv.textContent = S.bpm;
+  var bsl = document.getElementById('bpm-sl');
+  if (bsl) bsl.value = S.bpm;
+  var binp = document.getElementById('bpm-inp');
+  if (binp) binp.value = S.bpm;
+
+  // chips
+  var cts = document.getElementById('chip-ts');
+  if (cts) cts.textContent = S.beats + '/' + S.beatValue;
+  var csb = document.getElementById('chip-sub');
+  if (csb){
+    var sn = '四分';
+    for (var i=0;i<SUBDIVS.length;i++){
+      if (SUBDIVS[i].id === S.subdivision){
+        if (SUBDIVS[i].mult === 1) sn = '四分';
+        else if (SUBDIVS[i].mult === 2) sn = '八分';
+        else if (SUBDIVS[i].mult === 4) sn = '十六分';
+        else if (SUBDIVS[i].mult === 3) sn = '三连音';
+        else if (SUBDIVS[i].mult === 0.5) sn = '二分';
+        else if (SUBDIVS[i].mult === 5) sn = '五连音';
+      }
+    }
+    csb.textContent = sn;
+  }
+  var csnd = document.getElementById('chip-snd');
+  if (csnd){
+    var nm = S.useCustom ? '自定义' : '点击';
+    for (var j=0;j<SOUNDS.length;j++){
+      if (SOUNDS[j].id === S.soundType){ nm = SOUNDS[j].name; break; }
+    }
+    csnd.textContent = nm;
+  }
+
+  // sliders
+  var ssl = document.getElementById('swing-sl');
+  if (ssl) ssl.value = S.swing;
+  var svv = document.getElementById('swing-vv');
+  if (svv) svv.textContent = S.swing;
+
+  var fsl = document.getElementById('freq-sl');
+  if (fsl) fsl.value = S.customFreq;
+  var fvv = document.getElementById('freq-vv');
+  if (fvv) fvv.textContent = S.customFreq;
+  var dsl = document.getElementById('dur-sl');
+  if (dsl) dsl.value = S.customDur;
+  var dvv = document.getElementById('dur-vv');
+  if (dvv) dvv.textContent = S.customDur;
+
+  var vas = document.getElementById('vol-a-sl'); if (vas) vas.value = S.volA;
+  var vav = document.getElementById('vol-a-vv'); if (vav) vav.textContent = S.volA;
+  var vns = document.getElementById('vol-n-sl'); if (vns) vns.value = S.volN;
+  var vnv = document.getElementById('vol-n-vv'); if (vnv) vnv.textContent = S.volN;
+  var vss = document.getElementById('vol-s-sl'); if (vss) vss.value = S.volS;
+  var vsv = document.getElementById('vol-s-vv'); if (vsv) vsv.textContent = S.volS;
+
+  var fbs = document.getElementById('first-sw'); if (fbs) fbs.checked = !!S.firstBeatAccent;
+  var dk = document.getElementById('dk-sw'); if (dk) dk.checked = !!S.dark;
+  var tpdk = document.getElementById('tp-dk'); if (tpdk) tpdk.checked = !!S.dark;
+
+  var fssl = document.getElementById('fs-sl');
+  if (fssl) fssl.value = S.fontSize;
+  var fsvv = document.getElementById('fs-vv');
+  if (fsvv) fsvv.textContent = S.fontSize;
+
+  var prssl = document.getElementById('pr-start-sl'); if (prssl) prssl.value = 60;
+  var prsvv = document.getElementById('pr-start-vv'); if (prsvv) prsvv.textContent = '60';
+  var prst = document.getElementById('pr-start-v'); if (prst) prst.textContent = '60 BPM';
+
+  // render sub-renderers
+  renderDots();
+  renderTimeSigs();
+  renderSubdivs();
+  renderSounds();
+  renderWaves();
+  renderThemes();
+  renderSwatch();
+  renderBpmPresets();
+  renderPracticeList();
+
+  updatePlayUI();
+  document.body.style.fontSize = S.fontSize + 'px';
+}
+
+
+function applyTheme(){
+  var base = '#2563eb';
+  if (S.useCustomColor) base = S.customColor;
+  else {
+    for (var i=0;i<THEMES.length;i++){
+      if (THEMES[i].id === S.theme){ base = THEMES[i].color; break; }
+    }
+  }
+  var rgb = hexToRgb(base);
+  var root = document.documentElement;
+  root.style.setProperty('--p', base);
+  root.style.setProperty('--p-rgb', rgb);
+  if (S.dark){
+    root.style.setProperty('--bg', '#0b1020');
+    root.style.setProperty('--srf', '#151b30');
+    root.style.setProperty('--sr2', '#111628');
+    root.style.setProperty('--tx', '#e2e8f0');
+    root.style.setProperty('--ts', '#94a3b8');
+    root.style.setProperty('--tm', '#64748b');
+    root.style.setProperty('--bd', 'rgba(255,255,255,.06)');
+    root.style.setProperty('--bs', 'rgba(255,255,255,.12)');
+    root.style.setProperty('--gl', 'rgba(' + rgb + ',.35)');
+    root.style.setProperty('--sh1', '0 1px 3px rgba(0,0,0,.4)');
+    root.style.setProperty('--sh2', '0 4px 12px rgba(0,0,0,.45)');
+    root.style.setProperty('--sh3', '0 8px 32px rgba(0,0,0,.55)');
+    document.body.classList.add('dk');
+  } else {
+    root.style.setProperty('--bg', '#f1f5f9');
+    root.style.setProperty('--srf', '#ffffff');
+    root.style.setProperty('--sr2', '#f8fafc');
+    root.style.setProperty('--tx', '#0f172a');
+    root.style.setProperty('--ts', '#475569');
+    root.style.setProperty('--tm', '#94a3b8');
+    root.style.setProperty('--bd', 'rgba(15,23,42,.08)');
+    root.style.setProperty('--bs', 'rgba(15,23,42,.15)');
+    root.style.setProperty('--gl', 'rgba(' + rgb + ',.3)');
+    root.style.setProperty('--sh1', '0 1px 3px rgba(0,0,0,.06)');
+    root.style.setProperty('--sh2', '0 4px 12px rgba(0,0,0,.1)');
+    root.style.setProperty('--sh3', '0 8px 32px rgba(0,0,0,.15)');
+    document.body.classList.remove('dk');
+  }
+}
+
+function setBpm(val){
   val = Math.max(20, Math.min(300, Math.round(val)));
   S.bpm = val;
-  save();
-  syncAll();
+  saveState();
+  refreshAll();
 }
 
-function setTimeSig(beats, bv) {
-  beats = Math.max(1, Math.min(32, Math.round(beats)));
-  bv = Math.max(1, Math.min(32, Math.round(bv)));
-  S.beats = beats;
-  S.beatValue = bv;
-  save();
-  syncAll();
-}
-
-// ---- THEME ----
-function hexToRgb(h) {
-  var H = (h || '').replace('#', '');
-  if (H.length !== 6) return '37,99,235';
-  return parseInt(H.slice(0, 2), 16) + ',' + parseInt(H.slice(2, 4), 16) + ',' + parseInt(H.slice(4, 6), 16);
-}
-
-function applyTheme() {
-  var bodyClass = 't-' + S.theme;
-  if (S.dk) bodyClass += ' dk';
-  document.body.className = bodyClass;
-
-  var base;
-  if (S.uCC && S.cC) base = S.cC;
-  else {
-    for (var i = 0; i < THEMES.length; i++) {
-      if (THEMES[i].id === S.theme) { base = THEMES[i].c; break; }
-    }
-    if (!base) base = '#2563eb';
-  }
-
-  var pr = hexToRgb(base);
-  var H = base.replace('#', '');
-  var r = parseInt(H.slice(0, 2), 16);
-  var g = parseInt(H.slice(2, 4), 16);
-  var b2 = parseInt(H.slice(4, 6), 16);
-  var pl = '#' + [r,g,b2].map(function(x){ return Math.max(0, Math.min(255, Math.round(x + (255 - x) * 0.18))).toString(16).padStart(2, '0'); }).join('');
-  var pd = '#' + [r,g,b2].map(function(x){ return Math.max(0, Math.round(x * 0.78)).toString(16).padStart(2, '0'); }).join('');
-
-  document.documentElement.style.setProperty('--p', base);
-  document.documentElement.style.setProperty('--pr', pr);
-  document.documentElement.style.setProperty('--pl', pl);
-  document.documentElement.style.setProperty('--pd', pd);
-  document.documentElement.style.setProperty('--gl', 'rgba(' + pr + ',.3)');
-
-  if (S.dk) {
-    document.documentElement.style.setProperty('--bg', '#0b1020');
-    document.documentElement.style.setProperty('--srf', '#151b30');
-    document.documentElement.style.setProperty('--sr2', '#111628');
-    document.documentElement.style.setProperty('--tx', '#e2e8f0');
-    document.documentElement.style.setProperty('--ts', '#94a3b8');
-    document.documentElement.style.setProperty('--tm', '#64748b');
-    document.documentElement.style.setProperty('--bd', 'rgba(255,255,255,.06)');
-    document.documentElement.style.setProperty('--bs', 'rgba(255,255,255,.12)');
-    document.documentElement.style.setProperty('--sh1', '0 1px 3px rgba(0,0,0,.4)');
-    document.documentElement.style.setProperty('--sh2', '0 4px 12px rgba(0,0,0,.45)');
-    document.documentElement.style.setProperty('--sh3', '0 8px 32px rgba(0,0,0,.55)');
-  } else {
-    document.documentElement.style.setProperty('--bg', '');
-    document.documentElement.style.setProperty('--srf', '');
-    document.documentElement.style.setProperty('--sr2', '');
-    document.documentElement.style.setProperty('--tx', '');
-    document.documentElement.style.setProperty('--ts', '');
-    document.documentElement.style.setProperty('--tm', '');
-    document.documentElement.style.setProperty('--bd', '');
-    document.documentElement.style.setProperty('--bs', '');
-    document.documentElement.style.setProperty('--sh1', '');
-    document.documentElement.style.setProperty('--sh2', '');
-    document.documentElement.style.setProperty('--sh3', '');
-  }
-}
-
-// ---- BEAT DOTS ----
-function renderBeats() {
-  var r = document.getElementById('beat-r');
-  if (!r) return;
-  r.innerHTML = '';
-  for (var i = 0; i < S.beats; i++) {
-    var d = document.createElement('div');
-    d.className = 'bd';
-    d.dataset.beat = i;
-    var isAcc = (S.fst && i === 0) || S.acc.indexOf(i) >= 0;
-    d.dataset.ac = isAcc ? '1' : '0';
-    d.textContent = i + 1;
-    bindDot(d, i);
-    r.appendChild(d);
-  }
-}
-
-function bindDot(dot, idx) {
-  var timer = null;
-  var fired = false;
-  dot.addEventListener('touchstart', function(e) {
-    e.preventDefault();
-    fired = false;
-    timer = setTimeout(function() {
-      if (idx === 0) return;
-      var pos = S.acc.indexOf(idx);
-      if (pos >= 0) { S.acc.splice(pos, 1); dot.dataset.ac = '0'; }
-      else { S.acc.push(idx); dot.dataset.ac = '1'; }
-      S.acc.sort(function(a, b) { return a - b; });
-      save();
-      showToast(dot.dataset.ac === '1' ? '已设为重音' : '已取消重音');
-      fired = true;
-    }, 450);
-  }, { passive: false });
-  dot.addEventListener('touchend', function() { if (timer) { clearTimeout(timer); timer = null; } });
-  dot.addEventListener('touchcancel', function() { if (timer) { clearTimeout(timer); timer = null; } });
-  dot.addEventListener('mousedown', function() {
-    fired = false;
-    timer = setTimeout(function() {
-      if (idx === 0) return;
-      var pos = S.acc.indexOf(idx);
-      if (pos >= 0) { S.acc.splice(pos, 1); dot.dataset.ac = '0'; }
-      else { S.acc.push(idx); dot.dataset.ac = '1'; }
-      S.acc.sort(function(a, b) { return a - b; });
-      save();
-      showToast(dot.dataset.ac === '1' ? '已设为重音' : '已取消重音');
-      fired = true;
-    }, 450);
-  });
-  dot.addEventListener('mouseup', function() { if (timer) { clearTimeout(timer); timer = null; } });
-  dot.addEventListener('mouseleave', function() { if (timer) { clearTimeout(timer); timer = null; } });
-  dot.addEventListener('click', function(e) { if (fired) e.stopPropagation(); });
-}
-
-function flashDot(idx, isAcc) {
-  var dots = document.querySelectorAll('.bd');
-  for (var i = 0; i < dots.length; i++) {
-    if (parseInt(dots[i].dataset.beat, 10) === idx) {
-      dots[i].classList.add('fl');
-      if (S.fls) {
-        var bn = document.getElementById('bpm-d');
-        if (bn) {
-          bn.classList.remove('fl');
-          void bn.offsetWidth;
-          bn.classList.add('fl');
-          setTimeout(function() { bn.classList.remove('fl'); }, 200);
-        }
-      }
-    } else {
-      dots[i].classList.remove('fl');
+// === PAGE NAVIGATION ===
+var currentPage = 'home';
+function goToPage(page){
+  var pages = ['home','params','sound','theme','practice','settings'];
+  for (var i=0;i<pages.length;i++){
+    var p = document.getElementById('pg-' + pages[i]);
+    if (p){
+      if (pages[i] === page) p.style.display = 'block';
+      else p.style.display = 'none';
     }
   }
-  if (S.pls) {
-    var pr = document.getElementById('pulse-r');
-    if (pr) {
-      pr.classList.remove('pk');
-      void pr.offsetWidth;
-      pr.classList.add('pk');
-    }
-  }
-  setTimeout(function() {
-    for (var j = 0; j < dots.length; j++) dots[j].classList.remove('fl');
-  }, Math.max(100, (60 / S.bpm) * 1000 * 0.5));
+  currentPage = page;
+  window.scrollTo(0, 0);
 }
 
-function clearDots() {
-  var dots = document.querySelectorAll('.bd');
-  for (var i = 0; i < dots.length; i++) dots[i].classList.remove('fl');
-}
-
-// ---- PLAY UI ----
-function updatePlayUI() {
-  var pb = document.getElementById('play-b');
-  var ic = document.getElementById('play-ic');
-  var lbl = document.getElementById('play-lbl');
-  var npl = document.getElementById('nav-pl');
-  var nps = document.getElementById('nav-ps');
-  if (isPlaying) {
-    if (pb) { pb.classList.add('pk'); }
-    if (ic) ic.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
-    if (lbl) lbl.textContent = '正在播放';
-    if (npl) npl.textContent = '停止';
-    if (nps) nps.textContent = '停止节拍';
-    var navPb = document.getElementById('nav-pb');
-    if (navPb) navPb.classList.add('pk');
-  } else {
-    if (pb) pb.classList.remove('pk');
-    if (ic) ic.innerHTML = '<path d="M8 5v14l11-7z"/>';
-    if (lbl) lbl.textContent = '点击播放';
-    if (npl) npl.textContent = '播放';
-    if (nps) nps.textContent = '开始 / 停止';
-    var navPb2 = document.getElementById('nav-pb');
-    if (navPb2) navPb2.classList.remove('pk');
-  }
-}
-
-// ---- CHIPS & INFO ----
-function renderChips() {
-  var ts = document.getElementById('chip-ts');
-  if (ts) ts.textContent = S.beats + '/' + S.beatValue;
-  var sub = document.getElementById('chip-sub');
-  if (sub) {
-    for (var i = 0; i < SUBS.length; i++) {
-      if (SUBS[i].id === S.subdivision) { sub.textContent = SUBS[i].n; break; }
-    }
-  }
-  var snd = document.getElementById('chip-snd');
-  if (snd) {
-    for (var j = 0; j < SNDS.length; j++) {
-      if (SNDS[j].id === S.soundType) { snd.textContent = SNDS[j].n; break; }
-    }
-  }
-}
-
-function renderInfo() {
-  var ib = document.getElementById('info-bpm');
-  if (ib) ib.textContent = S.bpm;
-  var its = document.getElementById('info-ts');
-  if (its) {
-    var subNm = '四分';
-    for (var i = 0; i < SUBS.length; i++) {
-      if (SUBS[i].id === S.subdivision) {
-        subNm = SUBS[i].n.length <= 3 ? SUBS[i].n : SUBS[i].n.substring(0, 2);
-        break;
-      }
-    }
-    its.textContent = S.beats + '/' + S.beatValue + ' · ' + subNm;
-  }
-  var isn = document.getElementById('info-snd');
-  if (isn) {
-    for (var k = 0; k < SNDS.length; k++) {
-      if (SNDS[k].id === S.soundType) { isn.textContent = SNDS[k].n; break; }
-    }
-  }
-  var ith = document.getElementById('info-thm');
-  if (ith) {
-    for (var m = 0; m < THEMES.length; m++) {
-      if (THEMES[m].id === S.theme) { ith.textContent = THEMES[m].n; break; }
-    }
-  }
-}
-
-// ---- PANEL RENDERERS ----
-function renderTimeSigs() {
-  var g = document.getElementById('ts-g');
-  if (!g) return;
-  g.innerHTML = '';
-  for (var i = 0; i < TSIGS.length; i++) {
-    var ts = TSIGS[i];
-    var el = document.createElement('div');
-    el.className = 'ti';
-    if (ts.b === S.beats && ts.bv === S.beatValue) el.className = 'ti sel';
-    el.textContent = ts.b + '/' + ts.bv;
-    (function(b, bv) {
-      el.addEventListener('click', function() {
-        setTimeSig(b, bv);
-        showToast('已切换 ' + b + '/' + bv);
-      });
-    })(ts.b, ts.bv);
-    g.appendChild(el);
-  }
-}
-
-function renderSubs() {
-  var g = document.getElementById('sub-g');
-  if (!g) return;
-  g.innerHTML = '';
-  for (var i = 0; i < SUBS.length; i++) {
-    var s = SUBS[i];
-    var el = document.createElement('div');
-    el.className = 'si' + (s.id === S.subdivision ? ' sel' : '');
-    var lbl = '1';
-    if (s.m === 0.5) lbl = '1/2';
-    else if (s.m === 2) lbl = '2';
-    else if (s.m === 3) lbl = '3';
-    else if (s.m === 4) lbl = '4';
-    else if (s.m === 5) lbl = '5';
-    el.innerHTML = '<span class="sm">' + lbl + '</span><span>' + s.n + '</span>';
-    (function(sid, sn) {
-      el.addEventListener('click', function() {
-        S.subdivision = sid;
-        save();
-        renderSubs();
-        renderChips();
-        showToast('细分：' + sn);
-      });
-    })(s.id, s.n);
-    g.appendChild(el);
-  }
-}
-
-function renderSounds() {
-  var g = document.getElementById('snd-g');
-  if (!g) return;
-  g.innerHTML = '';
-  for (var i = 0; i < SNDS.length; i++) {
-    var s = SNDS[i];
-    var el = document.createElement('div');
-    el.className = 'sni' + (s.id === S.soundType ? ' sel' : '');
-    el.innerHTML = '<div class="si3"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg></div><span>' + s.n + '</span>';
-    (function(sid) {
-      el.addEventListener('click', function() {
-        S.soundType = sid;
-        save();
-        renderSounds();
-        renderChips();
-        if (ensureCtx()) scheduleTone(actx.currentTime + 0.02, 'a');
-      });
-    })(s.id);
-    g.appendChild(el);
-  }
-}
-
-function renderThemes() {
-  var g = document.getElementById('thm-g');
-  if (!g) return;
-  g.innerHTML = '';
-  for (var i = 0; i < THEMES.length; i++) {
-    var t = THEMES[i];
-    var el = document.createElement('div');
-    el.className = 'tgi' + (t.id === S.theme ? ' sel' : '');
-    el.innerHTML = '<div class="tsw2" style="background:' + t.c + '"></div><span>' + t.n + '</span>';
-    (function(tid, tn) {
-      el.addEventListener('click', function() {
-        S.theme = tid;
-        save();
-        applyTheme();
-        renderThemes();
-        renderInfo();
-        showToast('主题：' + tn);
-      });
-    })(t.id, t.n);
-    g.appendChild(el);
-  }
-}
-
-function renderSwatches() {
-  var g = document.getElementById('sw-g');
-  if (!g) return;
-  g.innerHTML = '';
-  for (var i = 0; i < SW_COLS.length; i++) {
-    var c = SW_COLS[i];
-    var el = document.createElement('button');
-    el.className = 'swb2';
-    if (c === S.cC && S.uCC) el.className = 'swb2 on';
-    el.style.backgroundColor = c;
-    (function(col) {
-      el.addEventListener('click', function() {
-        S.cC = col;
-        S.uCC = true;
-        var pk = document.getElementById('c-pk');
-        var hx = document.getElementById('c-hx');
-        var cc = document.getElementById('t-cc');
-        if (pk) pk.value = col;
-        if (hx) hx.textContent = col.toUpperCase();
-        if (cc) cc.checked = true;
-        save();
-        applyTheme();
-        renderSwatches();
-      });
-    })(c);
-    g.appendChild(el);
-  }
-}
-
-function renderBpmPresets() {
-  var g = document.getElementById('bp-g');
-  if (!g) return;
-  g.innerHTML = '';
-  for (var i = 0; i < BPM_PRESETS.length; i++) {
-    var p = BPM_PRESETS[i];
-    var el = document.createElement('button');
-    el.className = 'pbtn' + (S.bpm === p.b ? ' sel' : '');
-    el.innerHTML = p.b + '<span class="lb">' + p.n + '</span>';
-    (function(bpm) {
-      el.addEventListener('click', function() { setBpm(bpm); });
-    })(p.b);
-    g.appendChild(el);
-  }
-}
-
-function renderPracticeList() {
-  var g = document.getElementById('prac-l');
-  if (!g) return;
-  g.innerHTML = '';
-  for (var i = 0; i < PR_TMPLS.length; i++) {
-    var t = PR_TMPLS[i];
-    var el = document.createElement('div');
-    el.className = 'pi';
-    var sum = '';
-    for (var j = 0; j < t.st.length; j++) sum += (j > 0 ? ' → ' : '') + t.st[j].b;
-    var tot = 0;
-    for (var k = 0; k < t.st.length; k++) tot += t.st[k].s;
-    el.innerHTML = '<div class="pif2"><div class="pn2">' + t.n + '</div><div class="ps2">' + sum + '</div></div><div class="pb3">' + tot + 's</div>';
-    (function(tpl) {
-      el.addEventListener('click', function() { startPractice(tpl); });
-    })(t);
-    g.appendChild(el);
-  }
-}
-
-function renderGuideThemes() {
-  var g = document.getElementById('gt-g');
-  if (!g) return;
-  g.innerHTML = '';
-  for (var i = 0; i < THEMES.length; i++) {
-    var t = THEMES[i];
-    var el = document.createElement('div');
-    el.className = 'tp-i' + (t.id === S.theme ? ' sel' : '');
-    el.innerHTML = '<div class="tp-s3" style="background:' + t.c + '"></div><div class="tp-n2">' + t.n + '</div>';
-    (function(tid) {
-      el.addEventListener('click', function() {
-        S.theme = tid;
-        save();
-        applyTheme();
-        document.querySelectorAll('.tp-i').forEach(function(x) { x.classList.remove('sel'); });
-        el.classList.add('sel');
-      });
-    })(t.id);
-    g.appendChild(el);
-  }
-}
-
-// ---- PRACTICE ----
-var pracActive = false;
-var pracTimer = null;
-var pracCur = null;
-var pracIdx = 0;
-var pracEndAt = 0;
-
-function startPractice(t) {
-  stopPractice();
-  pracActive = true;
-  pracCur = t;
-  pracIdx = 0;
-  var stage = t.st[0];
-  setBpm(stage.b);
-  if (!isPlaying) startPlayback();
-  pracEndAt = Date.now() + stage.s * 1000;
-  if (pracTimer) clearInterval(pracTimer);
-  pracTimer = setInterval(tickPractice, 200);
-  var ps = document.getElementById('prac-ps');
-  if (ps) ps.style.display = 'block';
-  renderPracticeList();
-  showToast('练习已启动');
-}
-
-function tickPractice() {
-  if (!pracCur) return;
-  var rem = Math.max(0, pracEndAt - Date.now());
-  var sec = Math.ceil(rem / 1000);
-  var mm = String(Math.floor(sec / 60)).padStart(2, '0');
-  var ss = String(sec % 60).padStart(2, '0');
-  var el = document.getElementById('prac-cd');
-  var st = document.getElementById('prac-pt');
-  if (el) el.textContent = mm + ':' + ss;
-  if (st) st.textContent = '阶段 ' + (pracIdx + 1) + '/' + pracCur.st.length + ' · ' + pracCur.st[pracIdx].b + ' BPM';
-  if (rem <= 0) {
-    pracIdx++;
-    if (pracIdx >= pracCur.st.length) { stopPractice(); showToast('练习完成'); return; }
-    var stage = pracCur.st[pracIdx];
-    setBpm(stage.b);
-    pracEndAt = Date.now() + stage.s * 1000;
-  }
-}
-
-function stopPractice() {
-  if (pracTimer) { clearInterval(pracTimer); pracTimer = null; }
-  pracActive = false;
-  pracCur = null;
-  pracIdx = 0;
-  var ps = document.getElementById('prac-ps');
-  if (ps) ps.style.display = 'none';
-  renderPracticeList();
-}
-
-function updatePracticePath() {
-  var el = document.getElementById('pr-path');
-  if (!el) return;
-  var s = parseInt(document.getElementById('pr-s').value, 10) || 60;
-  var st = parseInt(document.getElementById('pr-st').value, 10) || 10;
-  var c = parseInt(document.getElementById('pr-c').value, 10) || 5;
-  var path = [];
-  for (var i = 0; i < c; i++) path.push(s + st * i);
-  el.textContent = path.join(' → ');
-}
-
-// ---- TAP TEMPO ----
-var tapTimes = [];
-
-function tapPress() {
-  var now = Date.now();
-  if (tapTimes.length && now - tapTimes[tapTimes.length - 1] > TAP_TMO) tapTimes = [];
-  tapTimes.push(now);
-  if (tapTimes.length > 8) tapTimes.shift();
-  document.getElementById('tap-c').textContent = tapTimes.length;
-  var btn = document.getElementById('tap-b');
-  if (btn) {
-    btn.classList.remove('dk2');
-    void btn.offsetWidth;
-    btn.classList.add('dk2');
-  }
-  if (tapTimes.length >= 2) {
-    var intervals = [];
-    for (var i = 1; i < tapTimes.length; i++) intervals.push(tapTimes[i] - tapTimes[i - 1]);
-    var avg = intervals.reduce(function(a, b) { return a + b; }, 0) / intervals.length;
-    var bpm = Math.round(60000 / avg);
-    var v = document.getElementById('tap-v');
-    if (v) v.textContent = (bpm >= 20 && bpm <= 300) ? bpm : '- -';
-  }
-}
-
-function applyTap() {
-  var v = document.getElementById('tap-v').textContent;
-  var bpm = parseInt(v, 10);
-  if (!isNaN(bpm) && bpm >= 20 && bpm <= 300) { setBpm(bpm); showToast('已应用 BPM ' + bpm); }
-  else showToast('请先至少点击 2 次 TAP');
-}
-
-function resetTap() {
-  tapTimes = [];
-  var d = document.getElementById('tap-v');
-  var c = document.getElementById('tap-c');
-  if (d) d.textContent = '- -';
-  if (c) c.textContent = '0';
-}
-
-// ---- HINTS ----
-var hintQ = [];
-var hintTimer = null;
-var HINTS = {
-  home: ['点击播放按钮开始节拍', '拖动滑块或按钮调整 BPM', '长按节拍点切换额外重音'],
-  params: ['点击预设拍号快速切换', '上下按钮增减数字，也可直接输入', 'TAP 跟随音乐节奏点击测速'],
-  sound: ['点击音色立即试听', '自定义音色可调节频率和波形', '三路音量分别控制重音/普通/细分'],
-  theme: ['每套主题有浅色和深色模式', '自定义颜色替换当前主题主色'],
-  practice: ['选择模板开始变速训练', '自定义练习可设置多阶段 BPM']
-};
-
-function showHint(msg) {
-  var b = document.getElementById('hint-b');
-  var t = document.getElementById('hint-t');
-  if (!b || !t) return;
-  t.textContent = msg;
-  b.classList.remove('hi');
-}
-
-function queueHints(page) {
-  if (!HINTS[page]) return;
-  hintQ = HINTS[page].slice();
-  cycleHint();
-}
-
-function cycleHint() {
-  if (!hintQ.length) { hideHint(); return; }
-  var msg = hintQ.shift();
-  showHint(msg);
-  if (hintTimer) clearTimeout(hintTimer);
-  hintTimer = setTimeout(cycleHint, 6000);
-}
-
-function hideHint() {
-  var b = document.getElementById('hint-b');
-  if (b) b.classList.add('hi');
-  if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
-  hintQ = [];
-}
-
-// ---- GUIDE ----
-var gIdx = 0;
-
-function showGuide() {
-  gIdx = 0;
-  renderGuideStep();
-  document.getElementById('guide-ov').classList.remove('hi');
-}
-
-function renderGuideStep() {
-  var s = G_STEPS[gIdx];
-  document.getElementById('g-ic').innerHTML = s.ic;
-  document.getElementById('g-tt').textContent = s.tt;
-  document.getElementById('g-ds').textContent = s.ds;
-  var dots = '';
-  for (var i = 0; i < G_STEPS.length; i++) dots += '<div class="gs2' + (i === gIdx ? ' on' : '') + '"></div>';
-  document.getElementById('g-st').innerHTML = dots;
-  var nx = document.getElementById('g-nx');
-  if (nx) nx.textContent = gIdx >= G_STEPS.length - 1 ? '完成' : '下一步';
-}
-
-function hideGuide() {
-  document.getElementById('guide-ov').classList.add('hi');
-  S.gSeen = true;
-  save();
-}
-
-// ---- TOAST ----
+// === TOAST ===
 var toastTimer = null;
-function showToast(msg) {
+function showToast(msg){
   var t = document.getElementById('toast');
   if (!t) return;
   t.textContent = msg;
   t.classList.add('on');
   if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { t.classList.remove('on'); }, 1700);
+  toastTimer = setTimeout(function(){ t.classList.remove('on'); }, 1800);
 }
 
-// ---- NAV ----
-function showPage(id) {
-  var pgs = document.querySelectorAll('.pg');
-  for (var i = 0; i < pgs.length; i++) pgs[i].classList.remove('ac');
-  var pg = document.getElementById(id);
-  if (pg) pg.classList.add('ac');
-  window.scrollTo(0, 0);
-  if (id === 'pg-system') renderInfo();
-  if (id === 'pg-practice') renderPracticeList();
-  queueHints(id.replace('pg-', ''));
-}
-
-function hashNav() {
-  var h = (location.hash || '').replace('#', '') || 'pg-home';
-  var valid = ['pg-home', 'pg-params', 'pg-sound', 'pg-theme', 'pg-practice', 'pg-system'];
-  showPage(valid.indexOf(h) >= 0 ? h : 'pg-home');
-}
-
-// ---- BIND EVENTS ----
-function bind() {
-  // BPM controls
-  document.getElementById('nb-m10').addEventListener('click', function() { setBpm(S.bpm - 10); });
-  document.getElementById('nb-m1').addEventListener('click', function() { setBpm(S.bpm - 1); });
-  document.getElementById('nb-p1').addEventListener('click', function() { setBpm(S.bpm + 1); });
-  document.getElementById('nb-p10').addEventListener('click', function() { setBpm(S.bpm + 10); });
-
-  var bpmIn = document.getElementById('bpm-in');
-  bpmIn.addEventListener('input', function(e) {
-    var v = Math.max(20, Math.min(300, parseInt(e.target.value, 10) || 20));
-    var bd = document.getElementById('bpm-d');
-    if (bd) bd.textContent = v;
-  });
-  bpmIn.addEventListener('change', function(e) { setBpm(parseInt(e.target.value, 10)); });
-  bpmIn.addEventListener('blur', function() { bpmIn.value = S.bpm; });
-
-  var bpmR = document.getElementById('bpm-r');
-  bpmR.addEventListener('input', function(e) {
-    document.getElementById('bpm-d').textContent = e.target.value;
-  });
-  bpmR.addEventListener('change', function(e) { setBpm(parseInt(e.target.value, 10)); });
-
-  // Play
-  document.getElementById('play-b').addEventListener('click', togglePlayback);
-  document.getElementById('nav-pb').addEventListener('click', togglePlayback);
-  document.getElementById('btn-test').addEventListener('click', function() {
-    if (ensureCtx()) scheduleTone(actx.currentTime + 0.02, 'a');
-  });
-
-  // Time sig custom
-  var ctb = document.getElementById('ctn-b');
-  var ctbv = document.getElementById('ctn-bv');
-  document.getElementById('ctb-dec-b').addEventListener('click', function() {
-    var v = Math.max(1, Math.min(32, parseInt(ctb.value, 10) - 1));
-    setTimeSig(v, parseInt(ctbv.value, 10));
-  });
-  document.getElementById('ctb-inc-b').addEventListener('click', function() {
-    var v = Math.max(1, Math.min(32, parseInt(ctb.value, 10) + 1));
-    setTimeSig(v, parseInt(ctbv.value, 10));
-  });
-  document.getElementById('ctb-dec-bv').addEventListener('click', function() {
-    var v = Math.max(1, Math.min(32, parseInt(ctbv.value, 10) - 1));
-    setTimeSig(parseInt(ctb.value, 10), v);
-  });
-  document.getElementById('ctb-inc-bv').addEventListener('click', function() {
-    var v = Math.max(1, Math.min(32, parseInt(ctbv.value, 10) + 1));
-    setTimeSig(parseInt(ctb.value, 10), v);
-  });
-  ctb.addEventListener('change', function() {
-    var v = Math.max(1, Math.min(32, parseInt(ctb.value, 10) || 4));
-    setTimeSig(v, parseInt(ctbv.value, 10));
-  });
-  ctbv.addEventListener('change', function() {
-    var v = Math.max(1, Math.min(32, parseInt(ctbv.value, 10) || 4));
-    setTimeSig(parseInt(ctb.value, 10), v);
-  });
-
-  // Swing
-  var swingR = document.getElementById('swing-r');
-  swingR.addEventListener('input', function(e) {
-    S.swing = parseInt(e.target.value, 10);
-    document.getElementById('swing-v').textContent = S.swing;
-    save();
-  });
-
-  // Toggles
-  document.getElementById('t-fst').addEventListener('change', function(e) {
-    S.fst = e.target.checked;
-    save();
-    renderBeats();
-  });
-  document.getElementById('t-pulse').addEventListener('change', function(e) { S.pls = e.target.checked; save(); });
-  document.getElementById('t-flash').addEventListener('change', function(e) { S.fls = e.target.checked; save(); });
-  document.getElementById('ct-clr-acc').addEventListener('click', function() {
-    S.acc = [];
-    save();
-    renderBeats();
-    showToast('已清除额外重音');
-  });
-
-  // TAP
-  document.getElementById('tap-b').addEventListener('click', tapPress);
-  document.getElementById('tap-ap').addEventListener('click', applyTap);
-  document.getElementById('tap-cl').addEventListener('click', resetTap);
-
-  // Sound volumes
-  var volA = document.getElementById('vol-a');
-  var volN = document.getElementById('vol-n');
-  var volS = document.getElementById('vol-s');
-  volA.addEventListener('input', function(e) {
-    S.vA = parseInt(e.target.value, 10);
-    document.getElementById('vol-a-v').textContent = S.vA;
-    save();
-  });
-  volN.addEventListener('input', function(e) {
-    S.vN = parseInt(e.target.value, 10);
-    document.getElementById('vol-n-v').textContent = S.vN;
-    save();
-  });
-  volS.addEventListener('input', function(e) {
-    S.vS = parseInt(e.target.value, 10);
-    document.getElementById('vol-s-v').textContent = S.vS;
-    save();
-  });
-
-  document.getElementById('t-csound').addEventListener('change', function(e) {
-    S.uCS = e.target.checked;
-    save();
-    renderSounds();
-  });
-
-  var cfreq = document.getElementById('cfreq-r');
-  cfreq.addEventListener('input', function(e) {
-    S.cF = parseInt(e.target.value, 10);
-    document.getElementById('cfreq-v').textContent = S.cF;
-    save();
-  });
-  var cdur = document.getElementById('cdur-r');
-  cdur.addEventListener('input', function(e) {
-    S.cD = parseInt(e.target.value, 10) / 1000;
-    document.getElementById('cdur-v').textContent = e.target.value;
-    save();
-  });
-
-  var waveEls = document.querySelectorAll('.wi');
-  for (var wi = 0; wi < waveEls.length; wi++) {
-    (function(wel) {
-      wel.addEventListener('click', function() {
-        S.cW = wel.dataset.wave;
-        save();
-        for (var k = 0; k < waveEls.length; k++) waveEls[k].classList.toggle('sel', waveEls[k].dataset.wave === S.cW);
-        if (ensureCtx()) scheduleTone(actx.currentTime + 0.02, 'n');
-      });
-    })(waveEls[wi]);
+// === TAP TEMPO ===
+var tapTimes = [];
+function onTap(){
+  var now = Date.now();
+  tapTimes.push(now);
+  if (tapTimes.length > 8) tapTimes.shift();
+  // need at least 2 taps (1 interval)
+  if (tapTimes.length < 2){
+    var tv = document.getElementById('tap-val');
+    if (tv) tv.textContent = '--';
+    return;
   }
-  var curWave = document.querySelector('.wi[data-wave="' + S.cW + '"]');
-  if (curWave) curWave.classList.add('sel');
+  var intervals = [];
+  for (var i=1;i<tapTimes.length;i++){
+    intervals.push(tapTimes[i] - tapTimes[i-1]);
+  }
+  var avg = 0;
+  for (var j=0;j<intervals.length;j++) avg += intervals[j];
+  avg = avg / intervals.length;
+  var bpm = Math.round(60000 / avg);
+  setBpm(bpm);
+  var tv = document.getElementById('tap-val');
+  if (tv) tv.textContent = bpm;
+}
 
-  document.getElementById('ct-play-cs').addEventListener('click', function() {
-    if (ensureCtx()) scheduleTone(actx.currentTime + 0.02, 'a');
+// reset tap if idle > 2.5s
+setInterval(function(){
+  if (tapTimes.length > 0 && (Date.now() - tapTimes[tapTimes.length-1]) > 2500){
+    tapTimes = [];
+  }
+}, 500);
+
+// === PRACTICE MODE ===
+var practiceId = null;
+var practiceStep = 0;
+var practiceTimer = null;
+var practiceDur = 60;
+
+function startPractice(id){
+  var tpl = null;
+  for (var i=0;i<PRACTICE_TEMPLATES.length;i++){
+    if (PRACTICE_TEMPLATES[i].id === id){ tpl = PRACTICE_TEMPLATES[i]; break; }
+  }
+  if (!tpl) return;
+  practiceId = id;
+  practiceStep = 0;
+  practiceDur = 60;
+  runPracticeStep(tpl);
+}
+
+function runPracticeStep(tpl){
+  if (practiceStep >= tpl.steps.length){
+    stopPlayback();
+    showToast('练习完成！');
+    return;
+  }
+  var bpm = tpl.steps[practiceStep];
+  setBpm(bpm);
+  showToast('第 ' + (practiceStep+1) + ' 段：' + bpm + ' BPM');
+  if (!isPlaying) startPlayback();
+  if (practiceTimer) clearTimeout(practiceTimer);
+  practiceTimer = setTimeout(function(){
+    practiceStep++;
+    runPracticeStep(tpl);
+  }, practiceDur * 1000);
+}
+
+function startCustomPractice(){
+  var startBpm = 60, steps = 5, dur = 60;
+  var ss = document.getElementById('pr-start-sl');
+  var ps = document.getElementById('pr-steps-sl');
+  var ds = document.getElementById('pr-dur-sl');
+  if (ss) startBpm = parseInt(ss.value,10);
+  if (ps) steps = parseInt(ps.value,10);
+  if (ds) dur = parseInt(ds.value,10);
+  var endBpm = Math.min(300, startBpm + 20 * steps);
+  var arr = [];
+  for (var i=0;i<steps;i++){
+    arr.push(Math.round(startBpm + (endBpm - startBpm) * (i / Math.max(1, steps-1))));
+  }
+  var customTpl = { id: 'custom', name: '自定义', desc: '自定义变速', steps: arr };
+  // temporary
+  practiceId = 'custom';
+  practiceStep = 0;
+  practiceDur = dur;
+  runPracticeStep(customTpl);
+}
+
+
+// === GUIDE FLOW ===
+var guideIdx = 0;
+
+function renderGuideStepper(){
+  var st = document.getElementById('guide-st');
+  if (!st) return;
+  var html = '';
+  for (var i=0;i<GUIDE_STEPS.length;i++){
+    html += '<div class="md-st-i' + (i === guideIdx ? ' on' : '') + '"></div>';
+  }
+  st.innerHTML = html;
+}
+
+function showGuideStep(){
+  var step = GUIDE_STEPS[guideIdx];
+  var ic = document.getElementById('guide-ic');
+  var tt = document.getElementById('guide-tt');
+  var ds = document.getElementById('guide-ds');
+  var next = document.getElementById('guide-next');
+  if (ic) ic.innerHTML = step.icon;
+  if (tt) tt.textContent = step.title;
+  if (ds) ds.textContent = step.desc;
+  if (next) next.textContent = (guideIdx === GUIDE_STEPS.length - 1) ? '完成' : '下一步';
+  renderGuideStepper();
+  showModal('guide-modal');
+}
+
+function startGuide(){
+  if (!S.agreed){
+    showModal('agree-modal');
+    return;
+  }
+  if (!S.guideSeen){
+    guideIdx = 0;
+    showGuideStep();
+    return;
+  }
+}
+
+function showModal(id){
+  var m = document.getElementById(id);
+  if (m) m.classList.remove('hi');
+}
+
+function hideModal(id){
+  var m = document.getElementById(id);
+  if (m) m.classList.add('hi');
+}
+
+function hideAllModals(){
+  var mods = document.querySelectorAll('.md');
+  for (var i=0;i<mods.length;i++) mods[i].classList.add('hi');
+}
+
+// === EVENT BINDINGS ===
+function bindAll(){
+  // play button
+  var pb = document.getElementById('play-btn');
+  if (pb) pb.addEventListener('click', function(e){ e.stopPropagation(); togglePlayback(); });
+
+  // bpm buttons
+  var bpmBtns = document.querySelectorAll('[data-bpm-dn]');
+  for (var i=0;i<bpmBtns.length;i++){
+    bpmBtns[i].addEventListener('click', function(el){
+      return function(){
+        var d = parseInt(el.getAttribute('data-bpm-dn'),10);
+        setBpm(S.bpm - d);
+      };
+    }(bpmBtns[i]));
+  }
+  var bpmBup = document.querySelectorAll('[data-bpm-up]');
+  for (var j=0;j<bpmBup.length;j++){
+    bpmBup[j].addEventListener('click', function(el){
+      return function(){
+        var d = parseInt(el.getAttribute('data-bpm-up'),10);
+        setBpm(S.bpm + d);
+      };
+    }(bpmBup[j]));
+  }
+
+  // bpm slider
+  var bsl = document.getElementById('bpm-sl');
+  if (bsl){
+    bsl.addEventListener('input', function(){ setBpm(parseInt(bsl.value,10)); });
+  }
+  // bpm input
+  var binp = document.getElementById('bpm-inp');
+  if (binp){
+    binp.addEventListener('change', function(){
+      var v = parseInt(binp.value,10);
+      if (!isNaN(v)) setBpm(v);
+      else binp.value = S.bpm;
+    });
+  }
+
+  // navigation
+  var navs = document.querySelectorAll('[data-nav]');
+  for (var k=0;k<navs.length;k++){
+    navs[k].addEventListener('click', function(el){
+      return function(){ goToPage(el.getAttribute('data-nav')); };
+    }(navs[k]));
+  }
+  var backs = document.querySelectorAll('[data-nav-back]');
+  for (var m=0;m<backs.length;m++){
+    backs[m].addEventListener('click', function(){ goToPage('home'); });
+  }
+
+  // tap tempo (home page button)
+  var tc = document.getElementById('tap-card');
+  if (tc){
+    tc.addEventListener('click', function(){
+      // just let user know - we'll add tap via modal or direct
+      showToast('请在节拍页面使用 TAP 测速');
+      goToPage('params');
+    });
+  }
+
+  // custom time sig buttons
+  function tsBtn(id, deltaB, deltaV){
+    var b = document.getElementById(id);
+    if (!b) return;
+    b.addEventListener('click', function(){
+      if (deltaB) S.beats = Math.max(1, Math.min(32, S.beats + deltaB));
+      if (deltaV) S.beatValue = Math.max(1, Math.min(32, S.beatValue + deltaV));
+      saveState(); refreshAll();
+    });
+  }
+  tsBtn('ts-b-b', -1, 0);
+  tsBtn('ts-b-a', 1, 0);
+  tsBtn('ts-v-b', 0, -1);
+  tsBtn('ts-v-a', 0, 1);
+
+  var tbIn = document.getElementById('ts-b-in');
+  if (tbIn){
+    tbIn.addEventListener('change', function(){
+      var v = parseInt(tbIn.value,10);
+      if (!isNaN(v)){ S.beats = Math.max(1, Math.min(32, v)); saveState(); refreshAll(); }
+      else tbIn.value = S.beats;
+    });
+  }
+  var tvIn = document.getElementById('ts-v-in');
+  if (tvIn){
+    tvIn.addEventListener('change', function(){
+      var v = parseInt(tvIn.value,10);
+      if (!isNaN(v)){ S.beatValue = Math.max(1, Math.min(32, v)); saveState(); refreshAll(); }
+      else tvIn.value = S.beatValue;
+    });
+  }
+
+  // sliders
+  var swSl = document.getElementById('swing-sl');
+  if (swSl){
+    swSl.addEventListener('input', function(){
+      S.swing = parseInt(swSl.value,10);
+      saveState();
+      var vv = document.getElementById('swing-vv');
+      if (vv) vv.textContent = S.swing;
+    });
+  }
+  var fsSl = document.getElementById('fs-sl');
+  if (fsSl){
+    fsSl.addEventListener('input', function(){
+      S.fontSize = parseInt(fsSl.value,10);
+      saveState();
+      document.body.style.fontSize = S.fontSize + 'px';
+      var vv = document.getElementById('fs-vv');
+      if (vv) vv.textContent = S.fontSize;
+    });
+  }
+  var freqSl = document.getElementById('freq-sl');
+  if (freqSl){
+    freqSl.addEventListener('input', function(){
+      S.customFreq = parseInt(freqSl.value,10);
+      saveState();
+      var vv = document.getElementById('freq-vv');
+      if (vv) vv.textContent = S.customFreq;
+    });
+  }
+  var durSl = document.getElementById('dur-sl');
+  if (durSl){
+    durSl.addEventListener('input', function(){
+      S.customDur = parseInt(durSl.value,10);
+      saveState();
+      var vv = document.getElementById('dur-vv');
+      if (vv) vv.textContent = S.customDur;
+    });
+  }
+
+  // vol sliders
+  function bindVol(slId, key, vvId){
+    var sl = document.getElementById(slId);
+    if (!sl) return;
+    sl.addEventListener('input', function(){
+      S[key] = parseInt(sl.value,10);
+      saveState();
+      var vv = document.getElementById(vvId);
+      if (vv) vv.textContent = S[key];
+    });
+  }
+  bindVol('vol-a-sl', 'volA', 'vol-a-vv');
+  bindVol('vol-n-sl', 'volN', 'vol-n-vv');
+  bindVol('vol-s-sl', 'volS', 'vol-s-vv');
+
+  // toggles
+  var fbs = document.getElementById('first-sw');
+  if (fbs){
+    fbs.addEventListener('change', function(){ S.firstBeatAccent = fbs.checked; saveState(); renderDots(); });
+  }
+  var csw = document.getElementById('custom-sw');
+  if (csw){
+    csw.addEventListener('change', function(){
+      S.useCustom = csw.checked;
+      saveState();
+      refreshAll();
+    });
+  }
+  var cusr = document.getElementById('cu-sw');
+  if (cusr){
+    cusr.addEventListener('change', function(){
+      S.useCustomColor = cusr.checked;
+      saveState();
+      refreshAll();
+    });
+  }
+  var dk = document.getElementById('dk-sw');
+  if (dk){
+    dk.addEventListener('change', function(){
+      S.dark = dk.checked;
+      saveState();
+      applyTheme();
+    });
+  }
+  var tpdks = document.getElementById('tp-dk');
+  if (tpdks){
+    tpdks.addEventListener('change', function(){
+      S.dark = tpdks.checked;
+      saveState();
+      applyTheme();
+    });
+  }
+
+  // practice custom
+  var ps = document.getElementById('pr-start-sl');
+  if (ps){
+    ps.addEventListener('input', function(){
+      var v = document.getElementById('pr-start-vv');
+      var t = document.getElementById('pr-start-v');
+      if (v) v.textContent = ps.value;
+      if (t) t.textContent = ps.value + ' BPM';
+    });
+  }
+
+  var psStart = document.getElementById('pr-start');
+  if (psStart) psStart.addEventListener('click', startCustomPractice);
+
+  // settings page
+  var about = document.getElementById('abt-row');
+  if (about) about.addEventListener('click', function(){
+    showToast('节拍器 v6.0 &middot; 本地运行');
   });
-  document.getElementById('ct-pv').addEventListener('click', function() {
-    if (!ensureCtx()) return;
-    var base = actx.currentTime + 0.05;
-    var iv = 60 / S.bpm;
-    for (var i = 0; i < 8; i++) {
-      var kind = 'n';
-      if (i === 0) kind = 'a';
-      else if (i % 2 === 0) kind = 'a';
-      scheduleTone(base + i * iv, kind);
+  var agr = document.getElementById('agree-row');
+  if (agr) agr.addEventListener('click', function(){ showModal('agree-modal'); });
+  var rst = document.getElementById('rst-row');
+  if (rst){
+    rst.addEventListener('click', function(){
+      if (confirm('确定重置所有设置吗？')){
+        try{ localStorage.removeItem(STORE_KEY); } catch(e){}
+        for (var k in DEFAULT) S[k] = DEFAULT[k];
+        refreshAll();
+        showToast('已重置');
+      }
+    });
+  }
+
+  // hint bar
+  var hc = document.getElementById('hint-close');
+  if (hc){
+    hc.addEventListener('click', function(){
+      var hb = document.getElementById('hint-bar');
+      if (hb) hb.classList.add('hi');
+    });
+  }
+
+  // agree modal
+  var achk = document.getElementById('agree-chk');
+  var anxt = document.getElementById('agree-next');
+  if (achk && anxt){
+    achk.addEventListener('change', function(){ anxt.disabled = !achk.checked; });
+    if (S.agreed) achk.checked = true;
+    anxt.addEventListener('click', function(){
+      if (!achk.checked) return;
+      S.agreed = true;
+      saveState();
+      hideModal('agree-modal');
+      // after agree, show theme picker
+      setTimeout(function(){
+        renderThemePicker();
+        showModal('theme-modal');
+      }, 150);
+    });
+  }
+
+  // theme modal
+  var tpNext = document.getElementById('tp-next');
+  var tpSkip = document.getElementById('tp-skip');
+  if (tpNext){
+    tpNext.addEventListener('click', function(){
+      S.guideSeen = true;
+      saveState();
+      hideModal('theme-modal');
+      showToast('开始使用吧！');
+    });
+  }
+  if (tpSkip){
+    tpSkip.addEventListener('click', function(){
+      S.guideSeen = true;
+      saveState();
+      hideModal('theme-modal');
+    });
+  }
+
+  // guide modal
+  var gNext = document.getElementById('guide-next');
+  if (gNext){
+    gNext.addEventListener('click', function(){
+      guideIdx++;
+      if (guideIdx >= GUIDE_STEPS.length){
+        S.guideSeen = true;
+        saveState();
+        hideModal('guide-modal');
+        showToast('欢迎使用！');
+      } else {
+        showGuideStep();
+      }
+    });
+  }
+  var gSkip = document.getElementById('guide-skip');
+  if (gSkip){
+    gSkip.addEventListener('click', function(){
+      S.guideSeen = true;
+      saveState();
+      hideModal('guide-modal');
+    });
+  }
+
+  // keyboard
+  document.addEventListener('keydown', function(e){
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+    if (e.code === 'Space' || e.key === ' '){
+      e.preventDefault();
+      togglePlayback();
+    } else if (e.key === 'ArrowUp'){
+      setBpm(S.bpm + 1);
+    } else if (e.key === 'ArrowDown'){
+      setBpm(S.bpm - 1);
     }
-    showToast('预览已发出');
   });
 
-  // Theme
-  document.getElementById('t-cc').addEventListener('change', function(e) {
-    S.uCC = e.target.checked;
-    save();
-    applyTheme();
-    renderSwatches();
-  });
-  document.getElementById('c-pk').addEventListener('input', function(e) {
-    S.cC = e.target.value;
-    S.uCC = true;
-    var hx = document.getElementById('c-hx');
-    var cc = document.getElementById('t-cc');
-    if (hx) hx.textContent = e.target.value.toUpperCase();
-    if (cc) cc.checked = true;
-    save();
-    applyTheme();
-    renderSwatches();
-  });
-
-  var modeEls = document.querySelectorAll('.mi');
-  for (var mi = 0; mi < modeEls.length; mi++) {
-    (function(mel) {
-      mel.addEventListener('click', function() {
-        S.dk = (mel.dataset.md === 'dark');
-        save();
-        applyTheme();
-        for (var k = 0; k < modeEls.length; k++) {
-          var on = (modeEls[k].dataset.md === 'dark' && S.dk) || (modeEls[k].dataset.md === 'light' && !S.dk);
-          modeEls[k].classList.toggle('sel', on);
-        }
-      });
-    })(modeEls[mi]);
-  }
-
-  var fontR = document.getElementById('font-r');
-  fontR.addEventListener('input', function(e) {
-    S.fs = parseInt(e.target.value, 10);
-    document.getElementById('font-v').textContent = S.fs;
-    document.documentElement.style.fontSize = S.fs + 'px';
-    save();
-  });
-
-  // Practice
-  var prIds = ['pr-s', 'pr-st', 'pr-d', 'pr-c'];
-  for (var pi = 0; pi < prIds.length; pi++) {
-    (function(pid) {
-      var el = document.getElementById(pid);
-      if (!el) return;
-      el.addEventListener('input', function() {
-        var vEl = document.getElementById(pid + '-v');
-        if (vEl) vEl.textContent = el.value;
-        updatePracticePath();
-      });
-    })(prIds[pi]);
-  }
-
-  document.getElementById('ct-prac-st').addEventListener('click', function() {
-    var s = parseInt(document.getElementById('pr-s').value, 10) || 60;
-    var st = parseInt(document.getElementById('pr-st').value, 10) || 10;
-    var d = parseInt(document.getElementById('pr-d').value, 10) || 60;
-    var c = parseInt(document.getElementById('pr-c').value, 10) || 5;
-    var stages = [];
-    for (var i = 0; i < c; i++) stages.push({ b: s + st * i, s: d });
-    var tpl = { id: 'cu-' + Date.now(), n: '自定义练习', st: stages };
-    startPractice(tpl);
-    showPage('pg-practice');
-  });
-
-  document.getElementById('ct-prac-sp').addEventListener('click', function() {
-    stopPractice();
-    showToast('已停止练习');
-  });
-
-  // System
-  document.getElementById('ct-reset').addEventListener('click', function() {
-    S = Object.assign({}, DFLT, { acc: [] });
-    save();
-    applyTheme();
-    syncAll();
-    showToast('已恢复默认');
-  });
-  document.getElementById('ct-clear').addEventListener('click', function() {
-    S = Object.assign({}, DFLT, { acc: [] });
-    try { localStorage.removeItem(SK); } catch(e) {}
-    applyTheme();
-    syncAll();
-    showToast('本地存储已清除');
-  });
-
-  // Nav
-  var backBtns = document.querySelectorAll('[data-back]');
-  for (var b2 = 0; b2 < backBtns.length; b2++) {
-    (function(btn) {
-      btn.addEventListener('click', function(e) { e.preventDefault(); location.hash = 'pg-home'; });
-    })(backBtns[b2]);
-  }
-  var navLinks = document.querySelectorAll('.nc[href^="#"]');
-  for (var nl = 0; nl < navLinks.length; nl++) {
-    (function(link) {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-        location.hash = link.getAttribute('href').substring(1);
-      });
-    })(navLinks[nl]);
-  }
-
-  // Hint close
-  document.getElementById('hint-c').addEventListener('click', hideHint);
-
-  // Guide flow
-  document.getElementById('g-nx').addEventListener('click', function() {
-    gIdx++;
-    if (gIdx >= G_STEPS.length) {
-      hideGuide();
-      renderGuideThemes();
-      document.getElementById('guide-theme').classList.remove('hi');
-      return;
-    }
-    renderGuideStep();
-  });
-  document.getElementById('g-sk').addEventListener('click', function() {
-    hideGuide();
-    renderGuideThemes();
-    document.getElementById('guide-theme').classList.remove('hi');
-  });
-
-  document.getElementById('gt-nx').addEventListener('click', function() {
-    document.getElementById('guide-theme').classList.add('hi');
-  });
-
-  // Agreement
-  document.getElementById('agree-cb').addEventListener('change', function(e) {
-    document.getElementById('agree-nx').disabled = !e.target.checked;
-  });
-  document.getElementById('agree-nx').addEventListener('click', function() {
-    if (!document.getElementById('agree-cb').checked) return;
-    S.agreed = true;
-    save();
-    document.getElementById('guide-agree').classList.add('hi');
-    if (!S.gSeen) {
-      setTimeout(function() {
-        renderGuideThemes();
-        document.getElementById('guide-theme').classList.remove('hi');
-      }, 250);
+  // page visibility: pause on hidden
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden && isPlaying){
+      // continue playing; audio works in background on most browsers
     }
   });
-
-  window.addEventListener('hashchange', hashNav);
 }
 
-// ---- SYNC ALL ----
-function syncAll() {
-  var bd = document.getElementById('bpm-d');
-  if (bd) bd.textContent = S.bpm;
-  var bi = document.getElementById('bpm-in');
-  if (bi) bi.value = S.bpm;
-  setSlider(document.getElementById('bpm-r'), S.bpm);
-
-  setSlider(document.getElementById('swing-r'), S.swing || 0);
-  var sv = document.getElementById('swing-v');
-  if (sv) sv.textContent = S.swing || 0;
-
-  setSlider(document.getElementById('vol-a'), S.vA);
-  document.getElementById('vol-a-v').textContent = S.vA;
-  setSlider(document.getElementById('vol-n'), S.vN);
-  document.getElementById('vol-n-v').textContent = S.vN;
-  setSlider(document.getElementById('vol-s'), S.vS);
-  document.getElementById('vol-s-v').textContent = S.vS;
-
-  setSlider(document.getElementById('cfreq-r'), S.cF);
-  document.getElementById('cfreq-v').textContent = S.cF;
-  var cdm = Math.round((S.cD || 0.035) * 1000);
-  setSlider(document.getElementById('cdur-r'), cdm);
-  document.getElementById('cdur-v').textContent = cdm;
-
-  setSlider(document.getElementById('font-r'), S.fs);
-  document.getElementById('font-v').textContent = S.fs;
-
-  document.getElementById('t-fst').checked = !!S.fst;
-  document.getElementById('t-pulse').checked = !!S.pls;
-  document.getElementById('t-flash').checked = !!S.fls;
-  document.getElementById('t-csound').checked = !!S.uCS;
-  document.getElementById('t-cc').checked = !!S.uCC;
-
-  var cpk = document.getElementById('c-pk');
-  var chx = document.getElementById('c-hx');
-  if (cpk) cpk.value = S.cC || '#2563eb';
-  if (chx) chx.textContent = (S.cC || '#2563eb').toUpperCase();
-
-  document.documentElement.style.fontSize = S.fs + 'px';
-
-  var ctb2 = document.getElementById('ctn-b');
-  var ctbv2 = document.getElementById('ctn-bv');
-  if (ctb2) ctb2.value = S.beats;
-  if (ctbv2) ctbv2.value = S.beatValue;
-
-  renderChips();
-  renderInfo();
-  renderBeats();
-  renderTimeSigs();
-  renderSubs();
-  renderSounds();
-  renderThemes();
-  renderSwatches();
-  renderBpmPresets();
-
-  // Mode sync
-  var modeEls = document.querySelectorAll('.mi');
-  for (var i = 0; i < modeEls.length; i++) {
-    var on = (modeEls[i].dataset.md === 'dark' && S.dk) || (modeEls[i].dataset.md === 'light' && !S.dk);
-    modeEls[i].classList.toggle('sel', on);
-  }
-
-  updatePracticePath();
-}
-
-// ---- INIT ----
-function init() {
-  load();
+// === INIT ===
+function init(){
+  loadState();
   applyTheme();
-  syncAll();
-  bind();
-  hashNav();
+  bindAll();
+  refreshAll();
+  document.body.style.fontSize = S.fontSize + 'px';
+  requestAnimationFrame(visualLoop);
 
-  if (!S.agreed) {
-    setTimeout(function() {
-      document.getElementById('guide-agree').classList.remove('hi');
-    }, 400);
-  } else if (!S.gSeen) {
-    setTimeout(function() {
-      renderGuideThemes();
-      document.getElementById('guide-theme').classList.remove('hi');
-    }, 400);
-  }
+  // initial flow: if not agreed -> agree modal; else if not seen guide -> theme picker
+  setTimeout(function(){
+    if (!S.agreed){ showModal('agree-modal'); }
+    else if (!S.guideSeen){ renderThemePicker(); showModal('theme-modal'); }
+    else {
+      var hb = document.getElementById('hint-bar');
+      if (hb) hb.classList.remove('hi');
+    }
+  }, 500);
 }
 
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-else init();
+if (document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 
 })();
 </script>

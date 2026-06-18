@@ -118,6 +118,7 @@ input[type=range].rng::-moz-range-thumb{width:24px;height:24px;border-radius:50%
 /* === NAV GRID === */
 .nav-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
 .nav-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;cursor:pointer;box-shadow:var(--shadow-sm);transition:all var(--trans);text-decoration:none;color:var(--text)}
+.nav-btn{font-family:inherit;font-size:100%;line-height:inherit;margin:0;overflow:visible;text-transform:none}
 .nav-card:active{transform:scale(.96);background:var(--primary);color:#fff;border-color:var(--primary)}
 .nav-icon{width:42px;height:42px;border-radius:50%;background:rgba(var(--primary-rgb),.12);color:var(--primary);display:flex;align-items:center;justify-content:center;transition:all var(--trans)}
 .nav-card:active .nav-icon{background:rgba(255,255,255,.15);color:#fff}
@@ -353,11 +354,11 @@ input.num-in:focus{border-color:var(--primary)}
         <span class="nav-t">系统</span>
         <span class="nav-s">关于 &middot; 重置</span>
       </a>
-      <a class="nav-card" id="nav-play-toggle">
+      <button class="nav-card nav-btn" id="nav-play-toggle">
         <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg></div>
         <span class="nav-t" id="nav-play-lbl">播放</span>
         <span class="nav-s">开始 / 停止</span>
-      </a>
+      </button>
     </div>
   </div>
 </div>
@@ -856,7 +857,11 @@ function startPlayback(){
 function stopPlayback(){
   isPlaying = false; curBeat=0; curSub=0;
   if (practiceTimer){ clearTimeout(practiceTimer); practiceTimer=null; }
+  curPracticeId=null;
   updatePlayUI(); clearDots();
+  var stat=document.getElementById('pr-stat');
+  if (stat) stat.style.display='none';
+  renderPractice();
 }
 
 function togglePlayback(){
@@ -926,6 +931,12 @@ function updatePlayUI(){
 function renderBeatRow(){
   var el = document.getElementById('beat-row');
   if (!el) return;
+  // Clean up invalid accent indices
+  if (Array.isArray(S.accented)){
+    var newAcc=[];
+    for(var ai=0;ai<S.accented.length;ai++) if(S.accented[ai]>0 && S.accented[ai]<S.beats) newAcc.push(S.accented[ai]);
+    if(newAcc.length!==S.accented.length){ S.accented=newAcc; saveState(); }
+  }
   var html = '';
   for (var i=0;i<S.beats;i++){
     var isAcc = (S.firstAccent && i===0) || (S.accented.indexOf(i)>=0);
@@ -1108,8 +1119,9 @@ function renderPractice(){
   var html='';
   for (var i=0;i<PRACTICE_TMPLTS.length;i++){
     var p=PRACTICE_TMPLTS[i];
-    html+='<div class="practice-item" data-id="'+p.id+'">';
-    html+='<div class="practice-info"><div class="practice-name">'+p.name+'</div><div class="practice-sub">'+p.desc+'</div></div>';
+    var sel=(curPracticeId===p.id);
+    html+='<div class="practice-item'+(sel?' sel':'')+'" data-id="'+p.id+'">';
+    html+='<div class="practice-info"><div class="practice-name">'+p.name+(sel?' &middot; 进行中':'')+'</div><div class="practice-sub">'+p.desc+'</div></div>';
     html+='<div class="practice-badge">'+p.st.length+'段</div></div>';
   }
   el.innerHTML = html;
@@ -1172,14 +1184,17 @@ function setBpm(val){
 }
 
 // === PRACTICE ===
+var curPracticeId=null;
 function startPracticeTpl(id){
   var tpl=null;
   for (var i=0;i<PRACTICE_TMPLTS.length;i++) if (PRACTICE_TMPLTS[i].id===id){ tpl=PRACTICE_TMPLTS[i]; break; }
   if (!tpl) return;
+  curPracticeId=id;
   practiceStep=0;
   var stat=document.getElementById('pr-stat');
   if (stat) stat.style.display='block';
-  runPracticeTpl(tpl, 60);
+  renderPractice();
+  runPracticeTpl(tpl, S.prDur||60);
 }
 
 function runPracticeTpl(tpl, dur){
@@ -1188,6 +1203,8 @@ function runPracticeTpl(tpl, dur){
     showToast('练习完成！');
     var stat=document.getElementById('pr-stat');
     if (stat) stat.style.display='none';
+    curPracticeId=null;
+    renderPractice();
     return;
   }
   var bpm=tpl.st[practiceStep];
@@ -1198,13 +1215,14 @@ function runPracticeTpl(tpl, dur){
   if (cd) cd.textContent=bpm+' BPM';
   showToast('第 '+(practiceStep+1)+' 段：'+bpm+' BPM');
   if (!isPlaying) startPlayback();
+  var curDur = (dur>0 && dur<=1800) ? dur : 60;
   practiceTimer = setTimeout(function(){
-    practiceStep++; runPracticeTpl(tpl, dur);
-  }, (dur||60)*1000);
+    practiceStep++; runPracticeTpl(tpl, curDur);
+  }, curDur*1000);
 }
 
 function startPracticeCustom(){
-  var startBpm=60, steps=5, dur=60;
+  var startBpm=S.prStartBpm||60, steps=S.prSteps||5, dur=S.prDur||60;
   var sr=document.getElementById('pr-start-rng');
   var dr=document.getElementById('pr-dur-rng');
   var cr=document.getElementById('pr-steps-rng');
@@ -1217,6 +1235,8 @@ function startPracticeCustom(){
   var stat=document.getElementById('pr-stat');
   if (stat) stat.style.display='block';
   practiceStep=0;
+  curPracticeId='custom';
+  renderPractice();
   var tpl={id:'custom',name:'自定义',st:arr};
   runPracticeTpl(tpl, dur);
 }
@@ -1252,13 +1272,17 @@ setInterval(function(){
 
 // === NAVIGATION ===
 function goToPage(id){
+  var pid=id.replace('pg-','');
   var pages=['home','params','sound','theme','practice','system'];
   for (var i=0;i<pages.length;i++){
     var p=document.getElementById('pg-'+pages[i]);
     if (p) p.classList.remove('active');
   }
-  var target=document.getElementById('pg-'+id);
+  var target=document.getElementById('pg-'+pid);
   if (target) target.classList.add('active');
+  if (history && history.replaceState){
+    history.replaceState(null,'','#pg-'+pid);
+  }
   window.scrollTo(0,0);
 }
 
@@ -1269,7 +1293,7 @@ function showToast(msg){
   if (!t) return;
   t.textContent=msg; t.classList.add('on');
   if (toastTimer) clearTimeout(toastTimer);
-  toastTimer=setTimeout(function(){ t.classList.remove('on'); }, 2000);
+  toastTimer=setTimeout(function(){ t.classList.remove('on'); }, 2500);
 }
 
 // === GUIDE ===
@@ -1430,15 +1454,11 @@ function bindAll(){
   if (pb) pb.addEventListener('click',togglePlayback);
   // Nav play toggle
   var npt=document.getElementById('nav-play-toggle');
-  if (npt) npt.addEventListener('click',togglePlayback);
+  if(npt) npt.addEventListener('click',function(){ togglePlayback(); });
 
   // Test sound
   var ts=document.getElementById('btn-test-snd');
   if (ts) ts.addEventListener('click',playTestSound);
-
-  // Nav play toggle
-  var npt=document.getElementById('nav-play-toggle');
-  if(npt) npt.addEventListener('click',function(){ togglePlayback(); });
 
   // Back buttons
   var backs=document.querySelectorAll('[data-back]');
@@ -1483,13 +1503,13 @@ function bindAll(){
 
   // Sliders
   var sliders2=[
-    ['swing-rng','swing-val',function(v){S.swing=v;document.getElementById('swing-val').textContent=v;updateSliderTrack(this);}],
-    ['freq-rng','freq-val',function(v){S.customFreq=v;document.getElementById('freq-val').textContent=v;updateSliderTrack(this);}],
-    ['dur-rng','dur-val',function(v){S.customDur=v;document.getElementById('dur-val').textContent=v;updateSliderTrack(this);}],
-    ['vol-a-rng','vol-a-val',function(v){S.volA=v;document.getElementById('vol-a-val').textContent=v;updateSliderTrack(this);}],
-    ['vol-n-rng','vol-n-val',function(v){S.volN=v;document.getElementById('vol-n-val').textContent=v;updateSliderTrack(this);}],
-    ['vol-s-rng','vol-s-val',function(v){S.volS=v;document.getElementById('vol-s-val').textContent=v;updateSliderTrack(this);}],
-    ['fs-rng','fs-val',function(v){S.fontSize=v;document.getElementById('fs-val').textContent=v;document.body.style.fontSize=v+'px';updateSliderTrack(this);}]
+    ['swing-rng','swing-val',function(v){S.swing=v;saveState();document.getElementById('swing-val').textContent=v;updateSliderTrack(this);}],
+    ['freq-rng','freq-val',function(v){S.customFreq=v;saveState();document.getElementById('freq-val').textContent=v;updateSliderTrack(this);}],
+    ['dur-rng','dur-val',function(v){S.customDur=v;saveState();document.getElementById('dur-val').textContent=v;updateSliderTrack(this);}],
+    ['vol-a-rng','vol-a-val',function(v){S.volA=v;saveState();document.getElementById('vol-a-val').textContent=v;updateSliderTrack(this);}],
+    ['vol-n-rng','vol-n-val',function(v){S.volN=v;saveState();document.getElementById('vol-n-val').textContent=v;updateSliderTrack(this);}],
+    ['vol-s-rng','vol-s-val',function(v){S.volS=v;saveState();document.getElementById('vol-s-val').textContent=v;updateSliderTrack(this);}],
+    ['fs-rng','fs-val',function(v){S.fontSize=v;saveState();document.getElementById('fs-val').textContent=v;document.body.style.fontSize=v+'px';updateSliderTrack(this);}]
   ];
   for(var s=0;s<sliders2.length;s++){
     var se=document.getElementById(sliders2[s][0]);
@@ -1512,12 +1532,7 @@ function bindAll(){
   var pcstart=document.getElementById('pr-custom-start');
   if(pcstart) pcstart.addEventListener('click',startPracticeCustom);
   var pstop=document.getElementById('pr-stop');
-  if(pstop) pstop.addEventListener('click',function(){
-    if(practiceTimer){clearTimeout(practiceTimer);practiceTimer=null;}
-    stopPlayback();
-    var stat=document.getElementById('pr-stat');
-    if(stat) stat.style.display='none';
-  });
+  if(pstop) pstop.addEventListener('click',stopPlayback);
 
   // System page
   var sabt=document.getElementById('sys-about');

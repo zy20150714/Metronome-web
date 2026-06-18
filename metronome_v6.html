@@ -1,646 +1,663 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#2563eb">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover"/>
+<meta name="theme-color" content="#2563eb"/>
 <title>节拍器</title>
 <style>
 /* === RESET === */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;overflow-x:hidden}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif;background:#f1f5f9;color:#0f172a;line-height:1.5;font-size:15px;-webkit-font-smoothing:antialiased}
-button{font-family:inherit;border:0;cursor:pointer;outline:none;background:none}
-input{font-family:inherit;border:0;outline:none;background:none}
-a{text-decoration:none;color:inherit}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.5;background:var(--bg);color:var(--text);font-size:var(--font-size,15px)}
+button{font-family:inherit;border:0;cursor:pointer}
+input,select{font-family:inherit}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]{-moz-appearance:textfield}
 ::-webkit-scrollbar{width:0;height:0}
 
-/* === CSS VARS (default = minimal light) === */
+/* === CSS TOKENS === */
 :root{
-  --p:#2563eb; --p-rgb:37,99,235;
-  --bg:#f1f5f9; --srf:#ffffff; --sr2:#f8fafc;
-  --tx:#0f172a; --ts:#475569; --tm:#94a3b8;
-  --bd:rgba(15,23,42,.08); --bs:rgba(15,23,42,.15);
-  --gl:rgba(37,99,235,.3);
-  --sh1:0 1px 3px rgba(0,0,0,.06);
-  --sh2:0 4px 12px rgba(0,0,0,.1);
-  --sh3:0 8px 32px rgba(0,0,0,.15);
-  --rc:20px; --rm:14px; --rs:10px; --hr:56px;
-  --fs:15px;
+  --primary:#2563eb;--primary-rgb:37,99,235;--primary-light:#60a5fa;--primary-dark:#1e40af;
+  --bg:#f1f5f9;--surface:#ffffff;--surface-2:#f8fafc;
+  --text:#0f172a;--text-sec:#475569;--text-muted:#94a3b8;
+  --border:rgba(15,23,42,.08);--border-strong:rgba(15,23,42,.15);
+  --glow:rgba(37,99,235,.35);
+  --shadow-sm:0 1px 3px rgba(15,23,42,.05);--shadow-md:0 4px 12px rgba(15,23,42,.06),0 2px 4px rgba(15,23,42,.04);--shadow-lg:0 16px 40px rgba(15,23,42,.12);
+  --r-lg:20px;--r-md:14px;--r-sm:10px;
+  --font-size:15px;--header-h:56px;
+  --trans:.3s cubic-bezier(.4,0,.2,1);
 }
+
+/* === 12 THEMES (v4 style) === */
+body.t-minimal  {--primary:#2563eb;--primary-rgb:37,99,235;--primary-light:#60a5fa;--primary-dark:#1e40af;--bg:#f1f5f9;--surface:#fff;--surface-2:#f8fafc;--text:#0f172a;--text-sec:#475569;--text-muted:#94a3b8;--border:rgba(15,23,42,.08);--border-strong:rgba(15,23,42,.15);--glow:rgba(37,99,235,.35)}
+body.t-nature   {--primary:#16a34a;--primary-rgb:22,163,74;--primary-light:#4ade80;--primary-dark:#166534;--bg:#f0fdf4;--surface:#fff;--surface-2:#f8fafc;--text:#14532d;--text-sec:#166534;--text-muted:#65a30d;--border:rgba(22,101,52,.08);--border-strong:rgba(22,101,52,.15);--glow:rgba(22,163,74,.35)}
+body.t-ocean    {--primary:#0284c7;--primary-rgb:2,132,199;--primary-light:#38bdf8;--primary-dark:#075985;--bg:#f0f9ff;--surface:#fff;--surface-2:#e0f2fe;--text:#0c4a6e;--text-sec:#0369a1;--text-muted:#0ea5e9;--border:rgba(3,105,161,.1);--border-strong:rgba(3,105,161,.18);--glow:rgba(2,132,199,.35)}
+body.t-sunset   {--primary:#ea580c;--primary-rgb:234,88,12;--primary-light:#fb923c;--primary-dark:#9a3412;--bg:#fff7ed;--surface:#fff;--surface-2:#ffedd5;--text:#7c2d12;--text-sec:#9a3412;--text-muted:#f59e0b;--border:rgba(154,52,18,.1);--border-strong:rgba(154,52,18,.18);--glow:rgba(234,88,12,.35)}
+body.t-berry    {--primary:#db2777;--primary-rgb:219,39,119;--primary-light:#f472b6;--primary-dark:#831843;--bg:#fdf2f8;--surface:#fff;--surface-2:#fce7f3;--text:#831843;--text-sec:#9d174d;--text-muted:#ec4899;--border:rgba(159,18,57,.1);--border-strong:rgba(159,18,57,.18);--glow:rgba(219,39,119,.35)}
+body.t-violet   {--primary:#8b5cf6;--primary-rgb:139,92,246;--primary-light:#a78bfa;--primary-dark:#5b21b6;--bg:#faf5ff;--surface:#fff;--surface-2:#ede9fe;--text:#4c1d95;--text-sec:#6d28d9;--text-muted:#8b5cf6;--border:rgba(109,40,217,.1);--border-strong:rgba(109,40,217,.2);--glow:rgba(139,92,246,.35)}
+body.t-graphite {--primary:#64748b;--primary-rgb:100,116,139;--primary-light:#94a3b8;--primary-dark:#334155;--bg:#f8fafc;--surface:#fff;--surface-2:#f1f5f9;--text:#0f172a;--text-sec:#475569;--text-muted:#94a3b8;--border:rgba(15,23,42,.08);--border-strong:rgba(15,23,42,.15);--glow:rgba(100,116,139,.35)}
+body.t-amber    {--primary:#b45309;--primary-rgb:180,83,9;--primary-light:#f59e0b;--primary-dark:#78350f;--bg:#fef3c7;--surface:#fffbeb;--surface-2:#fde68a;--text:#78350f;--text-sec:#92400e;--text-muted:#d97706;--border:rgba(120,53,15,.12);--border-strong:rgba(120,53,15,.2);--glow:rgba(180,83,9,.4)}
+body.t-crimson  {--primary:#dc2626;--primary-rgb:220,38,38;--primary-light:#f87171;--primary-dark:#991b1b;--bg:#fef2f2;--surface:#fff;--surface-2:#fee2e2;--text:#991b1b;--text-sec:#b91c1c;--text-muted:#ef4444;--border:rgba(153,27,27,.1);--border-strong:rgba(153,27,27,.2);--glow:rgba(220,38,38,.35)}
+body.t-forest   {--primary:#4d7c0f;--primary-rgb:77,124,15;--primary-light:#84cc16;--primary-dark:#365314;--bg:#f7fee7;--surface:#fff;--surface-2:#ecfccb;--text:#365314;--text-sec:#4d7c0f;--text-muted:#65a30d;--border:rgba(54,83,20,.1);--border-strong:rgba(54,83,20,.18);--glow:rgba(77,124,15,.35)}
+body.t-midnight {--primary:#1e40af;--primary-rgb:30,64,175;--primary-light:#60a5fa;--primary-dark:#1e3a8a;--bg:#eff6ff;--surface:#fff;--surface-2:#dbeafe;--text:#1e3a8a;--text-sec:#1e40af;--text-muted:#3b82f6;--border:rgba(30,64,175,.1);--border-strong:rgba(30,64,175,.2);--glow:rgba(30,64,175,.35)}
+body.t-teal     {--primary:#0d9488;--primary-rgb:13,148,136;--primary-light:#2dd4bf;--primary-dark:#115e59;--bg:#f0fdfa;--surface:#fff;--surface-2:#ccfbf1;--text:#115e59;--text-sec:#0f766e;--text-muted:#14b8a6;--border:rgba(17,94,89,.1);--border-strong:rgba(17,94,89,.18);--glow:rgba(13,148,136,.35)}
+
+/* === DARK MODE (applied on top of theme) === */
+body.dk{--bg:#0b1020;--surface:#151b30;--surface-2:#111628;--text:#e2e8f0;--text-sec:#94a3b8;--text-muted:#64748b;--border:rgba(255,255,255,.06);--border-strong:rgba(255,255,255,.12);--shadow-sm:0 1px 3px rgba(0,0,0,.4);--shadow-md:0 4px 12px rgba(0,0,0,.45);--shadow-lg:0 16px 40px rgba(0,0,0,.55)}
 
 /* === LAYOUT === */
-.app{width:100%;min-height:100%;min-height:100vh;background:var(--bg);position:relative;display:block}
+.app{max-width:540px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg);position:relative}
 
 /* === HEADER === */
-.hd{position:sticky;top:0;left:0;width:100%;height:56px;background:var(--srf);border-bottom:1px solid var(--bd);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;z-index:30;box-shadow:var(--sh1);overflow:hidden}
-.hd-t{font-size:1.1em;font-weight:800;color:var(--tx);letter-spacing:.3px;-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}
-.hb{width:40px;height:40px;border-radius:50%;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;color:var(--tx);background:transparent}
-.hb:active{background:var(--bd)}
-.hb svg{width:22px;height:22px;stroke:currentColor;stroke-width:2.3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.header{position:sticky;top:0;z-index:50;height:var(--header-h);padding:0 12px;padding-top:env(safe-area-inset-top,0);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow-sm)}
+.header-title{font-size:1.05em;font-weight:700;color:var(--text);letter-spacing:.3px}
+.btn-back{position:absolute;left:12px;top:50%;transform:translateY(-50%);margin-top:calc(env(safe-area-inset-top,0)/2);width:36px;height:36px;border-radius:50%;background:transparent;color:var(--text);display:flex;align-items:center;justify-content:center;transition:background var(--trans),transform var(--trans)}
+.btn-back:active{transform:translateY(-50%) scale(.9);background:var(--border)}
+.btn-back svg{width:22px;height:22px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.btn-action{position:absolute;right:12px;top:50%;transform:translateY(-50%);margin-top:calc(env(safe-area-inset-top,0)/2);width:36px;height:36px;border-radius:50%;background:transparent;color:var(--text);display:flex;align-items:center;justify-content:center;transition:background var(--trans),transform var(--trans)}
+.btn-action:active{transform:translateY(-50%) scale(.9);background:var(--border)}
+.btn-action svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
-/* === PAGES === */
-.pg{display:none;width:100%}
-.pg-on{display:block}
-.ct{padding:14px 14px 90px}
+.content{flex:1;padding:16px;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px));overflow-y:auto;-webkit-overflow-scrolling:touch}
 
-/* === BPM CARD === */
-.bc{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rc);padding:22px 14px 16px;text-align:center;margin-bottom:12px;box-shadow:var(--sh2)}
-.bv{font-size:4.5em;font-weight:900;color:var(--p);line-height:1;letter-spacing:-4px;font-variant-numeric:tabular-nums;display:block}
-.bu{color:var(--tm);font-size:.78em;letter-spacing:5px;text-transform:uppercase;font-weight:700;display:block;margin-top:4px}
-.cs{margin-top:10px;display:-webkit-box;display:-ms-flexbox;display:flex;gap:5px;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-ms-flex-wrap:wrap;flex-wrap:wrap}
-.cp{background:var(--bd);padding:3px 9px;border-radius:999px;font-size:.78em;color:var(--tx);font-weight:700}
-.bc-r{margin-top:14px;display:-webkit-box;display:-ms-flexbox;display:flex;gap:6px;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-wrap:wrap;flex-wrap:wrap}
-.bc-b{width:40px;height:40px;border-radius:50%;background:var(--srf);border:1px solid var(--bd);color:var(--tx);font-size:1em;font-weight:800;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;box-shadow:var(--sh1);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
-.bc-b:active{background:var(--p);color:#fff;border-color:var(--p);-webkit-transform:scale(.92);-ms-transform:scale(.92);transform:scale(.92)}
-.bc-i{width:84px;height:34px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--srf);color:var(--p);font-size:1.25em;font-weight:900;text-align:center;box-shadow:var(--sh1);font-variant-numeric:tabular-nums}
-.bc-i:focus{border-color:var(--p)}
-.sl{margin-top:12px;padding:0 4px}
-.sli{-webkit-appearance:none;width:100%;height:6px;background:var(--bd);border-radius:999px;outline:none;cursor:pointer}
-.sli::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--srf);border:3px solid var(--p);box-shadow:0 2px 6px var(--gl);cursor:pointer}
-.sli::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--srf);border:3px solid var(--p)}
-
-/* === BEAT PANEL === */
-.bp{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rc);padding:14px 10px;margin-top:12px;box-shadow:var(--sh2)}
-.bdr{display:-webkit-box;display:-ms-flexbox;display:flex;gap:6px;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-wrap:wrap;flex-wrap:wrap;min-height:48px;margin-bottom:8px}
-.bd{min-width:40px;height:40px;padding:0 6px;border-radius:10px;border:2px solid var(--bs);background:var(--sr2);color:var(--tm);font-size:.9em;font-weight:800;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-transition:all .15s;-o-transition:all .15s;transition:all .15s}
-.bd[data-ac="1"]{background:var(--p);color:#fff;border-color:var(--p);box-shadow:0 3px 10px var(--gl)}
-.bd.bt{background:var(--p);color:#fff;border-color:var(--p);-webkit-transform:scale(1.15);-ms-transform:scale(1.15);transform:scale(1.15);box-shadow:0 4px 14px var(--gl)}
-.pl{text-align:center;color:var(--ts);font-size:.82em;margin-top:4px}
-.pw{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;margin:10px 0 4px;height:120px}
-.pw-r{position:absolute;top:50%;left:50%;width:116px;height:116px;margin:-58px 0 0 -58px;border-radius:50%;border:2px solid var(--p);opacity:0;pointer-events:none;display:none}
-.pw-r.bt{opacity:.8;display:block;-webkit-animation:pwA .55s ease forwards;-o-animation:pwA .55s ease forwards;animation:pwA .55s ease forwards}
-@-webkit-keyframes pwA{0%{opacity:.7;-webkit-transform:scale(.8);transform:scale(.8)}100%{opacity:0;-webkit-transform:scale(1.7);transform:scale(1.7)}}
-@keyframes pwA{0%{opacity:.7;-webkit-transform:scale(.8);transform:scale(.8)}100%{opacity:0;-webkit-transform:scale(1.7);transform:scale(1.7)}}
-.pw-b{width:108px;height:108px;border-radius:50%;background:var(--p);color:#fff;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;box-shadow:0 10px 28px var(--gl);cursor:pointer;z-index:2;position:relative}
-.pw-b:active{-webkit-transform:scale(.93);-ms-transform:scale(.93);transform:scale(.93)}
-.pw-b svg{width:44px;height:44px;fill:currentColor;stroke:currentColor;stroke-width:0}
-
-/* === NAV CARDS === */
-.ng{display:-ms-grid;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-.nc{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);padding:12px 6px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:5px;text-align:center;cursor:pointer;box-shadow:var(--sh1);color:var(--tx)}
-.nc:active{background:var(--p);color:#fff;border-color:var(--p);-webkit-transform:scale(.97);-ms-transform:scale(.97);transform:scale(.97)}
-.nc-i{width:40px;height:40px;border-radius:50%;background:rgba(var(--p-rgb),.1);color:var(--p);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center}
-.nc:active .nc-i{background:rgba(255,255,255,.2);color:#fff}
-.nc-i svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.nc-t{font-weight:800;font-size:.88em}
-.nc-s{color:var(--ts);font-size:.7em}
-.nc:active .nc-s{color:rgba(255,255,255,.75)}
+/* === PAGES (v4 animation) === */
+.page{display:none}
+.page.active{display:block;animation:pgIn .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* === CARD === */
-.cd{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);padding:14px;margin-bottom:10px;box-shadow:var(--sh1)}
-.cd-t{font-size:.92em;font-weight:800;color:var(--tx);margin-bottom:3px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:7px}
-.cd-t svg{width:16px;height:16px;stroke:var(--p);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.cd-s{color:var(--ts);font-size:.78em;margin-bottom:10px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.card-title{font-size:.95em;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card-title svg{width:18px;height:18px;stroke:var(--primary);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.card-sub{color:var(--text-sec);font-size:.82em;margin-bottom:12px;margin-top:-2px}
 
-/* === SELECTOR GRIDS === */
-.tsg{display:-ms-grid;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.tsg-i{padding:10px 4px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--tx);font-size:.9em;font-weight:800;text-align:center;cursor:pointer}
-.tsg-i:active{-webkit-transform:scale(.96);-ms-transform:scale(.96);transform:scale(.96)}
-.tsg-i.on{background:var(--p);color:#fff;border-color:var(--p);box-shadow:0 3px 10px var(--gl);-webkit-transform:scale(1.04);-ms-transform:scale(1.04);transform:scale(1.04)}
+/* === BPM DISPLAY (v4 gradient style) === */
+.bpm-card{background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 100%);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px 20px 20px;box-shadow:var(--shadow-md);text-align:center;position:relative;overflow:hidden}
+.bpm-card::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(var(--primary-rgb),.18) 0%,transparent 65%);pointer-events:none}
+.bpm-num{font-size:4.5em;font-weight:800;line-height:1.05;color:var(--primary);letter-spacing:-3px;font-variant-numeric:tabular-nums;position:relative;display:block;transition:transform .2s ease}
+.bpm-unit{color:var(--text-muted);font-size:.8em;letter-spacing:4px;margin-top:6px;text-transform:uppercase;font-weight:600;display:block}
+.bpm-chips{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.bpm-chip{background:var(--border);padding:3px 10px;border-radius:999px;font-size:.83em;color:var(--text);font-weight:500}
 
-.subg{display:-ms-grid;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.sub-i{padding:10px 4px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--ts);font-size:.78em;font-weight:700;text-align:center;cursor:pointer;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;gap:3px;-webkit-box-align:center;-ms-flex-align:center;align-items:center}
-.sub-i .sm{font-size:1.15em;color:var(--tx);font-weight:900}
-.sub-i.on{background:var(--p);color:#fff;border-color:var(--p)}
-.sub-i.on .sm{color:#fff}
+/* === BPM CONTROLS === */
+.bpm-controls{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px}
+.step-btn{width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:1.15em;font-weight:700;box-shadow:var(--shadow-sm);transition:all var(--trans)}
+.step-btn:active{transform:scale(.9);background:var(--primary);color:#fff;border-color:var(--primary)}
+.bpm-in{width:88px;height:42px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);color:var(--primary);font-size:1.35em;font-weight:800;text-align:center;outline:none;box-shadow:var(--shadow-sm);transition:border-color var(--trans)}
+.bpm-in:focus{border-color:var(--primary)}
 
-.sng{display:-ms-grid;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.sn-i{padding:10px 4px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--ts);font-size:.75em;font-weight:700;text-align:center;cursor:pointer;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:4px}
-.sn-i .sn-ic{width:28px;height:28px;border-radius:8px;background:rgba(var(--p-rgb),.12);color:var(--p);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center}
-.sn-i .sn-ic svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none}
-.sn-i.on{background:var(--p);color:#fff;border-color:var(--p);box-shadow:0 3px 10px var(--gl)}
-.sn-i.on .sn-ic{background:rgba(255,255,255,.18);color:#fff}
+/* === SLIDER (v4 pseudo-element style) === */
+.slider-row{margin-top:12px;padding:0 4px}
+input[type=range].rng{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:transparent;outline:none;position:relative;cursor:pointer}
+input[type=range].rng::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:var(--v,50%);height:6px;border-radius:999px;background:var(--primary);pointer-events:none}
+input[type=range].rng::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:calc(100% - var(--v,50%));height:6px;border-radius:999px;background:var(--border);pointer-events:none}
+input[type=range].rng::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--surface);border:3px solid var(--primary);cursor:pointer;position:relative;z-index:2;box-shadow:0 2px 8px var(--glow);transition:transform .15s}
+input[type=range].rng::-webkit-slider-thumb:active{transform:scale(1.15)}
+input[type=range].rng::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--surface);border:3px solid var(--primary);cursor:pointer}
 
-.tg-g{display:-ms-grid;display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
-.tg-i{padding:10px;border-radius:var(--rm);border:2px solid var(--bd);background:var(--srf);color:var(--tx);font-size:.84em;font-weight:800;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:8px;cursor:pointer}
-.tg-i:active{-webkit-transform:scale(.98);-ms-transform:scale(.98);transform:scale(.98)}
-.tg-i.on{border-color:var(--p);box-shadow:0 3px 12px var(--gl)}
-.tg-sw{width:24px;height:24px;border-radius:50%;-ms-flex-negative:0;flex-shrink:0;border:2px solid rgba(255,255,255,.5);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+/* === BEAT PANEL (v4 pulse ring + dot animation) === */
+.beat-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 12px;box-shadow:var(--shadow-md);margin-top:16px}
+.beat-row{display:flex;justify-content:center;gap:7px;flex-wrap:wrap}
+.beat-dot{min-width:40px;min-height:40px;width:calc(100%/8 - 7px);max-width:50px;aspect-ratio:1;border-radius:13px;border:2px solid var(--border-strong);background:var(--surface-2);color:var(--text-muted);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:.95em;transition:all .16s cubic-bezier(.2,.8,.2,1);position:relative;user-select:none;touch-action:manipulation;cursor:pointer}
+.beat-dot[data-ac="1"]{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 14px var(--glow);transform:scale(1.1)}
+.beat-dot.bt{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff;transform:scale(1.2);box-shadow:0 6px 20px var(--glow)}
 
-/* === SLIDER ROWS === */
-.vr{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:10px;margin-top:8px}
-.vl{color:var(--ts);font-size:.8em;font-weight:700;width:68px;-ms-flex-negative:0;flex-shrink:0}
-.vv{width:44px;text-align:right;color:var(--p);font-weight:900;font-size:.82em;font-variant-numeric:tabular-nums}
+.play-wrap{display:flex;justify-content:center;align-items:center;margin:6px 0 4px;position:relative}
+.pulse-ring{position:absolute;left:50%;top:50%;width:110px;height:110px;border-radius:50%;border:2px solid var(--primary);transform:translate(-50%,-50%);pointer-events:none;opacity:0}
+.pulse-ring.pulse{animation:pulseR .55s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes pulseR{0%{opacity:.7;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.6)}}
+.play-btn{width:110px;height:110px;border-radius:50%;background:var(--primary);color:#fff;box-shadow:0 12px 32px var(--glow),inset 0 0 0 4px rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;transition:transform .25s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden}
+.play-btn::after{content:'';position:absolute;inset:0;border-radius:50%;border:3px solid transparent;border-top-color:rgba(255,255,255,.35);border-right-color:rgba(255,255,255,.35);opacity:0}
+.play-btn.playing::after{animation:spin 1.2s linear infinite;opacity:1}
+.play-btn:active{transform:scale(.93)}
+.play-btn svg{width:46px;height:46px;fill:currentColor;stroke:currentColor;stroke-width:0}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.play-label{text-align:center;color:var(--text-sec);font-size:.85em;margin-bottom:4px}
 
-/* === TOGGLE ROWS === */
-.tgr{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;padding:5px 0}
-.tgr span{font-size:.88em;color:var(--tx);font-weight:700}
-.swc{-webkit-appearance:none;width:42px;height:24px;background:var(--bs);border-radius:999px;position:relative;cursor:pointer;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:background .2s;-o-transition:background .2s;transition:background .2s}
-.swc::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;-webkit-transition:all .2s;-o-transition:all .2s;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
-.swc:checked{background:var(--p)}
-.swc:checked::after{left:21px}
+/* === NAV GRID === */
+.nav-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.nav-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;cursor:pointer;box-shadow:var(--shadow-sm);transition:all var(--trans);text-decoration:none;color:var(--text)}
+.nav-card:active{transform:scale(.96);background:var(--primary);color:#fff;border-color:var(--primary)}
+.nav-icon{width:42px;height:42px;border-radius:50%;background:rgba(var(--primary-rgb),.12);color:var(--primary);display:flex;align-items:center;justify-content:center;transition:all var(--trans)}
+.nav-card:active .nav-icon{background:rgba(255,255,255,.15);color:#fff}
+.nav-icon svg{width:21px;height:21px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.nav-t{font-weight:700;font-size:.93em}
+.nav-s{color:var(--text-sec);font-size:.75em}
+.nav-card:active .nav-s{color:rgba(255,255,255,.78)}
+
+/* === GRID SELECTORS === */
+.ts-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.ts-item{padding:11px 4px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:.95em;font-weight:700;text-align:center;transition:all var(--trans);cursor:pointer}
+.ts-item.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 14px var(--glow);transform:scale(1.04)}
+.ts-item:active{transform:scale(.92)}
+
+.sub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sub-item{padding:11px 4px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface-2);color:var(--text-sec);font-size:.83em;font-weight:600;text-align:center;transition:all var(--trans);cursor:pointer;display:flex;flex-direction:column;gap:3px;align-items:center}
+.sub-item .sym{font-size:1.35em}
+.sub-item.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+.sound-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.sound-item{padding:13px 4px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface-2);color:var(--text-sec);font-size:.76em;font-weight:600;text-align:center;transition:all var(--trans);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px}
+.sound-icon{width:32px;height:32px;border-radius:9px;background:rgba(var(--primary-rgb),.15);color:var(--primary);display:flex;align-items:center;justify-content:center}
+.sound-icon svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sound-item.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 14px var(--glow)}
+.sound-item.active .sound-icon{background:rgba(255,255,255,.2);color:#fff}
+.sound-item:active{transform:scale(.94)}
+
+.theme-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.theme-item{padding:13px;border-radius:var(--r-md);border:2px solid var(--border);background:var(--surface);color:var(--text);font-size:.88em;font-weight:700;display:flex;align-items:center;gap:10px;transition:all var(--trans);cursor:pointer}
+.theme-swatch{width:26px;height:26px;border-radius:50%;flex-shrink:0;border:2px solid rgba(255,255,255,.6);box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.theme-item.active{border-color:var(--primary);box-shadow:0 4px 16px var(--glow)}
+.theme-item:active{transform:scale(.97)}
+
+/* === VOLUME ROWS === */
+.vol-row{display:flex;align-items:center;gap:10px;margin-top:8px}
+.vol-lbl{color:var(--text-sec);font-size:.85em;font-weight:600;width:76px;flex-shrink:0}
+.vol-val{width:40px;text-align:right;color:var(--primary);font-weight:700;font-size:.85em;font-variant-numeric:tabular-nums}
+
+/* === TOGGLE SWITCH === */
+input.tgl{-webkit-appearance:none;appearance:none;width:44px;height:26px;background:var(--border-strong);border-radius:999px;position:relative;cursor:pointer;outline:none;transition:background var(--trans);flex-shrink:0}
+input.tgl::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:all var(--trans);box-shadow:0 2px 4px rgba(0,0,0,.15)}
+input.tgl:checked{background:var(--primary)}
+input.tgl:checked::after{left:21px}
 
 /* === CUSTOM TIME SIG === */
-.tsc{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--bd)}
-.tsc-lb{font-size:.82em;color:var(--ts);font-weight:700;white-space:nowrap}
-.tsc-r{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:4px;-webkit-box-flex:1;-ms-flex:1;flex:1;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center}
-.tsc-b{width:32px;height:32px;border-radius:50%;background:var(--sr2);border:1px solid var(--bd);color:var(--tx);font-size:1em;font-weight:800;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-ms-flex-negative:0;flex-shrink:0}
-.tsc-b:active{background:var(--p);color:#fff;border-color:var(--p);-webkit-transform:scale(.9);-ms-transform:scale(.9);transform:scale(.9)}
-.tsc-i{width:48px;height:34px;background:var(--srf);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);font-weight:900;text-align:center;font-size:1em}
-.tsc-i:focus{border-color:var(--p);outline:none}
-.tsc-sp{font-size:1.4em;color:var(--ts);font-weight:800}
+.custom-ts{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--border)}
+.custom-ts .lbl{font-size:.88em;color:var(--text-sec);font-weight:600;white-space:nowrap}
+select.bpm-sel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);font-weight:700;padding:6px 10px;outline:none;cursor:pointer}
+input.num-in{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);font-weight:800;text-align:center;width:56px;height:36px;font-size:1.1em;outline:none}
+input.num-in:focus{border-color:var(--primary)}
 
-/* === WAVE GRID === */
-.wg{display:-ms-grid;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:8px}
-.wg-i{padding:8px 3px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--ts);font-size:.78em;font-weight:700;text-align:center;cursor:pointer}
-.wg-i.on{background:var(--p);color:#fff;border-color:var(--p)}
+/* === WAVE / PRESET GRIDS === */
+.wave-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}
+.wave-item{padding:10px 4px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface-2);color:var(--text-sec);font-size:.82em;font-weight:600;text-align:center;cursor:pointer;transition:all var(--trans)}
+.wave-item.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-/* === BPM PRESETS === */
-.bpp{display:-ms-grid;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.bp-i{padding:10px 4px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sr2);color:var(--ts);font-size:.84em;font-weight:800;text-align:center;cursor:pointer}
-.bp-i .lb{display:block;font-size:.65em;color:var(--tm);font-weight:600;margin-top:1px;letter-spacing:.3px}
-.bp-i.on,.bp-i:active{background:var(--p);color:#fff;border-color:var(--p);box-shadow:0 3px 8px var(--gl)}
-.bp-i.on .lb,.bp-i:active .lb{color:rgba(255,255,255,.75)}
+.bpm-presets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.preset-btn{padding:9px 4px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface-2);color:var(--text-sec);font-size:.9em;font-weight:700;text-align:center;cursor:pointer;transition:all var(--trans);display:flex;flex-direction:column;align-items:center;gap:2px}
+.preset-btn .n{font-size:1.1em;font-weight:800;color:var(--text)}
+.preset-btn .l{font-size:.68em;color:var(--text-muted);font-weight:500}
+.preset-btn.active,.preset-btn:active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 12px var(--glow)}
+.preset-btn.active .n,.preset-btn:active .n{color:#fff}
+.preset-btn.active .l,.preset-btn:active .l{color:rgba(255,255,255,.75)}
 
-/* === SWATCH === */
-.sw{display:-ms-grid;display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:8px}
-.sw-b{width:100%;padding-top:100%;border-radius:var(--rs);border:2px solid var(--bd);cursor:pointer;position:relative;-webkit-transition:all .15s;-o-transition:all .15s;transition:all .15s}
-.sw-b:active{-webkit-transform:scale(.9);-ms-transform:scale(.9);transform:scale(.9)}
-.sw-b.on{border-color:var(--tx);box-shadow:0 0 0 2px var(--srf),0 0 0 4px var(--p);-webkit-transform:scale(1.06);-ms-transform:scale(1.06);transform:scale(1.06)}
+/* === SWATCH GRID === */
+.swatch-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:10px}
+.q-swatch{aspect-ratio:1;border-radius:var(--r-sm);border:2px solid var(--border);cursor:pointer;transition:transform var(--trans),border-color var(--trans)}
+.q-swatch:active{transform:scale(.9)}
+.q-swatch.on{border-color:var(--text);box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--primary)}
 
-/* === TAP === */
-.tp{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:12px;margin-top:6px}
-.tp-b{width:88px;height:88px;border-radius:50%;background:var(--p);color:#fff;font-size:.9em;font-weight:900;letter-spacing:2px;box-shadow:0 8px 22px var(--gl);cursor:pointer;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:all .12s;-o-transition:all .12s;transition:all .12s}
-.tp-b:active{-webkit-transform:scale(.92);-ms-transform:scale(.92);transform:scale(.92);box-shadow:0 4px 12px var(--gl)}
-.tp-i{-webkit-box-flex:1;-ms-flex:1;flex:1}
-.tp-lb{font-size:.8em;color:var(--ts)}
-.tp-v{font-size:2em;font-weight:900;color:var(--p);font-variant-numeric:tabular-nums;line-height:1.1}
+/* === TAP TEMPO (v4 animation) === */
+.tap-area{display:flex;align-items:center;gap:14px}
+.tap-btn{width:88px;height:88px;border-radius:50%;background:var(--primary);color:#fff;font-size:1.1em;font-weight:800;letter-spacing:1px;box-shadow:0 8px 24px var(--glow);transition:transform .15s,box-shadow .15s;cursor:pointer;flex-shrink:0}
+.tap-btn:active{transform:scale(.93);box-shadow:0 4px 12px var(--glow)}
+.tap-btn.working{animation:tapWork .1s ease}
+@keyframes tapWork{0%{transform:scale(.93)}50%{transform:scale(1.04)}100%{transform:scale(.93)}}
+.tap-info{flex:1}
+.tap-info .l{font-size:.83em;color:var(--text-sec)}
+.tap-info .v{font-size:2.2em;font-weight:800;color:var(--primary);line-height:1.1}
+.tap-btns{display:flex;gap:6px;margin-top:4px}
+.tap-sub{font-size:.78em;color:var(--text-muted)}
+.tap-sub .n{color:var(--primary);font-weight:700}
 
-/* === PRACTICE LIST === */
-.pl-l{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;gap:7px}
-.pl-i{padding:11px;border-radius:var(--rm);border:1px solid var(--bd);background:var(--srf);cursor:pointer;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;gap:8px}
-.pl-i:active{-webkit-transform:scale(.98);-ms-transform:scale(.98);transform:scale(.98)}
-.pl-i.on{border-color:var(--p);background:var(--p);color:#fff;box-shadow:0 3px 12px var(--gl)}
-.pl-i.on .pl-d{color:rgba(255,255,255,.7)}
-.pl-i.on .pl-tg{background:rgba(255,255,255,.18);color:#fff}
-.pl-if{-webkit-box-flex:1;-ms-flex:1;flex:1}
-.pl-t{font-weight:800;font-size:.92em}
-.pl-d{color:var(--ts);font-size:.78em;margin-top:1px}
-.pl-tg{font-size:.68em;padding:3px 8px;border-radius:999px;background:var(--bd);color:var(--tx);font-weight:800;white-space:nowrap}
+/* === PRACTICE === */
+.practice-list{display:flex;flex-direction:column;gap:10px}
+.practice-item{padding:13px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all var(--trans);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.practice-item:active{transform:scale(.98)}
+.practice-item.sel{border-color:var(--primary);background:var(--primary);color:#fff;box-shadow:0 4px 16px var(--glow)}
+.practice-item.sel .practice-sub{color:rgba(255,255,255,.75)}
+.practice-item.sel .practice-badge{background:rgba(255,255,255,.2);color:#fff}
+.practice-info{flex:1}
+.practice-name{font-weight:700;font-size:.98em}
+.practice-sub{color:var(--text-sec);font-size:.8em;margin-top:2px}
+.practice-badge{font-size:.72em;padding:3px 10px;border-radius:999px;background:var(--border);color:var(--text);font-weight:700;white-space:nowrap}
 
-.pl-box{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);padding:14px 12px;text-align:center;margin-top:6px;box-shadow:var(--sh1)}
-.pl-bt{color:var(--p);font-weight:800;font-size:.88em;letter-spacing:.4px}
-.pl-bv{font-size:2.8em;font-weight:900;color:var(--tx);font-variant-numeric:tabular-nums;letter-spacing:-2px;margin-top:2px}
-.pl-bn{margin-top:10px;padding:8px 18px;border-radius:999px;background:rgba(239,68,68,.08);color:#ef4444;font-weight:800;font-size:.82em;border:1px solid rgba(239,68,68,.25);cursor:pointer;display:inline-block}
-.pl-bn:active{background:#ef4444;color:#fff;border-color:#ef4444;-webkit-transform:scale(.96);-ms-transform:scale(.96);transform:scale(.96)}
+.practice-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:18px 14px;text-align:center;margin-top:4px;box-shadow:var(--shadow-sm)}
+.practice-stage-txt{color:var(--primary);font-weight:700;font-size:.95em;letter-spacing:.5px}
+.practice-countdown{font-size:3em;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-2px;margin-top:2px}
+.practice-stop-btn{margin-top:12px;padding:8px 22px;border-radius:999px;background:rgba(239,68,68,.1);color:#ef4444;font-weight:700;font-size:.85em;border:1px solid rgba(239,68,68,.3);transition:all var(--trans);cursor:pointer;display:inline-block}
+.practice-stop-btn:active{transform:scale(.94);background:#ef4444;color:#fff}
 
-/* === SYS LIST === */
-.sl-l{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);overflow:hidden;margin-bottom:10px;box-shadow:var(--sh1)}
-.sl-i{padding:11px 14px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;gap:10px;border-bottom:1px solid var(--bd);-webkit-transition:background .15s;-o-transition:background .15s;transition:background .15s;cursor:pointer}
-.sl-i:last-child{border-bottom:0}
-.sl-i:active{background:var(--bd)}
-.sl-i.no{pointer-events:none;cursor:default}
-.sl-i.no:active{background:transparent}
-.sl-ic{width:32px;height:32px;border-radius:8px;background:rgba(var(--p-rgb),.1);color:var(--p);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-ms-flex-negative:0;flex-shrink:0}
-.sl-ic.d{background:rgba(239,68,68,.1);color:#ef4444}
-.sl-ic svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.sl-tx{-webkit-box-flex:1;-ms-flex:1;flex:1}
-.sl-tt{font-weight:700;font-size:.88em;color:var(--tx)}
-.sl-ds{color:var(--ts);font-size:.76em;margin-top:1px}
-.sl-vv{color:var(--ts);font-size:.8em;font-weight:800;font-variant-numeric:tabular-nums}
+/* === SYS ROWS === */
+.sys-list{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.sys-row{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--border);transition:background var(--trans);cursor:pointer}
+.sys-row:last-child{border-bottom:0}
+.sys-row:active{background:var(--border)}
+.sys-row.no{pointer-events:none;cursor:default}
+.sys-row.no:active{background:transparent}
+.sys-l{display:flex;align-items:center;gap:12px;flex:1}
+.sys-icon{width:34px;height:34px;border-radius:9px;background:rgba(var(--primary-rgb),.12);color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sys-icon svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sys-icon.dng{background:rgba(239,68,68,.1);color:#ef4444}
+.sys-text{display:flex;flex-direction:column;gap:1px}
+.sys-title{font-weight:600;font-size:.93em;color:var(--text)}
+.sys-sub{color:var(--text-sec);font-size:.8em}
+.sys-val{color:var(--text-sec);font-size:.85em;display:flex;align-items:center;gap:4px}
+.sys-val svg{width:15px;height:15px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
-/* === HINT BAR === */
-.hb{position:fixed;bottom:0;left:0;width:100%;padding:0 12px 10px;background:var(--srf);border-top:1px solid var(--bd);z-index:50;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:9px;box-shadow:0 -2px 12px rgba(0,0,0,.04);pointer-events:none;padding-bottom:calc(10px + env(safe-area-inset-bottom,0))}
-.hb.hi{display:none}
-.hb-ic{width:28px;height:28px;border-radius:50%;background:rgba(var(--p-rgb),.1);color:var(--p);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-ms-flex-negative:0;flex-shrink:0}
-.hb-ic svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none}
-.hb-tx{-webkit-box-flex:1;-ms-flex:1;flex:1;font-size:.78em;color:var(--ts);line-height:1.45}
-.hb-tx strong{color:var(--p);font-weight:800}
-.hb-x{width:28px;height:28px;border-radius:50%;color:var(--tm);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;cursor:pointer;pointer-events:auto;-ms-flex-negative:0;flex-shrink:0}
-.hb-x svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.5;fill:none}
+.info-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:13px 16px;color:var(--text-sec);font-size:.82em;line-height:1.7;box-shadow:var(--shadow-sm)}
 
-/* === MODAL === */
-.md{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(5,10,20,.6);z-index:200;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;padding:20px}
-.md.hi{display:none}
-.md-c{background:var(--srf);border-radius:var(--rc);padding:22px 18px;max-width:380px;width:100%;box-shadow:var(--sh3);text-align:center;max-height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.md-ic{width:56px;height:56px;border-radius:50%;background:rgba(var(--p-rgb),.12);color:var(--p);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;margin:0 auto 12px}
-.md-ic svg{width:28px;height:28px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.md-tt{font-size:1.08em;font-weight:900;color:var(--tx);margin-bottom:6px}
-.md-ds{color:var(--ts);font-size:.84em;line-height:1.6;margin-bottom:14px}
-.md-st{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;gap:5px;margin-bottom:14px}
-.md-st-i{width:7px;height:7px;border-radius:50%;background:var(--bs);-webkit-transition:background .2s;-o-transition:background .2s;transition:background .2s}
-.md-st-i.on{background:var(--p);-webkit-transform:scale(1.3);-ms-transform:scale(1.3);transform:scale(1.3)}
-.md-b{width:100%;padding:12px;border-radius:var(--rm);background:var(--p);color:#fff;font-size:.92em;font-weight:800;cursor:pointer;box-shadow:0 4px 14px var(--gl)}
-.md-b:active{-webkit-transform:scale(.97);-ms-transform:scale(.97);transform:scale(.97);opacity:.88}
-.md-b.sk{background:transparent;color:var(--ts);font-size:.8em;font-weight:700;margin-top:6px;box-shadow:none}
-.md-b[disabled]{opacity:.4;cursor:not-allowed}
+/* === HINT BAR (v4 slide animation) === */
+.hint-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:540px;width:100%;padding:0 16px calc(10px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--border);z-index:100;display:flex;align-items:center;gap:10px;box-shadow:0 -4px 20px rgba(0,0,0,.06);transition:transform .4s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.hint-bar.hidden{transform:translateX(-50%) translateY(100%);opacity:0;pointer-events:none}
+.hint-icon{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:rgba(var(--primary-rgb),.12);color:var(--primary);display:flex;align-items:center;justify-content:center}
+.hint-icon svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hint-text{flex:1;font-size:.82em;color:var(--text-sec);line-height:1.4}
+.hint-text strong{color:var(--primary);font-weight:700}
+.hint-close{width:28px;height:28px;border-radius:50%;background:transparent;color:var(--text-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:color var(--trans)}
+.hint-close:hover{color:var(--text)}
+.hint-close svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
-/* === AGREE MODAL === */
-.ag-tx{background:var(--sr2);border:1px solid var(--bd);border-radius:var(--rm);padding:12px;text-align:left;max-height:220px;overflow-y:auto;-webkit-overflow-scrolling:touch;font-size:.78em;color:var(--ts);line-height:1.7;margin-bottom:12px}
-.ag-tx h3{color:var(--tx);font-size:1em;font-weight:800;margin-bottom:4px;margin-top:8px}
-.ag-tx h3:first-child{margin-top:0}
-.ag-tx p{margin-bottom:6px}
-.ag-cb{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;gap:7px;margin-bottom:12px;font-size:.84em;color:var(--ts);cursor:pointer}
-input[type=checkbox]{width:18px;height:18px;accent-color:var(--p);cursor:pointer}
-
-/* === THEME PICKER MODAL === */
-.tp-g2{display:-ms-grid;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-.tp-i{padding:10px 6px;border-radius:var(--rm);border:2px solid var(--bd);background:var(--sr2);cursor:pointer;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:6px}
-.tp-i:active{-webkit-transform:scale(.96);-ms-transform:scale(.96);transform:scale(.96)}
-.tp-i.on{border-color:var(--p);box-shadow:0 3px 10px var(--gl);-webkit-transform:scale(1.04);-ms-transform:scale(1.04);transform:scale(1.04)}
-.tp-sw{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.5);box-shadow:0 1px 4px rgba(0,0,0,.1)}
-.tp-nm{font-size:.78em;font-weight:800;color:var(--tx)}
+/* === MODAL (v4 animation) === */
+.guide-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;transition:opacity .3s}
+.guide-overlay.hidden{opacity:0;pointer-events:none}
+.guide-card{background:var(--surface);border-radius:var(--r-lg);padding:28px 24px;max-width:340px;width:100%;box-shadow:var(--shadow-lg);text-align:center;animation:guidePop .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes guidePop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.guide-icon{width:64px;height:64px;border-radius:50%;background:rgba(var(--primary-rgb),.15);color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.guide-icon svg{width:32px;height:32px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.guide-title{font-size:1.2em;font-weight:800;color:var(--text);margin-bottom:8px}
+.guide-desc{color:var(--text-sec);font-size:.9em;line-height:1.6;margin-bottom:20px}
+.guide-steps{display:flex;justify-content:center;gap:6px;margin-bottom:20px}
+.guide-step{width:8px;height:8px;border-radius:50%;background:var(--border-strong);transition:background var(--trans),transform var(--trans)}
+.guide-step.on{background:var(--primary);transform:scale(1.3)}
+.guide-btn{width:100%;padding:13px;border-radius:var(--r-md);background:var(--primary);color:#fff;font-size:1em;font-weight:700;cursor:pointer;transition:opacity var(--trans),transform var(--trans);box-shadow:0 4px 16px var(--glow)}
+.guide-btn:active{transform:scale(.97);opacity:.9}
+.guide-btn.skip{background:transparent;color:var(--text-sec);font-size:.85em;font-weight:600;margin-top:10px;box-shadow:none}
+.guide-btn.skip:active{opacity:.6;transform:none}
+.guide-btn[disabled]{opacity:.4;cursor:not-allowed}
 
 /* === TOAST === */
-.tst{position:fixed;left:50%;bottom:80px;-webkit-transform:translateX(-50%) translateY(10px);-ms-transform:translateX(-50%) translateY(10px);transform:translateX(-50%) translateY(10px);background:var(--tx);color:var(--srf);padding:8px 16px;border-radius:999px;font-size:.82em;font-weight:700;z-index:999;opacity:0;-webkit-transition:all .35s ease;-o-transition:all .35s ease;transition:all .35s ease;box-shadow:var(--sh2);pointer-events:none;max-width:80%;text-align:center}
-.tst.on{opacity:.95;-webkit-transform:translateX(-50%) translateY(0);-ms-transform:translateX(-50%) translateY(0);transform:translateX(-50%) translateY(0)}
-
-/* === INFO BOX === */
-.ib{background:var(--srf);border:1px solid var(--bd);border-radius:var(--rm);padding:12px 14px;color:var(--ts);font-size:.78em;line-height:1.7;box-shadow:var(--sh1)}
-
-/* === DARK MODE === */
-body.dk{--bg:#0b1020;--srf:#151b30;--sr2:#111628;--tx:#e2e8f0;--ts:#94a3b8;--tm:#64748b;--bd:rgba(255,255,255,.06);--bs:rgba(255,255,255,.12);--sh1:0 1px 3px rgba(0,0,0,.4);--sh2:0 4px 12px rgba(0,0,0,.45);--sh3:0 8px 32px rgba(0,0,0,.55)}
+.toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--surface);padding:9px 18px;border-radius:999px;font-size:.85em;font-weight:600;z-index:9999;opacity:0;transition:all .4s cubic-bezier(.2,.8,.2,1);box-shadow:var(--shadow-lg);pointer-events:none;max-width:80%;text-align:center}
+.toast.on{opacity:.96;transform:translateX(-50%) translateY(0)}
 
 /* === RESPONSIVE === */
-@media (max-width:360px){
-  body{font-size:14px}
-  .bv{font-size:3.6em;letter-spacing:-3px}
-  .ng{grid-template-columns:repeat(3,1fr);gap:6px}
-  .nc{padding:10px 4px}
-  .tsg{grid-template-columns:repeat(3,1fr)}
-  .bpp{grid-template-columns:repeat(3,1fr)}
-  .tg-g{grid-template-columns:repeat(1,1fr)}
+@media(max-width:380px){
+  .bpm-num{font-size:3.6em}
+  .play-btn{width:96px;height:96px}
+  .beat-dot{min-width:36px;min-height:36px;font-size:.83em}
+  .ts-grid{grid-template-columns:repeat(3,1fr)}
+  .theme-grid{grid-template-columns:1fr}
 }
-@media (min-width:720px){
-  .app{max-width:720px;margin:0 auto}
+@media(min-width:540px){
+  .app{margin-top:8px;margin-bottom:8px;border-radius:28px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-lg)}
 }
 </style>
 </head>
-<body>
+<body class="t-minimal">
 <div class="app" id="app">
 
-<!-- ========== HOME PAGE ========== -->
-<div class="pg pg-on" id="pg-home">
-  <div class="hd">
-    <button class="hb l" data-nav="settings" title="设置">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.83 1.04 1.51 1.1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
-    <div class="hd-t">节拍器</div>
-    <button class="hb r" data-nav="sound" title="试听">
-      <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><circle cx="18" cy="18" r="2"/></svg>
+<!-- HOME -->
+<div class="page active" id="pg-home">
+  <div class="header">
+    <div class="header-title">节拍器</div>
+    <button class="btn-action" id="btn-test-snd" title="试听">
+      <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>
     </button>
   </div>
-  <div class="ct">
-    <div class="bc">
-      <span class="bv" id="bpm-val">120</span>
-      <span class="bu">BPM</span>
-      <div class="cs" id="chips">
-        <span class="cp" id="chip-ts">4/4</span>
-        <span class="cp" id="chip-sub">四分</span>
-        <span class="cp" id="chip-snd">点击</span>
+  <div class="content">
+    <div class="bpm-card">
+      <div class="bpm-num" id="bpm-disp">120</div>
+      <div class="bpm-unit">BPM</div>
+      <div class="bpm-chips">
+        <span class="bpm-chip" id="chip-ts">4/4</span>
+        <span class="bpm-chip" id="chip-sub">四分音符</span>
+        <span class="bpm-chip" id="chip-snd">点击</span>
       </div>
-      <div class="bc-r">
-        <button class="bc-b" data-bpm-dn="10">-10</button>
-        <button class="bc-b" data-bpm-dn="1">-1</button>
-        <input class="bc-i" id="bpm-inp" type="number" min="20" max="300" value="120">
-        <button class="bc-b" data-bpm-up="1">+1</button>
-        <button class="bc-b" data-bpm-up="10">+10</button>
+      <div class="bpm-controls">
+        <button class="step-btn" data-d="-10">-10</button>
+        <button class="step-btn" data-d="-1">&minus;</button>
+        <input class="bpm-in" id="bpm-in" type="number" min="20" max="300" value="120" inputmode="numeric"/>
+        <button class="step-btn" data-d="1">+</button>
+        <button class="step-btn" data-d="10">+10</button>
       </div>
-      <div class="sl">
-        <input class="sli" id="bpm-sl" type="range" min="20" max="300" value="120" step="1">
+      <div class="slider-row">
+        <input class="rng" id="bpm-rng" type="range" min="20" max="300" value="120"/>
       </div>
     </div>
 
-    <div class="bp">
-      <div class="bdr" id="dots"></div>
-      <div class="pl" id="play-info">点击播放按钮开始</div>
-      <div class="pw">
-        <div class="pw-r" id="ring"></div>
-        <button class="pw-b" id="play-btn" title="播放/停止">
-          <svg id="play-ic" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    <div class="beat-panel">
+      <div class="beat-row" id="beat-row"></div>
+      <div class="play-label" id="play-lbl">点击播放</div>
+      <div class="play-wrap">
+        <div class="pulse-ring" id="pulse-ring"></div>
+        <button class="play-btn" id="play-btn">
+          <svg id="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         </button>
       </div>
     </div>
 
-    <div class="ng">
-      <div class="nc" data-nav="params">
-        <div class="nc-i"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="4"/></svg></div>
-        <div class="nc-t">节拍</div>
-        <div class="nc-s">拍号 细分 摇摆</div>
+    <div class="nav-grid">
+      <a class="nav-card" href="#pg-params">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
+        <span class="nav-t">参数</span>
+        <span class="nav-s">拍号 &middot; 细分</span>
+      </a>
+      <a class="nav-card" href="#pg-sound">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><circle cx="17.5" cy="12" r="1.5"/></svg></div>
+        <span class="nav-t">声音</span>
+        <span class="nav-s">音色 &middot; 音量</span>
+      </a>
+      <a class="nav-card" href="#pg-theme">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14 14 0 0 0 0 20"/></svg></div>
+        <span class="nav-t">主题</span>
+        <span class="nav-s">配色 &middot; 深色</span>
+      </a>
+      <a class="nav-card" href="#pg-practice">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div>
+        <span class="nav-t">练习</span>
+        <span class="nav-s">变速 &middot; 模板</span>
+      </a>
+      <a class="nav-card" href="#pg-system">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+        <span class="nav-t">系统</span>
+        <span class="nav-s">关于 &middot; 重置</span>
+      </a>
+      <a class="nav-card" id="nav-play-toggle">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg></div>
+        <span class="nav-t" id="nav-play-lbl">播放</span>
+        <span class="nav-s">开始 / 停止</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- PARAMS -->
+<div class="page" id="pg-params">
+  <div class="header">
+    <button class="btn-back" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="header-title">参数设置</div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>拍号选择</div>
+      <div class="card-sub">第一拍自动加重音，点击圆点切换额外重音</div>
+      <div class="ts-grid" id="ts-grid"></div>
+      <div class="custom-ts">
+        <span class="lbl">自定义</span>
+        <input class="num-in" id="ct-beats" type="number" min="1" max="32" value="4" inputmode="numeric"/>
+        <span class="lbl">/</span>
+        <select class="bpm-sel" id="ct-bv">
+          <option value="2">2</option>
+          <option value="4" selected>4</option>
+          <option value="8">8</option>
+          <option value="16">16</option>
+          <option value="32">32</option>
+        </select>
+        <button class="step-btn" id="ct-apply" style="flex:1;width:auto;border-radius:12px;padding:0 12px;font-size:.9em;font-weight:700;">应用</button>
       </div>
-      <div class="nc" data-nav="sound">
-        <div class="nc-i"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg></div>
-        <div class="nc-t">声音</div>
-        <div class="nc-s">音色 频率 音量</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>节拍细分</div>
+      <div class="card-sub">在主拍之间插入提示音，丰富节奏层次</div>
+      <div class="sub-grid" id="sub-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>重音设置</div>
+      <div class="card-sub">首页长按节拍点切换额外重音（第一拍除外）</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+        <label style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+          <span style="font-size:.92em;color:var(--text);font-weight:600">首拍自动加重</span>
+          <input type="checkbox" id="tog-first" class="tgl" checked>
+        </label>
+        <label style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+          <span style="font-size:.92em;color:var(--text);font-weight:600">播放脉冲光环</span>
+          <input type="checkbox" id="tog-pulse" class="tgl" checked>
+        </label>
+        <label style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+          <span style="font-size:.92em;color:var(--text);font-weight:600">BPM 数字缩放</span>
+          <input type="checkbox" id="tog-flash" class="tgl" checked>
+        </label>
       </div>
-      <div class="nc" data-nav="theme">
-        <div class="nc-i"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg></div>
-        <div class="nc-t">主题</div>
-        <div class="nc-s">配色 深色 字号</div>
+      <button class="step-btn" id="ct-clear-accent" style="width:100%;height:40px;border-radius:12px;font-weight:700;font-size:.92em">清除所有额外重音</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><path d="M12 2 2 22h20L12 2z"/></svg>摇摆 / Swing</div>
+      <div class="card-sub">需配合八分音符使用，产生爵士摇摆感</div>
+      <div class="vol-row">
+        <span class="vol-lbl">摇摆强度</span>
+        <input class="rng" id="swing-rng" type="range" min="0" max="80" value="0"/>
+        <span class="vol-val" id="swing-val">0</span>
       </div>
-      <div class="nc" data-nav="practice">
-        <div class="nc-i"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div>
-        <div class="nc-t">练习</div>
-        <div class="nc-s">变速 分段</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><path d="M12 2 L22 12 L12 22 L2 12 Z"/></svg>TAP 测速</div>
+      <div class="card-sub">跟随音乐节拍点击，自动计算 BPM</div>
+      <div class="tap-area" style="margin-top:14px">
+        <button class="tap-btn" id="tap-btn">TAP</button>
+        <div class="tap-info">
+          <div class="l">测得 BPM</div>
+          <div class="v" id="tap-val">– –</div>
+          <div class="tap-btns">
+            <button class="step-btn" id="tap-apply" style="width:auto;flex:1;border-radius:10px;font-size:.88em;font-weight:700;height:34px">应用</button>
+            <button class="step-btn" id="tap-clr" style="width:auto;flex:1;border-radius:10px;font-size:.88em;font-weight:700;height:34px;background:var(--border);color:var(--text)">清除</button>
+          </div>
+          <div class="tap-sub">点击次数 <span class="n" id="tap-cnt">0</span></div>
+        </div>
       </div>
-      <div class="nc" id="tap-card">
-        <div class="nc-i"><svg viewBox="0 0 24 24"><path d="M12 2v6M4.93 4.93l4.24 4.24M2 12h6M14.83 14.83l4.24 4.24M22 12h-6M14.83 9.17l4.24-4.24"/></svg></div>
-        <div class="nc-t">TAP</div>
-        <div class="nc-s">测速</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>常用 BPM 预设</div>
+      <div class="bpm-presets" id="bpm-presets"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SOUND -->
+<div class="page" id="pg-sound">
+  <div class="header">
+    <button class="btn-back" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="header-title">声音设置</div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>音色</div>
+      <div class="card-sub">选择预设音色或开启自定义调节</div>
+      <div class="sound-grid" id="sound-grid"></div>
+      <div style="margin-top:12px">
+        <label style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+          <span style="font-size:.92em;color:var(--text);font-weight:600">自定义音色</span>
+          <input type="checkbox" id="tog-custom-snd" class="tgl">
+        </label>
       </div>
-      <div class="nc" data-nav="settings">
-        <div class="nc-i"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-        <div class="nc-t">更多</div>
-        <div class="nc-s">关于 重置</div>
+    </div>
+
+    <div class="card" id="custom-snd-box" style="display:none">
+      <div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>自定义参数</div>
+      <div class="card-sub">调节频率与波形实时试听</div>
+      <div class="vol-row">
+        <span class="vol-lbl">频率 Hz</span>
+        <input class="rng" id="freq-rng" type="range" min="80" max="3200" step="10" value="1400"/>
+        <span class="vol-val" id="freq-val">1400</span>
+      </div>
+      <div class="vol-row">
+        <span class="vol-lbl">时长 ms</span>
+        <input class="rng" id="dur-rng" type="range" min="10" max="300" step="5" value="35"/>
+        <span class="vol-val" id="dur-val">35</span>
+      </div>
+      <div class="card-title" style="margin-top:12px"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>波形</div>
+      <div class="wave-grid" id="wave-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>音量</div>
+      <div class="card-sub">分别调节重音拍、普通拍和细分音的音量</div>
+      <div class="vol-row">
+        <span class="vol-lbl">重音拍</span>
+        <input class="rng" id="vol-a-rng" type="range" min="0" max="100" value="85"/>
+        <span class="vol-val" id="vol-a-val">85</span>
+      </div>
+      <div class="vol-row">
+        <span class="vol-lbl">普通拍</span>
+        <input class="rng" id="vol-n-rng" type="range" min="0" max="100" value="70"/>
+        <span class="vol-val" id="vol-n-val">70</span>
+      </div>
+      <div class="vol-row">
+        <span class="vol-lbl">细分音</span>
+        <input class="rng" id="vol-s-rng" type="range" min="0" max="100" value="55"/>
+        <span class="vol-val" id="vol-s-val">55</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ========== PARAMS PAGE ========== -->
-<div class="pg" id="pg-params">
-  <div class="hd">
-    <button class="hb l" data-nav-back><svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg></button>
-    <div class="hd-t">节拍设置</div>
+<!-- THEME -->
+<div class="page" id="pg-theme">
+  <div class="header">
+    <button class="btn-back" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="header-title">主题设置</div>
   </div>
-  <div class="ct">
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>拍号</div>
-      <div class="cd-s">选择常用拍号，或自定义任意组合</div>
-      <div class="tsg" id="tsg-grid"></div>
-      <div class="tsc">
-        <span class="tsc-lb">自定义</span>
-        <div class="tsc-r">
-          <button class="tsc-b" id="ts-b-b">-</button>
-          <input class="tsc-i" id="ts-b-in" type="number" min="1" max="32" value="4">
-          <button class="tsc-b" id="ts-b-a">+</button>
-          <span class="tsc-sp">/</span>
-          <button class="tsc-b" id="ts-v-b">-</button>
-          <input class="tsc-i" id="ts-v-in" type="number" min="1" max="32" value="4">
-          <button class="tsc-b" id="ts-v-a">+</button>
-        </div>
-      </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>主题配色</div>
+      <div class="card-sub">选择你喜欢的主色调</div>
+      <div class="theme-grid" id="theme-grid"></div>
     </div>
 
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>BPM 预设</div>
-      <div class="cd-s">点击快速切换到常用速度</div>
-      <div class="bpp" id="bpm-presets"></div>
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg>自定义颜色</div>
+      <div class="card-sub">选择任意颜色作为主色调</div>
+      <label style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;margin-bottom:6px">
+        <span style="font-size:.92em;color:var(--text);font-weight:600">启用自定义颜色</span>
+        <input type="checkbox" id="tog-custom-color" class="tgl">
+      </label>
+      <div class="swatch-grid" id="swatch-grid"></div>
     </div>
 
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>节拍细分</div>
-      <div class="cd-s">在主拍之间插入提示音，丰富节奏层次</div>
-      <div class="subg" id="sub-grid"></div>
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>深色模式</div>
+      <div class="card-sub">降低亮度，适合夜间使用</div>
+      <label style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+        <span style="font-size:.92em;color:var(--text);font-weight:600">启用深色模式</span>
+        <input type="checkbox" id="tog-dark" class="tgl">
+      </label>
     </div>
 
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg>摇摆 / Swing</div>
-      <div class="cd-s">开启八分音符细分后，偶数细分自动延迟产生摇摆感</div>
-      <div class="vr">
-        <span class="vl">摇摆量</span>
-        <input class="sli" id="swing-sl" type="range" min="0" max="80" value="0">
-        <span class="vv" id="swing-vv">0</span>
-      </div>
-      <div class="tgr">
-        <span>首拍加重</span>
-        <input class="swc" id="first-sw" type="checkbox" checked>
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>字号</div>
+      <div class="vol-row">
+        <span class="vol-lbl">字号</span>
+        <input class="rng" id="fs-rng" type="range" min="12" max="22" value="15"/>
+        <span class="vol-val" id="fs-val">15</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ========== SOUND PAGE ========== -->
-<div class="pg" id="pg-sound">
-  <div class="hd">
-    <button class="hb l" data-nav-back><svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg></button>
-    <div class="hd-t">声音设置</div>
+<!-- PRACTICE -->
+<div class="page" id="pg-practice">
+  <div class="header">
+    <button class="btn-back" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="header-title">变速练习</div>
   </div>
-  <div class="ct">
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg>音色</div>
-      <div class="cd-s">选择预设音色或开启自定义调节</div>
-      <div class="sng" id="snd-grid"></div>
-      <div class="tgr" style="margin-top:10px">
-        <span>自定义音色</span>
-        <input class="swc" id="custom-sw" type="checkbox">
-      </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>练习模板</div>
+      <div class="card-sub">选择一个模板开始变速练习</div>
+      <div class="practice-list" id="practice-list"></div>
     </div>
 
-    <div class="cd" id="custom-box" style="display:none">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>自定义参数</div>
-      <div class="cd-s">开启自定义后可手动调节频率与波形</div>
-      <div class="vr">
-        <span class="vl">频率 Hz</span>
-        <input class="sli" id="freq-sl" type="range" min="80" max="3200" step="10" value="1400">
-        <span class="vv" id="freq-vv">1400</span>
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>自定义练习</div>
+      <div class="card-sub">调节参数手动创建变速方案</div>
+      <div class="practice-stat" id="pr-stat" style="display:none">
+        <div class="practice-stage-txt" id="pr-stage-txt">第 1 段</div>
+        <div class="practice-countdown" id="pr-countdown">120</div>
+        <button class="practice-stop-btn" id="pr-stop">停止练习</button>
       </div>
-      <div class="vr">
-        <span class="vl">时长 ms</span>
-        <input class="sli" id="dur-sl" type="range" min="10" max="300" step="5" value="35">
-        <span class="vv" id="dur-vv">35</span>
+      <div class="vol-row" style="margin-top:12px">
+        <span class="vol-lbl">起始 BPM</span>
+        <input class="rng" id="pr-start-rng" type="range" min="40" max="240" value="60"/>
+        <span class="vol-val" id="pr-start-val">60</span>
       </div>
-      <div class="cd-t" style="margin-top:12px"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>波形</div>
-      <div class="wg" id="wave-grid"></div>
-    </div>
-
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>音量</div>
-      <div class="cd-s">分别调节重音拍、普通拍和细分音的音量</div>
-      <div class="vr">
-        <span class="vl">重音拍</span>
-        <input class="sli" id="vol-a-sl" type="range" min="0" max="100" value="85">
-        <span class="vv" id="vol-a-vv">85</span>
+      <div class="vol-row">
+        <span class="vol-lbl">每段秒数</span>
+        <input class="rng" id="pr-dur-rng" type="range" min="15" max="180" value="60"/>
+        <span class="vol-val" id="pr-dur-val">60</span>
       </div>
-      <div class="vr">
-        <span class="vl">普通拍</span>
-        <input class="sli" id="vol-n-sl" type="range" min="0" max="100" value="70">
-        <span class="vv" id="vol-n-vv">70</span>
+      <div class="vol-row">
+        <span class="vol-lbl">阶段数量</span>
+        <input class="rng" id="pr-steps-rng" type="range" min="2" max="8" value="5"/>
+        <span class="vol-val" id="pr-steps-val">5</span>
       </div>
-      <div class="vr">
-        <span class="vl">细分音</span>
-        <input class="sli" id="vol-s-sl" type="range" min="0" max="100" value="55">
-        <span class="vv" id="vol-s-vv">55</span>
-      </div>
+      <button class="step-btn" id="pr-custom-start" style="width:100%;height:44px;border-radius:12px;font-weight:700;font-size:.95em;margin-top:12px">开始自定义练习</button>
     </div>
   </div>
 </div>
 
-<!-- ========== THEME PAGE ========== -->
-<div class="pg" id="pg-theme">
-  <div class="hd">
-    <button class="hb l" data-nav-back><svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg></button>
-    <div class="hd-t">主题设置</div>
+<!-- SYSTEM -->
+<div class="page" id="pg-system">
+  <div class="header">
+    <button class="btn-back" data-back><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="header-title">系统</div>
   </div>
-  <div class="ct">
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>主题配色</div>
-      <div class="cd-s">选择你喜欢的主色调</div>
-      <div class="tg-g" id="theme-grid"></div>
-    </div>
-
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg>自定义颜色</div>
-      <div class="cd-s">开启后可选择任意颜色作为主色调</div>
-      <div class="tgr">
-        <span>启用自定义颜色</span>
-        <input class="swc" id="cu-sw" type="checkbox">
-      </div>
-      <div class="sw" id="swatch"></div>
-    </div>
-
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>深色模式</div>
-      <div class="cd-s">降低亮度，适合夜间使用</div>
-      <div class="tgr">
-        <span>启用深色模式</span>
-        <input class="swc" id="dk-sw" type="checkbox">
-      </div>
-    </div>
-
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>字号</div>
-      <div class="cd-s">调整全局文字大小</div>
-      <div class="vr">
-        <span class="vl">字号</span>
-        <input class="sli" id="fs-sl" type="range" min="12" max="22" value="15">
-        <span class="vv" id="fs-vv">15</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ========== PRACTICE PAGE ========== -->
-<div class="pg" id="pg-practice">
-  <div class="hd">
-    <button class="hb l" data-nav-back><svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg></button>
-    <div class="hd-t">变速练习</div>
-  </div>
-  <div class="ct">
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>练习模板</div>
-      <div class="cd-s">选择一个模板开始变速练习</div>
-      <div class="pl-l" id="pr-list"></div>
-    </div>
-
-    <div class="cd">
-      <div class="cd-t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>自定义练习</div>
-      <div class="cd-s">调节参数手动创建变速方案</div>
-      <div class="pl-box" id="pr-box">
-        <div class="pl-bt">起始速度</div>
-        <div class="pl-bv" id="pr-start-v">60 BPM</div>
-        <div class="vr">
-          <span class="vl">起始 BPM</span>
-          <input class="sli" id="pr-start-sl" type="range" min="40" max="240" value="60">
-          <span class="vv" id="pr-start-vv">60</span>
+  <div class="content">
+    <div class="sys-list">
+      <div class="sys-row" id="sys-about">
+        <div class="sys-l">
+          <div class="sys-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+          <div class="sys-text">
+            <div class="sys-title">关于节拍器</div>
+            <div class="sys-sub">版本 6.0 &middot; Web Audio API</div>
+          </div>
         </div>
-        <div class="vr">
-          <span class="vl">每段秒数</span>
-          <input class="sli" id="pr-dur-sl" type="range" min="15" max="180" value="60">
-          <span class="vv" id="pr-dur-vv">60</span>
-        </div>
-        <div class="vr">
-          <span class="vl">阶段数量</span>
-          <input class="sli" id="pr-steps-sl" type="range" min="2" max="8" value="5">
-          <span class="vv" id="pr-steps-vv">5</span>
-        </div>
-        <button class="pl-bn" id="pr-start">开始自定义练习</button>
+        <div class="sys-val">&rsaquo;</div>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- ========== SETTINGS PAGE ========== -->
-<div class="pg" id="pg-settings">
-  <div class="hd">
-    <button class="hb l" data-nav-back><svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg></button>
-    <div class="hd-t">更多</div>
-  </div>
-  <div class="ct">
-    <div class="sl-l">
-      <div class="sl-i" id="abt-row">
-        <div class="sl-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
-        <div class="sl-tx">
-          <div class="sl-tt">关于</div>
-          <div class="sl-ds">版本信息与用户协议</div>
+      <div class="sys-row" id="sys-agree">
+        <div class="sys-l">
+          <div class="sys-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+          <div class="sys-text">
+            <div class="sys-title">用户协议</div>
+            <div class="sys-sub" id="agree-status">已同意</div>
+          </div>
         </div>
-        <div class="sl-vv">&rsaquo;</div>
+        <div class="sys-val">&rsaquo;</div>
       </div>
-      <div class="sl-i" id="agree-row">
-        <div class="sl-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
-        <div class="sl-tx">
-          <div class="sl-tt">用户协议</div>
-          <div class="sl-ds" id="agree-status">已同意</div>
+      <div class="sys-row" id="sys-rst">
+        <div class="sys-l">
+          <div class="sys-icon dng"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg></div>
+          <div class="sys-text">
+            <div class="sys-title">重置所有设置</div>
+            <div class="sys-sub">清除本地存储，恢复默认</div>
+          </div>
         </div>
-        <div class="sl-vv">&rsaquo;</div>
-      </div>
-      <div class="sl-i" id="rst-row">
-        <div class="sl-ic d"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg></div>
-        <div class="sl-tx">
-          <div class="sl-tt">重置设置</div>
-          <div class="sl-ds">清除所有保存的偏好</div>
-        </div>
-        <div class="sl-vv">&rsaquo;</div>
+        <div class="sys-val">&rsaquo;</div>
       </div>
     </div>
 
-    <div class="ib">
+    <div class="info-block">
       节拍器 v6.0 &middot; 使用 Web Audio API 提供精准节拍调度<br>
       所有设置均保存在浏览器本地（localStorage），不上传任何数据。
     </div>
   </div>
 </div>
 
-
-<!-- ========== HINT BAR ========== -->
-<div class="hb hi" id="hint-bar">
-  <div class="hb-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
-  <div class="hb-tx" id="hint-txt">按空格键快速切换播放</div>
-  <div class="hb-x" id="hint-close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+<!-- HINT BAR -->
+<div class="hint-bar hidden" id="hint-bar">
+  <div class="hint-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+  <div class="hint-text" id="hint-text">按空格键或点击按钮播放</div>
+  <div class="hint-close" id="hint-close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
 </div>
 
-<!-- ========== GUIDE OVERLAY MODAL ========== -->
-<div class="md hi" id="guide-modal">
-  <div class="md-c">
-    <div class="md-ic" id="guide-ic"></div>
-    <div class="md-tt" id="guide-tt">欢迎使用节拍器</div>
-    <div class="md-ds" id="guide-ds">一款完全本地运行、无网络依赖的精准节拍器，支持丰富的个性化设置与练习模板。</div>
-    <div class="md-st" id="guide-st"></div>
-    <button class="md-b" id="guide-next">下一步</button>
-    <button class="md-b sk" id="guide-skip">跳过引导</button>
+<!-- GUIDE MODAL -->
+<div class="guide-overlay hidden" id="guide-modal">
+  <div class="guide-card">
+    <div class="guide-icon" id="guide-icon"></div>
+    <div class="guide-title" id="guide-title">欢迎使用节拍器</div>
+    <div class="guide-desc" id="guide-desc">一款完全本地运行、无网络依赖的精准节拍器，支持丰富的个性化设置与变速练习模板。</div>
+    <div class="guide-steps" id="guide-steps"></div>
+    <button class="guide-btn" id="guide-btn">下一步</button>
+    <button class="guide-btn skip" id="guide-skip">跳过引导</button>
   </div>
 </div>
 
-<!-- ========== AGREE MODAL ========== -->
-<div class="md hi" id="agree-modal">
-  <div class="md-c">
-    <div class="md-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
-    <div class="md-tt">用户协议与隐私声明</div>
-    <div class="ag-tx">
-      <h3>使用说明</h3>
-      <p>本应用为纯前端单文件应用，打开后即可使用，无需安装、无需注册账号。</p>
-      <h3>数据与隐私</h3>
-      <p>您的设置（BPM、主题、音色偏好等）保存在浏览器本地存储（localStorage）中，不会上传到任何服务器。清除浏览器数据或使用隐私浏览模式，这些设置将被清除。</p>
-      <h3>权限说明</h3>
-      <p>本应用仅需要音频播放能力，使用浏览器内置的 Web Audio API 合成节拍声音，不请求任何麦克风、摄像头或定位权限。</p>
-      <h3>免责声明</h3>
-      <p>本应用按"现状"提供，不提供任何明示或暗示的保证。因使用本应用造成的任何直接或间接损失，作者不承担任何责任。长时间使用耳机请适度降低音量，保护听力。</p>
-    </div>
-    <label class="ag-cb"><input type="checkbox" id="agree-chk">我已阅读并同意上述协议</label>
-    <button class="md-b" id="agree-next" disabled>继续</button>
-  </div>
-</div>
-
-<!-- ========== THEME PICKER MODAL ========== -->
-<div class="md hi" id="theme-modal">
-  <div class="md-c">
-    <div class="md-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg></div>
-    <div class="md-tt">选择你喜欢的主题</div>
-    <div class="md-ds">首次进入可选择主题配色，稍后可随时在「主题」页面更改</div>
-    <div class="tp-g2" id="tp-grid"></div>
-    <div class="tgr">
-      <span>启用深色模式</span>
-      <input class="swc" id="tp-dk" type="checkbox">
-    </div>
-    <button class="md-b" id="tp-next">开始使用</button>
-    <button class="md-b sk" id="tp-skip">使用默认</button>
-  </div>
-</div>
-
-<!-- ========== TOAST ========== -->
-<div class="tst" id="toast"></div>
-
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
 (function(){
@@ -648,61 +665,54 @@ body.dk{--bg:#0b1020;--srf:#151b30;--sr2:#111628;--tx:#e2e8f0;--ts:#94a3b8;--tm:
 
 var STORE_KEY = 'metro_v6';
 var DEFAULT = {
-  bpm: 120, beats: 4, beatValue: 4, subdivision: 'quarter',
-  soundType: 'click',
-  volA: 85, volN: 70, volS: 55,
-  theme: 'minimal', fontSize: 15,
-  accented: [], swing: 0,
-  useCustom: false, customFreq: 1400, customWave: 'square', customDur: 35,
-  dark: false, useCustomColor: false, customColor: '#2563eb',
-  firstBeatAccent: true,
-  agreed: false, guideSeen: false
+  bpm:120, beats:4, beatValue:4, subdivision:'quarter',
+  soundType:'click',
+  volA:85, volN:70, volS:55,
+  theme:'minimal', fontSize:15,
+  accented:[], swing:0,
+  useCustom:false, customFreq:1400, customWave:'square', customDur:35,
+  dark:false, useCustomColor:false, customColor:'#2563eb',
+  firstAccent:true, showPulse:true, showFlash:true,
+  agreed:false, guideSeen:false
 };
 
 var THEMES = [
-  { id: 'minimal', name: '经典蓝', color: '#2563eb' },
-  { id: 'nature',  name: '自然绿', color: '#16a34a' },
-  { id: 'ocean',   name: '海洋青', color: '#0284c7' },
-  { id: 'sunset',  name: '日落橙', color: '#ea580c' },
-  { id: 'berry',   name: '樱桃粉', color: '#db2777' },
-  { id: 'violet',  name: '紫罗兰', color: '#8b5cf6' },
-  { id: 'graphite',name: '石墨灰', color: '#64748b' },
-  { id: 'amber',   name: '琥珀黄', color: '#b45309' },
-  { id: 'crimson', name: '深红', color: '#dc2626' },
-  { id: 'forest',  name: '森林绿', color: '#4d7c0f' },
-  { id: 'midnight',name: '午夜蓝', color: '#1e3a8a' },
-  { id: 'teal',    name: '青碧', color: '#0d9488' }
+  {id:'minimal',name:'经典蓝'},{id:'nature',name:'自然绿'},{id:'ocean',name:'海洋青'},
+  {id:'sunset',name:'日落橙'},{id:'berry',name:'樱桃粉'},{id:'violet',name:'紫罗兰'},
+  {id:'graphite',name:'石墨灰'},{id:'amber',name:'琥珀黄'},{id:'crimson',name:'深红'},
+  {id:'forest',name:'森林绿'},{id:'midnight',name:'午夜蓝'},{id:'teal',name:'青碧'}
 ];
+var THEME_COLORS = {
+  minimal:'#2563eb',nature:'#16a34a',ocean:'#0284c7',sunset:'#ea580c',
+  berry:'#db2777',violet:'#8b5cf6',graphite:'#64748b',amber:'#b45309',
+  crimson:'#dc2626',forest:'#4d7c0f',midnight:'#1e40af',teal:'#0d9488'
+};
 
 var SUBDIVS = [
-  { id: 'quarter', name: '四分音符', mult: 1 },
-  { id: 'eighth',  name: '八分音符', mult: 2 },
-  { id: 'sixteenth', name: '十六分音', mult: 4 },
-  { id: 'triplet', name: '三连音', mult: 3 },
-  { id: 'half',    name: '二分音符', mult: 0.5 },
-  { id: 'quintuplet', name: '五连音', mult: 5 }
+  {id:'quarter',name:'四分音符',sym:'1',mult:1},
+  {id:'eighth',name:'八分音符',sym:'1/2',mult:2},
+  {id:'sixteenth',name:'十六分音',sym:'1/4',mult:4},
+  {id:'triplet',name:'三连音',sym:'3',mult:3},
+  {id:'half',name:'二分音符',sym:'2',mult:0.5},
+  {id:'quintuplet',name:'五连音',sym:'5',mult:5}
 ];
 
 var TIMESIGS = [
-  { b: 2, v: 4 }, { b: 3, v: 4 }, { b: 4, v: 4 }, { b: 5, v: 4 },
-  { b: 6, v: 8 }, { b: 7, v: 8 }, { b: 8, v: 8 }, { b: 9, v: 8 },
-  { b: 12, v: 8 }, { b: 2, v: 2 }, { b: 3, v: 2 }, { b: 6, v: 4 }
+  {b:2,v:4},{b:3,v:4},{b:4,v:4},{b:5,v:4},
+  {b:6,v:8},{b:7,v:8},{b:8,v:8},{b:9,v:8},{b:12,v:8},{b:2,v:2},{b:3,v:2},{b:6,v:4}
 ];
 
 var SOUNDS = [
-  { id: 'click', name: '点击', freq: 1400, wave: 'square',   dur: 0.035 },
-  { id: 'beep',  name: '蜂鸣', freq: 880,  wave: 'sine',     dur: 0.080 },
-  { id: 'wood',  name: '木鱼', freq: 350,  wave: 'triangle', dur: 0.100 },
-  { id: 'drum',  name: '鼓点', freq: 220,  wave: 'sawtooth', dur: 0.120 },
-  { id: 'bright',name: '明亮', freq: 2000, wave: 'square',   dur: 0.030 },
-  { id: 'warm',  name: '温暖', freq: 440,  wave: 'sine',     dur: 0.100 }
+  {id:'click',name:'点击',freq:1400,wave:'square',dur:0.035},
+  {id:'beep',name:'蜂鸣',freq:880,wave:'sine',dur:0.08},
+  {id:'wood',name:'木鱼',freq:350,wave:'triangle',dur:0.10},
+  {id:'drum',name:'鼓点',freq:220,wave:'sawtooth',dur:0.12},
+  {id:'bright',name:'明亮',freq:2000,wave:'square',dur:0.030},
+  {id:'warm',name:'温暖',freq:440,wave:'sine',dur:0.10}
 ];
 
 var WAVES = [
-  { id: 'square', name: '方波' },
-  { id: 'sine', name: '正弦' },
-  { id: 'triangle', name: '三角' },
-  { id: 'sawtooth', name: '锯齿' }
+  {id:'square',name:'方波'},{id:'sine',name:'正弦'},{id:'triangle',name:'三角'},{id:'sawtooth',name:'锯齿'}
 ];
 
 var COLOR_SWATCHES = [
@@ -712,42 +722,26 @@ var COLOR_SWATCHES = [
 ];
 
 var BPM_PRESETS = [
-  { bpm: 60,  name: 'Largo 慢板' },
-  { bpm: 80,  name: 'Andante 行板' },
-  { bpm: 100, name: 'Moderato 中板' },
-  { bpm: 120, name: 'Allegro 快板' },
-  { bpm: 140, name: 'Vivace 急板' },
-  { bpm: 168, name: 'Presto 速板' },
-  { bpm: 180, name: 'Prestissimo' },
-  { bpm: 200, name: '极限' }
+  {bpm:60,label:'Largo'},{bpm:80,label:'Adagio'},{bpm:90,label:'Andante'},
+  {bpm:108,label:'Moderato'},{bpm:120,label:'Allegro'},{bpm:138,label:'Vivace'},
+  {bpm:156,label:'Presto'},{bpm:180,label:'Prestissimo'}
+];
+
+var PRACTICE_TMPLTS = [
+  {id:'warmup',name:'慢速热身',desc:'从 60 BPM 开始，逐步提速',st:[60,80,100,120]},
+  {id:'steady',name:'稳定提速',desc:'从 80 到 140，循序渐进',st:[80,100,120,140]},
+  {id:'intense',name:'高强度',desc:'中高速区间，考验节奏稳定性',st:[120,140,160,180]},
+  {id:'variable',name:'高低变速',desc:'交替高低速度，提升节奏感',st:[80,130,100,160,120]},
+  {id:'extreme',name:'极限冲刺',desc:'高速区间挑战',st:[160,180,200,220]}
 ];
 
 var GUIDE_STEPS = [
-  { icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
-    title: '欢迎使用节拍器',
-    desc: '一款完全本地运行、无网络依赖的精准节拍器。支持丰富的个性化设置与变速练习模板。' },
-  { icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
-    title: '调节 BPM',
-    desc: '通过滑块、按钮或直接输入数值来调整节拍速度，范围 20-300 BPM。也可使用 TAP 功能跟随音乐自动测速。' },
-  { icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>',
-    title: '节拍点与重音',
-    desc: '每个圆点代表一拍。首拍默认加重。点击任一圆点可切换其重音标记。在节拍页面自定义拍号和细分。' },
-  { icon: '<svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>',
-    title: '自定义声音',
-    desc: '进入「声音」页面选择不同的预设音色，或开启自定义模式调节频率、波形与音量。' },
-  { icon: '<svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>',
-    title: '变速练习',
-    desc: '使用练习模板进行自动分段变速训练。设置起始 BPM 与阶段数，每段结束后自动加速。' }
+  {icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',title:'欢迎使用节拍器',desc:'一款完全本地运行、无网络依赖的精准节拍器，支持丰富的个性化设置与变速练习模板。'},
+  {icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',title:'调节 BPM',desc:'通过滑块、按钮或直接输入数值，范围 20-300 BPM。使用 TAP 跟随音乐自动测速。'},
+  {icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>',title:'节拍点与重音',desc:'每个圆点代表一拍。首拍默认加重。点击任一圆点可切换其重音标记。'},
+  {icon:'<svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>',title:'自定义声音',desc:'进入「声音」页面选择不同的预设音色，或开启自定义模式调节频率与波形。'},
+  {icon:'<svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>',title:'变速练习',desc:'使用练习模板进行自动分段变速训练，每段结束后自动加速。'}
 ];
-
-var PRACTICE_TEMPLATES = [
-  { id: 'warmup',   name: '慢速热身', desc: '从 60 BPM 开始，每 60 秒增加 20 BPM', steps: [60, 80, 100, 120] },
-  { id: 'steady',   name: '稳定提速', desc: '从 80 BPM 起步，逐步推进至 140', steps: [80, 100, 120, 140] },
-  { id: 'intense',  name: '高强度',   desc: '中高速区间，考验节奏稳定性', steps: [120, 140, 160, 180] },
-  { id: 'variable', name: '高低变速', desc: '交替高低速度，提升节奏感', steps: [80, 130, 100, 160, 120] },
-  { id: 'extreme',  name: '极限冲刺', desc: '高速区间挑战', steps: [160, 180, 200, 220] }
-];
-
 
 // === STATE ===
 var S = {};
@@ -756,583 +750,630 @@ for (var k in DEFAULT) S[k] = DEFAULT[k];
 function loadState(){
   try{
     var raw = localStorage.getItem(STORE_KEY);
-    if(!raw) return;
+    if (!raw) return;
     var d = JSON.parse(raw);
     for (var k in DEFAULT){
       if (d[k] !== undefined) S[k] = d[k];
     }
-    // sanity checks
-    S.bpm = Math.max(20, Math.min(300, Math.round(S.bpm)));
-    S.beats = Math.max(1, Math.min(32, Math.round(S.beats)));
-    S.beatValue = Math.max(1, Math.min(32, Math.round(S.beatValue)));
     if (!Array.isArray(S.accented)) S.accented = [];
   } catch(e){}
 }
-
 function saveState(){
   try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch(e){}
 }
 
-function hexToRgb(hex){
-  var h = (hex || '').replace('#','');
-  if (h.length !== 6) return '37,99,235';
-  var r = parseInt(h.slice(0,2),16);
-  var g = parseInt(h.slice(2,4),16);
-  var b = parseInt(h.slice(4,6),16);
-  return r + ',' + g + ',' + b;
-}
-
 // === AUDIO ENGINE ===
-var actx = null;
-var isPlaying = false;
-var nextBeatTime = 0;
-var curBeat = 0;
-var curSub = 0;
-var rafId = null;
-var lookAhead = 25; // ms
-var scheduleAhead = 0.1; // s
+var actx = null, isPlaying = false, nextBeatTime = 0, curBeat = 0, curSub = 0, rafId = null;
+var practiceTimer = null, practiceStep = 0;
 
 function ensureAudio(){
   if (!actx){
-    try{
-      var AC = window.AudioContext || window.webkitAudioContext;
-      if (AC) actx = new AC();
-    } catch(e){ actx = null; }
+    try{ actx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ actx = null; }
   }
-  if (actx && actx.state === 'suspended'){
-    try{ actx.resume(); } catch(e){}
-  }
+  if (actx && actx.state === 'suspended'){ try{ actx.resume(); } catch(e){} }
   return !!actx;
 }
 
 function getSubMult(){
-  for (var i=0;i<SUBDIVS.length;i++){
-    if (SUBDIVS[i].id === S.subdivision) return SUBDIVS[i].mult;
-  }
+  for (var i=0;i<SUBDIVS.length;i++) if (SUBDIVS[i].id === S.subdivision) return SUBDIVS[i].mult;
   return 1;
 }
 
 function getSoundConfig(){
-  if (S.useCustom){
-    return { freq: S.customFreq, wave: S.customWave, dur: S.customDur / 1000 };
-  }
-  for (var i=0;i<SOUNDS.length;i++){
-    if (SOUNDS[i].id === S.soundType) return SOUNDS[i];
-  }
+  if (S.useCustom) return {freq:S.customFreq,wave:S.customWave,dur:S.customDur/1000};
+  for (var i=0;i<SOUNDS.length;i++) if (SOUNDS[i].id === S.soundType) return SOUNDS[i];
   return SOUNDS[0];
 }
 
 function scheduleClick(when, kind){
   if (!actx) return;
-  var snd = getSoundConfig();
-  var vol, freq;
-  if (kind === 'a'){
-    vol = (S.volA / 100) * 0.7;
-    freq = snd.freq * 1.15;
-  } else if (kind === 'n'){
-    vol = (S.volN / 100) * 0.55;
-    freq = snd.freq;
-  } else {
-    vol = (S.volS / 100) * 0.4;
-    freq = snd.freq * 0.95;
-  }
+  var snd = getSoundConfig(), vol, freq;
+  if (kind === 'a'){ vol = (S.volA/100)*0.7; freq = snd.freq * 1.15; }
+  else if (kind === 'n'){ vol = (S.volN/100)*0.55; freq = snd.freq; }
+  else { vol = (S.volS/100)*0.4; freq = snd.freq * 0.95; }
   try{
-    var osc = actx.createOscillator();
-    var g = actx.createGain();
+    var osc = actx.createOscillator(), g = actx.createGain();
     osc.type = snd.wave;
     osc.frequency.setValueAtTime(freq, when);
     g.gain.setValueAtTime(0.0001, when);
-    g.gain.exponentialRampToValueAtTime(Math.max(0.001, vol), when + 0.006);
-    g.gain.exponentialRampToValueAtTime(0.0001, when + snd.dur);
-    osc.connect(g);
-    g.connect(actx.destination);
-    osc.start(when);
-    osc.stop(when + snd.dur + 0.04);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001,vol), when+0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, when+snd.dur);
+    osc.connect(g); g.connect(actx.destination);
+    osc.start(when); osc.stop(when+snd.dur+0.04);
   } catch(e){}
 }
 
 function scheduler(){
   if (!actx || !isPlaying) return;
-  var mult = getSubMult();
-  var subInterval;
-  if (mult >= 1) subInterval = (60 / S.bpm) / mult;
-  else subInterval = (60 / S.bpm) / mult; // same calc, safety
-
-  var horizon = actx.currentTime + scheduleAhead;
+  var mult = getSubMult(), subInterval = (60/S.bpm)/Math.max(1,mult);
+  var horizon = actx.currentTime + 0.12;
   while (nextBeatTime < horizon){
-    var isMainBeat = (curSub === 0);
-    var kind;
-    if (isMainBeat){
-      var bIdx = curBeat % S.beats;
-      var isAccent = (S.firstBeatAccent && bIdx === 0) || (S.accented.indexOf(bIdx) >= 0);
-      kind = isAccent ? 'a' : 'n';
-    } else {
-      kind = 's';
-    }
+    var isMain = (curSub === 0);
+    var kind, bIdx;
+    if (isMain){
+      bIdx = curBeat % S.beats;
+      var isAcc = (S.firstAccent && bIdx===0) || (S.accented.indexOf(bIdx)>=0);
+      kind = isAcc ? 'a' : 'n';
+    } else { kind = 's'; }
     var playTime = nextBeatTime;
-    // swing: shift even subdivisions when mult=2
-    if (S.swing > 0 && mult === 2 && !isMainBeat && curSub === 1){
-      playTime = playTime + (subInterval * (S.swing / 100) * 0.55);
+    if (S.swing > 0 && mult === 2 && !isMain && curSub === 1){
+      playTime += subInterval * (S.swing/100) * 0.55;
     }
     scheduleClick(playTime, kind);
-    queueVisual(isMainBeat ? (curBeat % S.beats) : -1, kind);
-
+    if (isMain) queueFlash(bIdx, kind==='a');
     curSub++;
     var subCount = Math.max(1, Math.round(mult));
     if (curSub >= subCount){ curSub = 0; curBeat++; }
     nextBeatTime += subInterval;
   }
-  rafId = setTimeout(scheduler, lookAhead);
+  setTimeout(scheduler, 25);
 }
 
 function startPlayback(){
   if (!ensureAudio()){ showToast('浏览器不支持音频'); return; }
   if (isPlaying) return;
-  isPlaying = true;
-  curBeat = 0;
-  curSub = 0;
-  nextBeatTime = actx.currentTime + 0.05;
-  // unlock on iOS: play a silent click
-  try{
-    var o = actx.createOscillator();
-    var g = actx.createGain();
-    g.gain.value = 0.0001;
-    o.connect(g); g.connect(actx.destination);
-    o.start(actx.currentTime);
-    o.stop(actx.currentTime + 0.02);
-  } catch(e){}
-  scheduler();
-  updatePlayUI();
+  isPlaying = true; curBeat=0; curSub=0; nextBeatTime = actx.currentTime + 0.05;
+  // iOS unlock
+  try{ var o=actx.createOscillator(),g=actx.createGain(); g.gain.value=0.0001; o.connect(g); g.connect(actx.destination); o.start(actx.currentTime); o.stop(actx.currentTime+0.02); } catch(e){}
+  scheduler(); updatePlayUI();
 }
 
 function stopPlayback(){
-  isPlaying = false;
-  if (rafId){ clearTimeout(rafId); rafId = null; }
-  curBeat = 0;
-  curSub = 0;
-  clearVisuals();
-  updatePlayUI();
+  isPlaying = false; curBeat=0; curSub=0;
+  if (practiceTimer){ clearTimeout(practiceTimer); practiceTimer=null; }
+  updatePlayUI(); clearDots();
 }
 
 function togglePlayback(){
-  if (isPlaying) stopPlayback();
-  else startPlayback();
+  if (isPlaying) stopPlayback(); else startPlayback();
 }
 
-// === VISUAL CUE QUEUE ===
-var visualQueue = [];
-var lastVisualTime = 0;
-
-function queueVisual(dotIdx, kind){
-  visualQueue.push({ time: nextBeatTime, idx: dotIdx, kind: kind });
-}
-
-function clearVisuals(){
-  visualQueue = [];
-  var dots = document.querySelectorAll('.bd');
-  for (var i=0;i<dots.length;i++) dots[i].classList.remove('bt');
-  var ring = document.getElementById('ring');
-  if (ring) ring.classList.remove('bt');
-}
-
+// === VISUALS ===
+var flashQueue = [];
 function visualLoop(){
-  if (actx && isPlaying && visualQueue.length > 0){
+  if (actx && isPlaying && flashQueue.length > 0){
     var now = actx.currentTime;
-    while (visualQueue.length > 0 && visualQueue[0].time <= now + 0.02){
-      var q = visualQueue.shift();
-      if (q.idx >= 0) flashDot(q.idx, q.kind === 'a');
-      else flashSub();
+    while (flashQueue.length > 0 && flashQueue[0].t <= now + 0.02){
+      var q = flashQueue.shift();
+      flashDotAt(q.idx, q.kind);
     }
   }
   requestAnimationFrame(visualLoop);
 }
 
-function flashDot(idx, strong){
-  var dots = document.querySelectorAll('#dots .bd');
+function queueFlash(idx, strong){
+  flashQueue.push({t: nextBeatTime, idx:idx, kind:strong?'a':'n'});
+}
+
+function flashDotAt(idx, kind){
+  var dots = document.querySelectorAll('.beat-dot');
   if (dots[idx]){
     dots[idx].classList.add('bt');
-    (function(el){ setTimeout(function(){ el.classList.remove('bt'); }, 180); })(dots[idx]);
+    setTimeout(function(){ if(dots[idx]) dots[idx].classList.remove('bt'); }, 200);
   }
-  // pulse ring always
-  var ring = document.getElementById('ring');
-  if (ring){
-    ring.classList.remove('bt');
-    void ring.offsetWidth;
-    ring.classList.add('bt');
+  if (S.showPulse){
+    var ring = document.getElementById('pulse-ring');
+    if (ring){ ring.classList.remove('pulse'); void ring.offsetWidth; ring.classList.add('pulse'); }
   }
-  var bpmVal = document.getElementById('bpm-val');
-  if (bpmVal){
-    bpmVal.style.transform = 'scale(1.06)';
-    setTimeout(function(){ if (bpmVal) bpmVal.style.transform = ''; }, 120);
+  if (S.showFlash){
+    var bpmD = document.getElementById('bpm-disp');
+    if (bpmD){ bpmD.style.transform='scale(1.05)'; setTimeout(function(){ if(bpmD) bpmD.style.transform=''; }, 150); }
   }
 }
 
-function flashSub(){
-  // subtle: nothing big, could add small pulse
-  var ring = document.getElementById('ring');
-  if (ring){
-    ring.classList.remove('bt');
-    void ring.offsetWidth;
-    ring.classList.add('bt');
-  }
+function clearDots(){
+  var dots = document.querySelectorAll('.beat-dot');
+  for (var i=0;i<dots.length;i++) dots[i].classList.remove('bt');
+  var ring = document.getElementById('pulse-ring');
+  if (ring) ring.classList.remove('pulse');
 }
 
 function updatePlayUI(){
-  var btn = document.getElementById('play-btn');
-  var ic = document.getElementById('play-ic');
-  var info = document.getElementById('play-info');
-  if (!btn) return;
+  var pb = document.getElementById('play-btn');
+  var pi = document.getElementById('play-icon');
+  var pl = document.getElementById('play-lbl');
+  var npl = document.getElementById('nav-play-lbl');
+  if (!pb) return;
   if (isPlaying){
-    ic.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
-    if (info) info.textContent = S.beats + '/' + S.beatValue + '  &middot;  ' + S.bpm + ' BPM';
+    pb.classList.add('playing');
+    pi.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
+    if (pl) pl.textContent = S.beats + '/' + S.beatValue + ' · ' + S.bpm + ' BPM';
+    if (npl) npl.textContent = '停止';
   } else {
-    ic.innerHTML = '<path d="M8 5v14l11-7z"/>';
-    if (info) info.textContent = '点击播放按钮开始';
+    pb.classList.remove('playing');
+    pi.innerHTML = '<path d="M8 5v14l11-7z"/>';
+    if (pl) pl.textContent = '点击播放';
+    if (npl) npl.textContent = '播放';
   }
 }
-
 
 // === RENDER HELPERS ===
-function renderDots(){
-  var wrap = document.getElementById('dots');
-  if (!wrap) return;
+function renderBeatRow(){
+  var el = document.getElementById('beat-row');
+  if (!el) return;
   var html = '';
   for (var i=0;i<S.beats;i++){
-    var isAccent = (S.firstBeatAccent && i === 0) || (S.accented.indexOf(i) >= 0);
-    html += '<div class="bd" data-idx="' + i + '" data-ac="' + (isAccent ? '1' : '0') + '">' + (i+1) + '</div>';
+    var isAcc = (S.firstAccent && i===0) || (S.accented.indexOf(i)>=0);
+    html += '<div class="beat-dot" data-i="'+i+'" data-ac="'+(isAcc?'1':'0')+'">'+ (i+1) +'</div>';
   }
-  wrap.innerHTML = html;
-  var dots = wrap.querySelectorAll('.bd');
+  el.innerHTML = html;
+  var dots = el.querySelectorAll('.beat-dot');
   for (var j=0;j<dots.length;j++){
-    dots[j].addEventListener('click', onDotClick);
+    dots[j].addEventListener('click', function(dot){
+      return function(){
+        var idx = parseInt(dot.getAttribute('data-i'),10);
+        if (idx===0) return;
+        var pos = S.accented.indexOf(idx);
+        if (pos>=0){ S.accented.splice(pos,1); dot.setAttribute('data-ac','0'); }
+        else { S.accented.push(idx); dot.setAttribute('data-ac','1'); }
+        saveState();
+      };
+    }(dots[j]));
   }
-}
-
-function onDotClick(e){
-  var idx = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
-  if (idx === 0) return; // first beat handled by firstBeatAccent toggle only
-  var pos = S.accented.indexOf(idx);
-  if (pos >= 0) S.accented.splice(pos, 1);
-  else S.accented.push(idx);
-  saveState();
-  renderDots();
 }
 
 function renderTimeSigs(){
-  var grid = document.getElementById('tsg-grid');
-  if (!grid) return;
-  var html = '';
+  var el = document.getElementById('ts-grid');
+  if (!el) return;
+  var html='';
   for (var i=0;i<TIMESIGS.length;i++){
-    var t = TIMESIGS[i];
-    var on = (t.b === S.beats && t.v === S.beatValue);
-    html += '<div class="tsg-i' + (on ? ' on' : '') + '" data-b="' + t.b + '" data-v="' + t.v + '">' + t.b + '/' + t.v + '</div>';
+    var t=TIMESIGS[i];
+    var on=(t.b===S.beats && t.v===S.beatValue);
+    html+='<div class="ts-item'+(on?' active':'')+'" data-b="'+t.b+'" data-v="'+t.v+'">'+t.b+'/'+t.v+'</div>';
   }
-  grid.innerHTML = html;
-  var items = grid.querySelectorAll('.tsg-i');
+  el.innerHTML = html;
+  var items = el.querySelectorAll('.ts-item');
   for (var j=0;j<items.length;j++){
-    items[j].addEventListener('click', function(el){
+    items[j].addEventListener('click', function(it){
       return function(){
-        var b = parseInt(el.getAttribute('data-b'),10);
-        var v = parseInt(el.getAttribute('data-v'),10);
-        S.beats = b; S.beatValue = v;
-        saveState();
-        refreshAll();
+        S.beats=parseInt(it.getAttribute('data-b'),10);
+        S.beatValue=parseInt(it.getAttribute('data-v'),10);
+        saveState(); refreshAll();
       };
     }(items[j]));
   }
-  var bi = document.getElementById('ts-b-in');
-  var vi = document.getElementById('ts-v-in');
-  if (bi) bi.value = S.beats;
-  if (vi) vi.value = S.beatValue;
+  var cb = document.getElementById('ct-beats');
+  var bv = document.getElementById('ct-bv');
+  if (cb) cb.value = S.beats;
+  if (bv) bv.value = S.beatValue;
 }
 
 function renderSubdivs(){
-  var grid = document.getElementById('sub-grid');
-  if (!grid) return;
-  var html = '';
+  var el = document.getElementById('sub-grid');
+  if (!el) return;
+  var html='';
   for (var i=0;i<SUBDIVS.length;i++){
-    var s = SUBDIVS[i];
-    var on = (s.id === S.subdivision);
-    html += '<div class="sub-i' + (on ? ' on' : '') + '" data-id="' + s.id + '">';
-    html += '<div class="sm">' + s.name + '</div>';
-    if (s.mult === 0.5) html += '<div style="font-size:.72em;color:var(--ts)">x&frac12;</div>';
-    else html += '<div style="font-size:.72em;color:var(--ts)">x' + s.mult + '</div>';
-    html += '</div>';
+    var s=SUBDIVS[i];
+    var on=(s.id===S.subdivision);
+    html+='<div class="sub-item'+(on?' active':'')+'" data-id="'+s.id+'"><span class="sym">'+s.sym+'</span>'+s.name+'</div>';
   }
-  grid.innerHTML = html;
-  var items = grid.querySelectorAll('.sub-i');
+  el.innerHTML = html;
+  var items = el.querySelectorAll('.sub-item');
   for (var j=0;j<items.length;j++){
-    items[j].addEventListener('click', function(el){
+    items[j].addEventListener('click', function(it){
       return function(){
-        S.subdivision = el.getAttribute('data-id');
-        saveState();
-        refreshAll();
+        S.subdivision=it.getAttribute('data-id'); saveState(); refreshAll();
       };
     }(items[j]));
   }
 }
 
 function renderSounds(){
-  var grid = document.getElementById('snd-grid');
-  if (!grid) return;
-  var html = '';
+  var el = document.getElementById('sound-grid');
+  if (!el) return;
+  var html='';
   for (var i=0;i<SOUNDS.length;i++){
-    var s = SOUNDS[i];
-    var on = (!S.useCustom && s.id === S.soundType);
-    html += '<div class="sn-i' + (on ? ' on' : '') + '" data-id="' + s.id + '">';
-    html += '<div class="sn-ic"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg></div>';
-    html += '<div style="font-size:.82em;font-weight:800;color:var(--tx);margin-top:4px">' + s.name + '</div>';
-    html += '</div>';
+    var s=SOUNDS[i];
+    var on=(!S.useCustom && s.id===S.soundType);
+    html+='<div class="sound-item'+(on?' active':'')+'" data-id="'+s.id+'">';
+    html+='<div class="sound-icon"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/></svg></div>'+s.name+'</div>';
   }
-  grid.innerHTML = html;
-  var items = grid.querySelectorAll('.sn-i');
+  el.innerHTML = html;
+  var items = el.querySelectorAll('.sound-item');
   for (var j=0;j<items.length;j++){
-    items[j].addEventListener('click', function(el){
+    items[j].addEventListener('click', function(it){
       return function(){
-        S.soundType = el.getAttribute('data-id');
-        S.useCustom = false;
-        saveState();
-        refreshAll();
-        if (ensureAudio()){
-          var o = actx.createOscillator();
-          var g = actx.createGain();
-          var cfg = getSoundConfig();
-          o.type = cfg.wave; o.frequency.value = cfg.freq;
-          g.gain.value = 0.0001;
-          o.connect(g); g.connect(actx.destination);
-          var now = actx.currentTime;
-          g.gain.exponentialRampToValueAtTime(0.3, now + 0.005);
-          g.gain.exponentialRampToValueAtTime(0.0001, now + cfg.dur);
-          o.start(now); o.stop(now + cfg.dur + 0.04);
-        }
+        S.soundType=it.getAttribute('data-id'); S.useCustom=false; saveState(); refreshAll();
+        playTestSound();
       };
     }(items[j]));
   }
-  var cb = document.getElementById('custom-sw');
-  if (cb) cb.checked = !!S.useCustom;
-  var cbox = document.getElementById('custom-box');
-  if (cbox) cbox.style.display = S.useCustom ? 'block' : 'none';
+  var cs = document.getElementById('tog-custom-snd');
+  if (cs) cs.checked = !!S.useCustom;
+  var cb = document.getElementById('custom-snd-box');
+  if (cb) cb.style.display = S.useCustom ? 'block' : 'none';
 }
 
 function renderWaves(){
-  var grid = document.getElementById('wave-grid');
-  if (!grid) return;
-  var html = '';
+  var el = document.getElementById('wave-grid');
+  if (!el) return;
+  var html='';
   for (var i=0;i<WAVES.length;i++){
-    var on = (WAVES[i].id === S.customWave);
-    html += '<div class="wg-i' + (on ? ' on' : '') + '" data-id="' + WAVES[i].id + '">' + WAVES[i].name + '</div>';
+    var w=WAVES[i];
+    var on=(w.id===S.customWave);
+    html+='<div class="wave-item'+(on?' active':'')+'" data-id="'+w.id+'">'+w.name+'</div>';
   }
-  grid.innerHTML = html;
-  var items = grid.querySelectorAll('.wg-i');
+  el.innerHTML = html;
+  var items = el.querySelectorAll('.wave-item');
   for (var j=0;j<items.length;j++){
-    items[j].addEventListener('click', function(el){
+    items[j].addEventListener('click', function(it){
       return function(){
-        S.customWave = el.getAttribute('data-id');
-        saveState();
-        refreshAll();
+        S.customWave=it.getAttribute('data-id'); saveState(); refreshAll(); playTestSound();
       };
     }(items[j]));
   }
 }
 
 function renderThemes(){
-  var grid = document.getElementById('theme-grid');
-  if (!grid) return;
-  var html = '';
+  var el = document.getElementById('theme-grid');
+  if (!el) return;
+  var html='';
   for (var i=0;i<THEMES.length;i++){
-    var t = THEMES[i];
-    var on = (!S.useCustomColor && t.id === S.theme);
-    var rgb = hexToRgb(t.color);
-    html += '<div class="tg-i' + (on ? ' on' : '') + '" data-id="' + t.id + '" style="--p:' + t.color + ';--p-rgb:' + rgb + '">';
-    html += '<div class="tg-sw" style="width:24px;height:24px;border-radius:50%;background:' + t.color + ';border:2px solid rgba(255,255,255,.5);box-shadow:0 1px 3px rgba(0,0,0,.1)"></div>';
-    html += '<span style="font-weight:800;font-size:.88em;color:var(--tx);margin-left:8px">' + t.name + '</span>';
-    html += '</div>';
+    var t=THEMES[i];
+    var on=(!S.useCustomColor && t.id===S.theme);
+    var c=THEME_COLORS[t.id];
+    html+='<div class="theme-item'+(on?' active':'')+'" data-id="'+t.id+'">';
+    html+='<div class="theme-swatch" style="background:'+c+'"></div>'+t.name+'</div>';
   }
-  grid.innerHTML = html;
-  var items = grid.querySelectorAll('.tg-i');
+  el.innerHTML = html;
+  var items = el.querySelectorAll('.theme-item');
   for (var j=0;j<items.length;j++){
-    items[j].addEventListener('click', function(el){
+    items[j].addEventListener('click', function(it){
       return function(){
-        S.theme = el.getAttribute('data-id');
-        S.useCustomColor = false;
-        saveState();
-        refreshAll();
+        S.theme=it.getAttribute('data-id'); S.useCustomColor=false; saveState(); applyTheme(); refreshAll();
       };
     }(items[j]));
   }
-}
-
-function renderThemePicker(){
-  var grid = document.getElementById('tp-grid');
-  if (!grid) return;
-  var html = '';
-  for (var i=0;i<THEMES.length;i++){
-    var t = THEMES[i];
-    var on = (t.id === S.theme);
-    html += '<div class="tp-i' + (on ? ' on' : '') + '" data-id="' + t.id + '">';
-    html += '<div class="tp-sw" style="background:' + t.color + '"></div>';
-    html += '<div class="tp-nm">' + t.name + '</div>';
-    html += '</div>';
-  }
-  grid.innerHTML = html;
-  var items = grid.querySelectorAll('.tp-i');
-  for (var j=0;j<items.length;j++){
-    items[j].addEventListener('click', function(el){
-      return function(){
-        S.theme = el.getAttribute('data-id');
-        S.useCustomColor = false;
-        saveState();
-        refreshAll();
-      };
-    }(items[j]));
-  }
+  var cc = document.getElementById('tog-custom-color');
+  if (cc) cc.checked = !!S.useCustomColor;
 }
 
 function renderSwatch(){
-  var sw = document.getElementById('swatch');
-  if (!sw) return;
-  var html = '';
+  var el = document.getElementById('swatch-grid');
+  if (!el) return;
+  var html='';
   for (var i=0;i<COLOR_SWATCHES.length;i++){
-    var c = COLOR_SWATCHES[i];
-    var on = (S.useCustomColor && S.customColor === c);
-    html += '<div class="sw-b' + (on ? ' on' : '') + '" data-c="' + c + '" style="background:' + c + '"></div>';
+    var c=COLOR_SWATCHES[i];
+    var on=(S.useCustomColor && S.customColor===c);
+    html+='<div class="q-swatch'+(on?' on':'')+'" data-c="'+c+'" style="background:'+c+'"></div>';
   }
-  sw.innerHTML = html;
-  var items = sw.querySelectorAll('.sw-b');
+  el.innerHTML = html;
+  var items = el.querySelectorAll('.q-swatch');
   for (var j=0;j<items.length;j++){
-    items[j].addEventListener('click', function(el){
+    items[j].addEventListener('click', function(it){
       return function(){
-        S.customColor = el.getAttribute('data-c');
-        S.useCustomColor = true;
-        saveState();
-        refreshAll();
+        S.customColor=it.getAttribute('data-c'); S.useCustomColor=true; saveState(); applyTheme(); refreshAll();
       };
     }(items[j]));
   }
-  var cu = document.getElementById('cu-sw');
-  if (cu) cu.checked = !!S.useCustomColor;
 }
 
 function renderBpmPresets(){
-  var grid = document.getElementById('bpm-presets');
-  if (!grid) return;
-  var html = '';
+  var el = document.getElementById('bpm-presets');
+  if (!el) return;
+  var html='';
   for (var i=0;i<BPM_PRESETS.length;i++){
-    var b = BPM_PRESETS[i];
-    var on = (b.bpm === S.bpm);
-    html += '<div class="bp-i' + (on ? ' on' : '') + '" data-bpm="' + b.bpm + '">';
-    html += '<span style="font-weight:900;font-size:1.05em;color:var(--tx)">' + b.bpm + '</span>';
-    html += '<span class="lb" style="font-size:.65em;color:var(--tm);font-weight:600;margin-top:2px;letter-spacing:.3px;display:block">' + b.name + '</span>';
-    html += '</div>';
+    var p=BPM_PRESETS[i];
+    var on=(p.bpm===S.bpm);
+    html+='<div class="preset-btn'+(on?' active':'')+'" data-bpm="'+p.bpm+'">';
+    html+='<span class="n">'+p.bpm+'</span><span class="l">'+p.label+'</span></div>';
   }
-  grid.innerHTML = html;
-  var items = grid.querySelectorAll('.bp-i');
+  el.innerHTML = html;
+  var items = el.querySelectorAll('.preset-btn');
   for (var j=0;j<items.length;j++){
-    items[j].addEventListener('click', function(el){
-      return function(){
-        var b = parseInt(el.getAttribute('data-bpm'),10);
-        setBpm(b);
-      };
+    items[j].addEventListener('click', function(it){
+      return function(){ setBpm(parseInt(it.getAttribute('data-bpm'),10)); };
     }(items[j]));
   }
 }
 
-function renderPracticeList(){
-  var list = document.getElementById('pr-list');
-  if (!list) return;
-  var html = '';
-  for (var i=0;i<PRACTICE_TEMPLATES.length;i++){
-    var p = PRACTICE_TEMPLATES[i];
-    html += '<div class="pl-i" data-id="' + p.id + '">';
-    html += '<div class="pl-if"><div class="pl-t" style="font-weight:800;font-size:.94em">' + p.name + '</div><div class="pl-d" style="color:var(--ts);font-size:.78em;margin-top:1px">' + p.desc + '</div></div>';
-    html += '<div class="pl-tg" style="font-size:.7em;padding:3px 10px;border-radius:999px;background:var(--bd);color:var(--tx);font-weight:800;white-space:nowrap">开始</div>';
-    html += '</div>';
+function renderPractice(){
+  var el = document.getElementById('practice-list');
+  if (!el) return;
+  var html='';
+  for (var i=0;i<PRACTICE_TMPLTS.length;i++){
+    var p=PRACTICE_TMPLTS[i];
+    html+='<div class="practice-item" data-id="'+p.id+'">';
+    html+='<div class="practice-info"><div class="practice-name">'+p.name+'</div><div class="practice-sub">'+p.desc+'</div></div>';
+    html+='<div class="practice-badge">'+p.st.length+'段</div></div>';
   }
-  list.innerHTML = html;
-  var items = list.querySelectorAll('.pl-i');
+  el.innerHTML = html;
+  var items = el.querySelectorAll('.practice-item');
   for (var j=0;j<items.length;j++){
-    items[j].addEventListener('click', function(el){
-      return function(){ startPractice(el.getAttribute('data-id')); };
+    items[j].addEventListener('click', function(it){
+      return function(){ startPracticeTpl(it.getAttribute('data-id')); };
     }(items[j]));
   }
 }
 
+// === THEME APPLICATION ===
+function applyTheme(){
+  var body = document.body;
+  // Remove all theme classes
+  var classes = body.className.split(' ');
+  for (var i=0;i<classes.length;i++){
+    if (classes[i].indexOf('t-')===0 || classes[i]==='dk') body.classList.remove(classes[i]);
+  }
+  if (!S.useCustomColor){
+    body.classList.add('t-'+S.theme);
+  } else {
+    // Apply custom color by temporarily setting CSS var
+    var rgb = hexToRgb(S.customColor);
+    document.documentElement.style.setProperty('--primary', S.customColor);
+    document.documentElement.style.setProperty('--primary-rgb', rgb);
+    var lighter = lighten(S.customColor);
+    var darker = darken(S.customColor);
+    document.documentElement.style.setProperty('--primary-light', lighter);
+    document.documentElement.style.setProperty('--primary-dark', darker);
+    document.documentElement.style.setProperty('--glow', 'rgba('+rgb+',.35)');
+  }
+  if (S.dark) body.classList.add('dk');
+}
+
+function hexToRgb(h){
+  var hex=(h||'').replace('#','');
+  if (hex.length!==6) return '37,99,235';
+  return parseInt(hex.slice(0,2),16)+','+parseInt(hex.slice(2,4),16)+','+parseInt(hex.slice(4,6),16);
+}
+
+function lighten(h){
+  var r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);
+  var nr=Math.round(r+(255-r)*0.18),ng=Math.round(g+(255-g)*0.18),nb=Math.round(b+(255-b)*0.18);
+  return '#'+nr.toString(16).padStart(2,'0')+ng.toString(16).padStart(2,'0')+nb.toString(16).padStart(2,'0');
+}
+
+function darken(h){
+  var r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);
+  return '#'+Math.round(r*0.78).toString(16).padStart(2,'0')+Math.round(g*0.78).toString(16).padStart(2,'0')+Math.round(b*0.78).toString(16).padStart(2,'0');
+}
+
+// === SET BPM ===
+function setBpm(val){
+  val = Math.max(20, Math.min(300, Math.round(val)));
+  S.bpm = val; saveState(); refreshAll();
+}
+
+// === PRACTICE ===
+function startPracticeTpl(id){
+  var tpl=null;
+  for (var i=0;i<PRACTICE_TMPLTS.length;i++) if (PRACTICE_TMPLTS[i].id===id){ tpl=PRACTICE_TMPLTS[i]; break; }
+  if (!tpl) return;
+  practiceStep=0;
+  var stat=document.getElementById('pr-stat');
+  if (stat) stat.style.display='block';
+  runPracticeTpl(tpl, 60);
+}
+
+function runPracticeTpl(tpl, dur){
+  if (practiceStep >= tpl.st.length){
+    stopPlayback();
+    showToast('练习完成！');
+    var stat=document.getElementById('pr-stat');
+    if (stat) stat.style.display='none';
+    return;
+  }
+  var bpm=tpl.st[practiceStep];
+  setBpm(bpm);
+  var stage=document.getElementById('pr-stage-txt');
+  var cd=document.getElementById('pr-countdown');
+  if (stage) stage.textContent='第 '+(practiceStep+1)+' 段 / 共 '+tpl.st.length+' 段';
+  if (cd) cd.textContent=bpm+' BPM';
+  showToast('第 '+(practiceStep+1)+' 段：'+bpm+' BPM');
+  if (!isPlaying) startPlayback();
+  practiceTimer = setTimeout(function(){
+    practiceStep++; runPracticeTpl(tpl, dur);
+  }, (dur||60)*1000);
+}
+
+function startPracticeCustom(){
+  var startBpm=60, steps=5, dur=60;
+  var sr=document.getElementById('pr-start-rng');
+  var dr=document.getElementById('pr-dur-rng');
+  var cr=document.getElementById('pr-steps-rng');
+  if (sr) startBpm=parseInt(sr.value,10);
+  if (dr) dur=parseInt(dr.value,10);
+  if (cr) steps=parseInt(cr.value,10);
+  var endBpm=Math.min(300, startBpm+20*steps);
+  var arr=[];
+  for (var i=0;i<steps;i++) arr.push(Math.round(startBpm+(endBpm-startBpm)*(i/Math.max(1,steps-1))));
+  var stat=document.getElementById('pr-stat');
+  if (stat) stat.style.display='block';
+  practiceStep=0;
+  var tpl={id:'custom',name:'自定义',st:arr};
+  runPracticeTpl(tpl, dur);
+}
+
+// === TAP TEMPO ===
+var tapTimes=[];
+function onTap(){
+  var now=Date.now();
+  tapTimes.push(now);
+  if (tapTimes.length>8) tapTimes.shift();
+  if (tapTimes.length<2){
+    var tv=document.getElementById('tap-val');
+    if (tv) tv.textContent='– –';
+    return;
+  }
+  var intervals=[];
+  for (var i=1;i<tapTimes.length;i++) intervals.push(tapTimes[i]-tapTimes[i-1]);
+  var avg=0;
+  for (var j=0;j<intervals.length;j++) avg+=intervals[j];
+  avg=avg/intervals.length;
+  var bpm=Math.round(60000/avg);
+  setBpm(bpm);
+  var tv=document.getElementById('tap-val');
+  if (tv) tv.textContent=bpm;
+  var tc=document.getElementById('tap-cnt');
+  if (tc) tc.textContent=tapTimes.length;
+  var btn=document.getElementById('tap-btn');
+  if (btn){ btn.classList.remove('working'); void btn.offsetWidth; btn.classList.add('working'); }
+}
+setInterval(function(){
+  if (tapTimes.length>0 && (Date.now()-tapTimes[tapTimes.length-1])>2500) tapTimes=[];
+}, 500);
+
+// === NAVIGATION ===
+function goToPage(id){
+  var pages=['home','params','sound','theme','practice','system'];
+  for (var i=0;i<pages.length;i++){
+    var p=document.getElementById('pg-'+pages[i]);
+    if (p) p.classList.remove('active');
+  }
+  var target=document.getElementById('pg-'+id);
+  if (target) target.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// === TOAST ===
+var toastTimer=null;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  if (!t) return;
+  t.textContent=msg; t.classList.add('on');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){ t.classList.remove('on'); }, 2000);
+}
+
+// === GUIDE ===
+var guideIdx=0;
+function showGuideStep(){
+  var step=GUIDE_STEPS[guideIdx];
+  var gi=document.getElementById('guide-icon');
+  var gt=document.getElementById('guide-title');
+  var gd=document.getElementById('guide-desc');
+  var gs=document.getElementById('guide-steps');
+  if (gi) gi.innerHTML=step.icon;
+  if (gt) gt.textContent=step.title;
+  if (gd) gd.textContent=step.desc;
+  var h='';
+  for (var i=0;i<GUIDE_STEPS.length;i++) h+='<div class="guide-step'+(i===guideIdx?' on':'')+'"></div>';
+  if (gs) gs.innerHTML=h;
+  var btn=document.getElementById('guide-btn');
+  if (btn) btn.textContent=(guideIdx===GUIDE_STEPS.length-1)?'完成':'下一步';
+  showModal('guide-modal');
+}
+function startGuide(){
+  if (!S.agreed){ showModal('guide-modal'); return; }
+  if (!S.guideSeen){ guideIdx=0; showGuideStep(); return; }
+  hideHintBar();
+}
+
+// === MODAL HELPERS ===
+function showModal(id){ var m=document.getElementById(id); if(m) m.classList.remove('hidden'); }
+function hideModal(id){ var m=document.getElementById(id); if(m) m.classList.add('hidden'); }
+
+// === HINT BAR ===
+function showHintBar(msg){
+  var hb=document.getElementById('hint-bar');
+  var ht=document.getElementById('hint-text');
+  if (ht) ht.textContent=msg||'按空格键或点击按钮播放';
+  if (hb) hb.classList.remove('hidden');
+}
+function hideHintBar(){
+  var hb=document.getElementById('hint-bar');
+  if (hb) hb.classList.add('hidden');
+}
+
+// === PLAY TEST SOUND ===
+function playTestSound(){
+  if (!ensureAudio()) return;
+  var cfg=getSoundConfig();
+  try{
+    var o=actx.createOscillator(), g=actx.createGain();
+    o.type=cfg.wave; o.frequency.value=cfg.freq;
+    var now=actx.currentTime;
+    g.gain.setValueAtTime(0.0001,now);
+    g.gain.exponentialRampToValueAtTime(0.3,now+0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001,now+cfg.dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(now); o.stop(now+cfg.dur+0.04);
+  } catch(e){}
+}
+
+// === SLIDER VALUE UPDATE (v4 style: CSS var) ===
+function updateSliderTrack(input){
+  var min=parseFloat(input.min)||0, max=parseFloat(input.max)||100;
+  var val=parseFloat(input.value);
+  var pct=((val-min)/(max-min)*100).toFixed(1)+'%';
+  input.style.setProperty('--v', pct);
+}
+
+// === REFRESH ALL ===
 function refreshAll(){
-  // theme first (css vars)
   applyTheme();
 
-  // bpm display
-  var bv = document.getElementById('bpm-val');
-  if (bv) bv.textContent = S.bpm;
-  var bsl = document.getElementById('bpm-sl');
-  if (bsl) bsl.value = S.bpm;
-  var binp = document.getElementById('bpm-inp');
-  if (binp) binp.value = S.bpm;
+  var bv=document.getElementById('bpm-disp');
+  if (bv) bv.textContent=S.bpm;
+  var bi=document.getElementById('bpm-in');
+  if (bi) bi.value=S.bpm;
+  var br=document.getElementById('bpm-rng');
+  if (br){ br.value=S.bpm; updateSliderTrack(br); }
 
-  // chips
-  var cts = document.getElementById('chip-ts');
-  if (cts) cts.textContent = S.beats + '/' + S.beatValue;
-  var csb = document.getElementById('chip-sub');
-  if (csb){
-    var sn = '四分';
-    for (var i=0;i<SUBDIVS.length;i++){
-      if (SUBDIVS[i].id === S.subdivision){
-        if (SUBDIVS[i].mult === 1) sn = '四分';
-        else if (SUBDIVS[i].mult === 2) sn = '八分';
-        else if (SUBDIVS[i].mult === 4) sn = '十六分';
-        else if (SUBDIVS[i].mult === 3) sn = '三连音';
-        else if (SUBDIVS[i].mult === 0.5) sn = '二分';
-        else if (SUBDIVS[i].mult === 5) sn = '五连音';
-      }
-    }
-    csb.textContent = sn;
+  var cts=document.getElementById('chip-ts');
+  if (cts) cts.textContent=S.beats+'/'+S.beatValue;
+  var cs=document.getElementById('chip-sub');
+  if (cs){
+    for (var i=0;i<SUBDIVS.length;i++) if(SUBDIVS[i].id===S.subdivision){ cs.textContent=SUBDIVS[i].name; break; }
   }
-  var csnd = document.getElementById('chip-snd');
-  if (csnd){
-    var nm = S.useCustom ? '自定义' : '点击';
-    for (var j=0;j<SOUNDS.length;j++){
-      if (SOUNDS[j].id === S.soundType){ nm = SOUNDS[j].name; break; }
-    }
-    csnd.textContent = nm;
+  var csn=document.getElementById('chip-snd');
+  if (csn){
+    var nm='自定义';
+    if (!S.useCustom) for(var j=0;j<SOUNDS.length;j++) if(SOUNDS[j].id===S.soundType){ nm=SOUNDS[j].name; break; }
+    csn.textContent=nm;
   }
 
   // sliders
-  var ssl = document.getElementById('swing-sl');
-  if (ssl) ssl.value = S.swing;
-  var svv = document.getElementById('swing-vv');
-  if (svv) svv.textContent = S.swing;
+  var sliders = [
+    ['swing-rng','swing-val',S.swing],
+    ['freq-rng','freq-val',S.customFreq],
+    ['dur-rng','dur-val',S.customDur],
+    ['vol-a-rng','vol-a-val',S.volA],
+    ['vol-n-rng','vol-n-val',S.volN],
+    ['vol-s-rng','vol-s-val',S.volS],
+    ['fs-rng','fs-val',S.fontSize],
+    ['pr-start-rng','pr-start-val',60],
+    ['pr-dur-rng','pr-dur-val',60],
+    ['pr-steps-rng','pr-steps-val',5]
+  ];
+  for (var k=0;k<sliders.length;k++){
+    var sr=document.getElementById(sliders[k][0]);
+    var vv=document.getElementById(sliders[k][1]);
+    if (sr){ sr.value=sliders[k][2]; updateSliderTrack(sr); }
+    if (vv) vv.textContent=sliders[k][2];
+  }
 
-  var fsl = document.getElementById('freq-sl');
-  if (fsl) fsl.value = S.customFreq;
-  var fvv = document.getElementById('freq-vv');
-  if (fvv) fvv.textContent = S.customFreq;
-  var dsl = document.getElementById('dur-sl');
-  if (dsl) dsl.value = S.customDur;
-  var dvv = document.getElementById('dur-vv');
-  if (dvv) dvv.textContent = S.customDur;
+  var tf=document.getElementById('tog-first'); if(tf) tf.checked=!!S.firstAccent;
+  var tp=document.getElementById('tog-pulse'); if(tp) tp.checked=!!S.showPulse;
+  var tfl=document.getElementById('tog-flash'); if(tfl) tfl.checked=!!S.showFlash;
+  var td=document.getElementById('tog-dark'); if(td) td.checked=!!S.dark;
+  var tcs=document.getElementById('tog-custom-snd'); if(tcs) tcs.checked=!!S.useCustom;
+  var tcc=document.getElementById('tog-custom-color'); if(tcc) tcc.checked=!!S.useCustomColor;
+  var as=document.getElementById('agree-status');
+  if (as) as.textContent=S.agreed?'已同意':'未同意';
 
-  var vas = document.getElementById('vol-a-sl'); if (vas) vas.value = S.volA;
-  var vav = document.getElementById('vol-a-vv'); if (vav) vav.textContent = S.volA;
-  var vns = document.getElementById('vol-n-sl'); if (vns) vns.value = S.volN;
-  var vnv = document.getElementById('vol-n-vv'); if (vnv) vnv.textContent = S.volN;
-  var vss = document.getElementById('vol-s-sl'); if (vss) vss.value = S.volS;
-  var vsv = document.getElementById('vol-s-vv'); if (vsv) vsv.textContent = S.volS;
+  document.body.style.fontSize=S.fontSize+'px';
 
-  var fbs = document.getElementById('first-sw'); if (fbs) fbs.checked = !!S.firstBeatAccent;
-  var dk = document.getElementById('dk-sw'); if (dk) dk.checked = !!S.dark;
-  var tpdk = document.getElementById('tp-dk'); if (tpdk) tpdk.checked = !!S.dark;
-
-  var fssl = document.getElementById('fs-sl');
-  if (fssl) fssl.value = S.fontSize;
-  var fsvv = document.getElementById('fs-vv');
-  if (fsvv) fsvv.textContent = S.fontSize;
-
-  var prssl = document.getElementById('pr-start-sl'); if (prssl) prssl.value = 60;
-  var prsvv = document.getElementById('pr-start-vv'); if (prsvv) prsvv.textContent = '60';
-  var prst = document.getElementById('pr-start-v'); if (prst) prst.textContent = '60 BPM';
-
-  // render sub-renderers
-  renderDots();
+  renderBeatRow();
   renderTimeSigs();
   renderSubdivs();
   renderSounds();
@@ -1340,541 +1381,185 @@ function refreshAll(){
   renderThemes();
   renderSwatch();
   renderBpmPresets();
-  renderPracticeList();
-
+  renderPractice();
   updatePlayUI();
-  document.body.style.fontSize = S.fontSize + 'px';
-}
-
-
-function applyTheme(){
-  var base = '#2563eb';
-  if (S.useCustomColor) base = S.customColor;
-  else {
-    for (var i=0;i<THEMES.length;i++){
-      if (THEMES[i].id === S.theme){ base = THEMES[i].color; break; }
-    }
-  }
-  var rgb = hexToRgb(base);
-  var root = document.documentElement;
-  root.style.setProperty('--p', base);
-  root.style.setProperty('--p-rgb', rgb);
-  if (S.dark){
-    root.style.setProperty('--bg', '#0b1020');
-    root.style.setProperty('--srf', '#151b30');
-    root.style.setProperty('--sr2', '#111628');
-    root.style.setProperty('--tx', '#e2e8f0');
-    root.style.setProperty('--ts', '#94a3b8');
-    root.style.setProperty('--tm', '#64748b');
-    root.style.setProperty('--bd', 'rgba(255,255,255,.06)');
-    root.style.setProperty('--bs', 'rgba(255,255,255,.12)');
-    root.style.setProperty('--gl', 'rgba(' + rgb + ',.35)');
-    root.style.setProperty('--sh1', '0 1px 3px rgba(0,0,0,.4)');
-    root.style.setProperty('--sh2', '0 4px 12px rgba(0,0,0,.45)');
-    root.style.setProperty('--sh3', '0 8px 32px rgba(0,0,0,.55)');
-    document.body.classList.add('dk');
-  } else {
-    root.style.setProperty('--bg', '#f1f5f9');
-    root.style.setProperty('--srf', '#ffffff');
-    root.style.setProperty('--sr2', '#f8fafc');
-    root.style.setProperty('--tx', '#0f172a');
-    root.style.setProperty('--ts', '#475569');
-    root.style.setProperty('--tm', '#94a3b8');
-    root.style.setProperty('--bd', 'rgba(15,23,42,.08)');
-    root.style.setProperty('--bs', 'rgba(15,23,42,.15)');
-    root.style.setProperty('--gl', 'rgba(' + rgb + ',.3)');
-    root.style.setProperty('--sh1', '0 1px 3px rgba(0,0,0,.06)');
-    root.style.setProperty('--sh2', '0 4px 12px rgba(0,0,0,.1)');
-    root.style.setProperty('--sh3', '0 8px 32px rgba(0,0,0,.15)');
-    document.body.classList.remove('dk');
-  }
-}
-
-function setBpm(val){
-  val = Math.max(20, Math.min(300, Math.round(val)));
-  S.bpm = val;
-  saveState();
-  refreshAll();
-}
-
-// === PAGE NAVIGATION ===
-var currentPage = 'home';
-function goToPage(page){
-  var pages = ['home','params','sound','theme','practice','settings'];
-  for (var i=0;i<pages.length;i++){
-    var p = document.getElementById('pg-' + pages[i]);
-    if (p){
-      if (pages[i] === page) p.style.display = 'block';
-      else p.style.display = 'none';
-    }
-  }
-  currentPage = page;
-  window.scrollTo(0, 0);
-}
-
-// === TOAST ===
-var toastTimer = null;
-function showToast(msg){
-  var t = document.getElementById('toast');
-  if (!t) return;
-  t.textContent = msg;
-  t.classList.add('on');
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){ t.classList.remove('on'); }, 1800);
-}
-
-// === TAP TEMPO ===
-var tapTimes = [];
-function onTap(){
-  var now = Date.now();
-  tapTimes.push(now);
-  if (tapTimes.length > 8) tapTimes.shift();
-  // need at least 2 taps (1 interval)
-  if (tapTimes.length < 2){
-    var tv = document.getElementById('tap-val');
-    if (tv) tv.textContent = '--';
-    return;
-  }
-  var intervals = [];
-  for (var i=1;i<tapTimes.length;i++){
-    intervals.push(tapTimes[i] - tapTimes[i-1]);
-  }
-  var avg = 0;
-  for (var j=0;j<intervals.length;j++) avg += intervals[j];
-  avg = avg / intervals.length;
-  var bpm = Math.round(60000 / avg);
-  setBpm(bpm);
-  var tv = document.getElementById('tap-val');
-  if (tv) tv.textContent = bpm;
-}
-
-// reset tap if idle > 2.5s
-setInterval(function(){
-  if (tapTimes.length > 0 && (Date.now() - tapTimes[tapTimes.length-1]) > 2500){
-    tapTimes = [];
-  }
-}, 500);
-
-// === PRACTICE MODE ===
-var practiceId = null;
-var practiceStep = 0;
-var practiceTimer = null;
-var practiceDur = 60;
-
-function startPractice(id){
-  var tpl = null;
-  for (var i=0;i<PRACTICE_TEMPLATES.length;i++){
-    if (PRACTICE_TEMPLATES[i].id === id){ tpl = PRACTICE_TEMPLATES[i]; break; }
-  }
-  if (!tpl) return;
-  practiceId = id;
-  practiceStep = 0;
-  practiceDur = 60;
-  runPracticeStep(tpl);
-}
-
-function runPracticeStep(tpl){
-  if (practiceStep >= tpl.steps.length){
-    stopPlayback();
-    showToast('练习完成！');
-    return;
-  }
-  var bpm = tpl.steps[practiceStep];
-  setBpm(bpm);
-  showToast('第 ' + (practiceStep+1) + ' 段：' + bpm + ' BPM');
-  if (!isPlaying) startPlayback();
-  if (practiceTimer) clearTimeout(practiceTimer);
-  practiceTimer = setTimeout(function(){
-    practiceStep++;
-    runPracticeStep(tpl);
-  }, practiceDur * 1000);
-}
-
-function startCustomPractice(){
-  var startBpm = 60, steps = 5, dur = 60;
-  var ss = document.getElementById('pr-start-sl');
-  var ps = document.getElementById('pr-steps-sl');
-  var ds = document.getElementById('pr-dur-sl');
-  if (ss) startBpm = parseInt(ss.value,10);
-  if (ps) steps = parseInt(ps.value,10);
-  if (ds) dur = parseInt(ds.value,10);
-  var endBpm = Math.min(300, startBpm + 20 * steps);
-  var arr = [];
-  for (var i=0;i<steps;i++){
-    arr.push(Math.round(startBpm + (endBpm - startBpm) * (i / Math.max(1, steps-1))));
-  }
-  var customTpl = { id: 'custom', name: '自定义', desc: '自定义变速', steps: arr };
-  // temporary
-  practiceId = 'custom';
-  practiceStep = 0;
-  practiceDur = dur;
-  runPracticeStep(customTpl);
-}
-
-
-// === GUIDE FLOW ===
-var guideIdx = 0;
-
-function renderGuideStepper(){
-  var st = document.getElementById('guide-st');
-  if (!st) return;
-  var html = '';
-  for (var i=0;i<GUIDE_STEPS.length;i++){
-    html += '<div class="md-st-i' + (i === guideIdx ? ' on' : '') + '"></div>';
-  }
-  st.innerHTML = html;
-}
-
-function showGuideStep(){
-  var step = GUIDE_STEPS[guideIdx];
-  var ic = document.getElementById('guide-ic');
-  var tt = document.getElementById('guide-tt');
-  var ds = document.getElementById('guide-ds');
-  var next = document.getElementById('guide-next');
-  if (ic) ic.innerHTML = step.icon;
-  if (tt) tt.textContent = step.title;
-  if (ds) ds.textContent = step.desc;
-  if (next) next.textContent = (guideIdx === GUIDE_STEPS.length - 1) ? '完成' : '下一步';
-  renderGuideStepper();
-  showModal('guide-modal');
-}
-
-function startGuide(){
-  if (!S.agreed){
-    showModal('agree-modal');
-    return;
-  }
-  if (!S.guideSeen){
-    guideIdx = 0;
-    showGuideStep();
-    return;
-  }
-}
-
-function showModal(id){
-  var m = document.getElementById(id);
-  if (m) m.classList.remove('hi');
-}
-
-function hideModal(id){
-  var m = document.getElementById(id);
-  if (m) m.classList.add('hi');
-}
-
-function hideAllModals(){
-  var mods = document.querySelectorAll('.md');
-  for (var i=0;i<mods.length;i++) mods[i].classList.add('hi');
 }
 
 // === EVENT BINDINGS ===
 function bindAll(){
-  // play button
-  var pb = document.getElementById('play-btn');
-  if (pb) pb.addEventListener('click', function(e){ e.stopPropagation(); togglePlayback(); });
-
-  // bpm buttons
-  var bpmBtns = document.querySelectorAll('[data-bpm-dn]');
-  for (var i=0;i<bpmBtns.length;i++){
-    bpmBtns[i].addEventListener('click', function(el){
-      return function(){
-        var d = parseInt(el.getAttribute('data-bpm-dn'),10);
-        setBpm(S.bpm - d);
-      };
-    }(bpmBtns[i]));
+  // BPM buttons
+  var btns=document.querySelectorAll('[data-d]');
+  for(var i=0;i<btns.length;i++){
+    btns[i].addEventListener('click',function(b){
+      return function(){ setBpm(S.bpm+parseInt(b.getAttribute('data-d'),10)); };
+    }(btns[i]));
   }
-  var bpmBup = document.querySelectorAll('[data-bpm-up]');
-  for (var j=0;j<bpmBup.length;j++){
-    bpmBup[j].addEventListener('click', function(el){
-      return function(){
-        var d = parseInt(el.getAttribute('data-bpm-up'),10);
-        setBpm(S.bpm + d);
-      };
-    }(bpmBup[j]));
+  // BPM input
+  var bi=document.getElementById('bpm-in');
+  if (bi) bi.addEventListener('change',function(){
+    var v=parseInt(bi.value,10);
+    if(!isNaN(v)) setBpm(v); else bi.value=S.bpm;
+  });
+  // BPM slider
+  var br=document.getElementById('bpm-rng');
+  if (br){
+    br.addEventListener('input',function(){ setBpm(parseInt(br.value,10)); updateSliderTrack(br); });
+    updateSliderTrack(br);
   }
 
-  // bpm slider
-  var bsl = document.getElementById('bpm-sl');
-  if (bsl){
-    bsl.addEventListener('input', function(){ setBpm(parseInt(bsl.value,10)); });
-  }
-  // bpm input
-  var binp = document.getElementById('bpm-inp');
-  if (binp){
-    binp.addEventListener('change', function(){
-      var v = parseInt(binp.value,10);
-      if (!isNaN(v)) setBpm(v);
-      else binp.value = S.bpm;
-    });
+  // Play button
+  var pb=document.getElementById('play-btn');
+  if (pb) pb.addEventListener('click',togglePlayback);
+  // Nav play toggle
+  var npt=document.getElementById('nav-play-toggle');
+  if (npt) npt.addEventListener('click',togglePlayback);
+
+  // Test sound
+  var ts=document.getElementById('btn-test-snd');
+  if (ts) ts.addEventListener('click',playTestSound);
+
+  // Back buttons
+  var backs=document.querySelectorAll('[data-back]');
+  for(var j=0;j<backs.length;j++){
+    backs[j].addEventListener('click',function(){ goToPage('home'); });
   }
 
-  // navigation
-  var navs = document.querySelectorAll('[data-nav]');
-  for (var k=0;k<navs.length;k++){
-    navs[k].addEventListener('click', function(el){
-      return function(){ goToPage(el.getAttribute('data-nav')); };
-    }(navs[k]));
-  }
-  var backs = document.querySelectorAll('[data-nav-back]');
-  for (var m=0;m<backs.length;m++){
-    backs[m].addEventListener('click', function(){ goToPage('home'); });
-  }
-
-  // tap tempo (home page button)
-  var tc = document.getElementById('tap-card');
-  if (tc){
-    tc.addEventListener('click', function(){
-      // just let user know - we'll add tap via modal or direct
-      showToast('请在节拍页面使用 TAP 测速');
-      goToPage('params');
-    });
-  }
-
-  // custom time sig buttons
-  function tsBtn(id, deltaB, deltaV){
-    var b = document.getElementById(id);
-    if (!b) return;
-    b.addEventListener('click', function(){
-      if (deltaB) S.beats = Math.max(1, Math.min(32, S.beats + deltaB));
-      if (deltaV) S.beatValue = Math.max(1, Math.min(32, S.beatValue + deltaV));
+  // Custom time sig apply
+  var cta=document.getElementById('ct-apply');
+  if (cta) cta.addEventListener('click',function(){
+    var cb=document.getElementById('ct-beats');
+    var bv=document.getElementById('ct-bv');
+    if(cb&&bv){
+      S.beats=Math.max(1,Math.min(32,parseInt(cb.value,10)||4));
+      S.beatValue=Math.max(1,Math.min(32,parseInt(bv.value,10)||4));
       saveState(); refreshAll();
-    });
-  }
-  tsBtn('ts-b-b', -1, 0);
-  tsBtn('ts-b-a', 1, 0);
-  tsBtn('ts-v-b', 0, -1);
-  tsBtn('ts-v-a', 0, 1);
-
-  var tbIn = document.getElementById('ts-b-in');
-  if (tbIn){
-    tbIn.addEventListener('change', function(){
-      var v = parseInt(tbIn.value,10);
-      if (!isNaN(v)){ S.beats = Math.max(1, Math.min(32, v)); saveState(); refreshAll(); }
-      else tbIn.value = S.beats;
-    });
-  }
-  var tvIn = document.getElementById('ts-v-in');
-  if (tvIn){
-    tvIn.addEventListener('change', function(){
-      var v = parseInt(tvIn.value,10);
-      if (!isNaN(v)){ S.beatValue = Math.max(1, Math.min(32, v)); saveState(); refreshAll(); }
-      else tvIn.value = S.beatValue;
-    });
-  }
-
-  // sliders
-  var swSl = document.getElementById('swing-sl');
-  if (swSl){
-    swSl.addEventListener('input', function(){
-      S.swing = parseInt(swSl.value,10);
-      saveState();
-      var vv = document.getElementById('swing-vv');
-      if (vv) vv.textContent = S.swing;
-    });
-  }
-  var fsSl = document.getElementById('fs-sl');
-  if (fsSl){
-    fsSl.addEventListener('input', function(){
-      S.fontSize = parseInt(fsSl.value,10);
-      saveState();
-      document.body.style.fontSize = S.fontSize + 'px';
-      var vv = document.getElementById('fs-vv');
-      if (vv) vv.textContent = S.fontSize;
-    });
-  }
-  var freqSl = document.getElementById('freq-sl');
-  if (freqSl){
-    freqSl.addEventListener('input', function(){
-      S.customFreq = parseInt(freqSl.value,10);
-      saveState();
-      var vv = document.getElementById('freq-vv');
-      if (vv) vv.textContent = S.customFreq;
-    });
-  }
-  var durSl = document.getElementById('dur-sl');
-  if (durSl){
-    durSl.addEventListener('input', function(){
-      S.customDur = parseInt(durSl.value,10);
-      saveState();
-      var vv = document.getElementById('dur-vv');
-      if (vv) vv.textContent = S.customDur;
-    });
-  }
-
-  // vol sliders
-  function bindVol(slId, key, vvId){
-    var sl = document.getElementById(slId);
-    if (!sl) return;
-    sl.addEventListener('input', function(){
-      S[key] = parseInt(sl.value,10);
-      saveState();
-      var vv = document.getElementById(vvId);
-      if (vv) vv.textContent = S[key];
-    });
-  }
-  bindVol('vol-a-sl', 'volA', 'vol-a-vv');
-  bindVol('vol-n-sl', 'volN', 'vol-n-vv');
-  bindVol('vol-s-sl', 'volS', 'vol-s-vv');
-
-  // toggles
-  var fbs = document.getElementById('first-sw');
-  if (fbs){
-    fbs.addEventListener('change', function(){ S.firstBeatAccent = fbs.checked; saveState(); renderDots(); });
-  }
-  var csw = document.getElementById('custom-sw');
-  if (csw){
-    csw.addEventListener('change', function(){
-      S.useCustom = csw.checked;
-      saveState();
-      refreshAll();
-    });
-  }
-  var cusr = document.getElementById('cu-sw');
-  if (cusr){
-    cusr.addEventListener('change', function(){
-      S.useCustomColor = cusr.checked;
-      saveState();
-      refreshAll();
-    });
-  }
-  var dk = document.getElementById('dk-sw');
-  if (dk){
-    dk.addEventListener('change', function(){
-      S.dark = dk.checked;
-      saveState();
-      applyTheme();
-    });
-  }
-  var tpdks = document.getElementById('tp-dk');
-  if (tpdks){
-    tpdks.addEventListener('change', function(){
-      S.dark = tpdks.checked;
-      saveState();
-      applyTheme();
-    });
-  }
-
-  // practice custom
-  var ps = document.getElementById('pr-start-sl');
-  if (ps){
-    ps.addEventListener('input', function(){
-      var v = document.getElementById('pr-start-vv');
-      var t = document.getElementById('pr-start-v');
-      if (v) v.textContent = ps.value;
-      if (t) t.textContent = ps.value + ' BPM';
-    });
-  }
-
-  var psStart = document.getElementById('pr-start');
-  if (psStart) psStart.addEventListener('click', startCustomPractice);
-
-  // settings page
-  var about = document.getElementById('abt-row');
-  if (about) about.addEventListener('click', function(){
-    showToast('节拍器 v6.0 &middot; 本地运行');
-  });
-  var agr = document.getElementById('agree-row');
-  if (agr) agr.addEventListener('click', function(){ showModal('agree-modal'); });
-  var rst = document.getElementById('rst-row');
-  if (rst){
-    rst.addEventListener('click', function(){
-      if (confirm('确定重置所有设置吗？')){
-        try{ localStorage.removeItem(STORE_KEY); } catch(e){}
-        for (var k in DEFAULT) S[k] = DEFAULT[k];
-        refreshAll();
-        showToast('已重置');
-      }
-    });
-  }
-
-  // hint bar
-  var hc = document.getElementById('hint-close');
-  if (hc){
-    hc.addEventListener('click', function(){
-      var hb = document.getElementById('hint-bar');
-      if (hb) hb.classList.add('hi');
-    });
-  }
-
-  // agree modal
-  var achk = document.getElementById('agree-chk');
-  var anxt = document.getElementById('agree-next');
-  if (achk && anxt){
-    achk.addEventListener('change', function(){ anxt.disabled = !achk.checked; });
-    if (S.agreed) achk.checked = true;
-    anxt.addEventListener('click', function(){
-      if (!achk.checked) return;
-      S.agreed = true;
-      saveState();
-      hideModal('agree-modal');
-      // after agree, show theme picker
-      setTimeout(function(){
-        renderThemePicker();
-        showModal('theme-modal');
-      }, 150);
-    });
-  }
-
-  // theme modal
-  var tpNext = document.getElementById('tp-next');
-  var tpSkip = document.getElementById('tp-skip');
-  if (tpNext){
-    tpNext.addEventListener('click', function(){
-      S.guideSeen = true;
-      saveState();
-      hideModal('theme-modal');
-      showToast('开始使用吧！');
-    });
-  }
-  if (tpSkip){
-    tpSkip.addEventListener('click', function(){
-      S.guideSeen = true;
-      saveState();
-      hideModal('theme-modal');
-    });
-  }
-
-  // guide modal
-  var gNext = document.getElementById('guide-next');
-  if (gNext){
-    gNext.addEventListener('click', function(){
-      guideIdx++;
-      if (guideIdx >= GUIDE_STEPS.length){
-        S.guideSeen = true;
-        saveState();
-        hideModal('guide-modal');
-        showToast('欢迎使用！');
-      } else {
-        showGuideStep();
-      }
-    });
-  }
-  var gSkip = document.getElementById('guide-skip');
-  if (gSkip){
-    gSkip.addEventListener('click', function(){
-      S.guideSeen = true;
-      saveState();
-      hideModal('guide-modal');
-    });
-  }
-
-  // keyboard
-  document.addEventListener('keydown', function(e){
-    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
-    if (e.code === 'Space' || e.key === ' '){
-      e.preventDefault();
-      togglePlayback();
-    } else if (e.key === 'ArrowUp'){
-      setBpm(S.bpm + 1);
-    } else if (e.key === 'ArrowDown'){
-      setBpm(S.bpm - 1);
     }
   });
 
-  // page visibility: pause on hidden
-  document.addEventListener('visibilitychange', function(){
-    if (document.hidden && isPlaying){
-      // continue playing; audio works in background on most browsers
+  // Clear accents
+  var cca=document.getElementById('ct-clear-accent');
+  if(cca) cca.addEventListener('click',function(){
+    S.accented=[]; saveState(); renderBeatRow();
+  });
+
+  // Toggle switches
+  var togs=[
+    ['tog-first',function(el){ S.firstAccent=el.checked; saveState(); renderBeatRow(); }],
+    ['tog-pulse',function(el){ S.showPulse=el.checked; saveState(); }],
+    ['tog-flash',function(el){ S.showFlash=el.checked; saveState(); }],
+    ['tog-dark',function(el){ S.dark=el.checked; saveState(); applyTheme(); }],
+    ['tog-custom-snd',function(el){
+      S.useCustom=el.checked; saveState(); refreshAll();
+      if (el.checked) playTestSound();
+    }],
+    ['tog-custom-color',function(el){ S.useCustomColor=el.checked; saveState(); applyTheme(); refreshAll(); }]
+  ];
+  for(var t=0;t<togs.length;t++){
+    var te=document.getElementById(togs[t][0]);
+    if(te) togs[t][1](te);
+    te.addEventListener('change',function(fn){ return function(el){ fn(el.target); }; }(togs[t][1]));
+  }
+
+  // Sliders
+  var sliders2=[
+    ['swing-rng','swing-val',function(v){S.swing=v;document.getElementById('swing-val').textContent=v;updateSliderTrack(this);}],
+    ['freq-rng','freq-val',function(v){S.customFreq=v;document.getElementById('freq-val').textContent=v;updateSliderTrack(this);}],
+    ['dur-rng','dur-val',function(v){S.customDur=v;document.getElementById('dur-val').textContent=v;updateSliderTrack(this);}],
+    ['vol-a-rng','vol-a-val',function(v){S.volA=v;document.getElementById('vol-a-val').textContent=v;updateSliderTrack(this);}],
+    ['vol-n-rng','vol-n-val',function(v){S.volN=v;document.getElementById('vol-n-val').textContent=v;updateSliderTrack(this);}],
+    ['vol-s-rng','vol-s-val',function(v){S.volS=v;document.getElementById('vol-s-val').textContent=v;updateSliderTrack(this);}],
+    ['fs-rng','fs-val',function(v){S.fontSize=v;document.getElementById('fs-val').textContent=v;document.body.style.fontSize=v+'px';updateSliderTrack(this);}]
+  ];
+  for(var s=0;s<sliders2.length;s++){
+    var se=document.getElementById(sliders2[s][0]);
+    if(se){
+      se.addEventListener('input',function(fn){
+        return function(){ var v=parseInt(this.value,10); fn(v); };
+      }(sliders2[s][2]));
+      updateSliderTrack(se);
     }
+  }
+
+  // Practice custom sliders
+  var psr=document.getElementById('pr-start-rng');
+  if(psr){ psr.addEventListener('input',function(){var v=this.value;document.getElementById('pr-start-val').textContent=v;updateSliderTrack(psr);}); updateSliderTrack(psr);}
+  var pdr=document.getElementById('pr-dur-rng');
+  if(pdr){ pdr.addEventListener('input',function(){var v=this.value;document.getElementById('pr-dur-val').textContent=v;updateSliderTrack(pdr);}); updateSliderTrack(pdr);}
+  var pcr=document.getElementById('pr-steps-rng');
+  if(pcr){ pcr.addEventListener('input',function(){var v=this.value;document.getElementById('pr-steps-val').textContent=v;updateSliderTrack(pcr);}); updateSliderTrack(pcr);}
+
+  var pcstart=document.getElementById('pr-custom-start');
+  if(pcstart) pcstart.addEventListener('click',startPracticeCustom);
+  var pstop=document.getElementById('pr-stop');
+  if(pstop) pstop.addEventListener('click',function(){
+    if(practiceTimer){clearTimeout(practiceTimer);practiceTimer=null;}
+    stopPlayback();
+    var stat=document.getElementById('pr-stat');
+    if(stat) stat.style.display='none';
+  });
+
+  // System page
+  var sabt=document.getElementById('sys-about');
+  if(sabt) sabt.addEventListener('click',function(){ showToast('节拍器 v6.0 · Web Audio API'); });
+  var sagi=document.getElementById('sys-agree');
+  if(sagi) sagi.addEventListener('click',function(){ showToast('用户协议可重新查阅'); });
+  var srst=document.getElementById('sys-rst');
+  if(srst) srst.addEventListener('click',function(){
+    if(confirm('确定重置所有设置吗？此操作不可撤销。')){
+      try{localStorage.removeItem(STORE_KEY);}catch(e){}
+      for(var k in DEFAULT) S[k]=DEFAULT[k];
+      refreshAll(); showToast('已重置为默认');
+    }
+  });
+
+  // Hint bar close
+  var hc=document.getElementById('hint-close');
+  if(hc) hc.addEventListener('click',hideHintBar);
+
+  // Guide modal
+  var gnext=document.getElementById('guide-btn');
+  if(gnext) gnext.addEventListener('click',function(){
+    guideIdx++;
+    if(guideIdx>=GUIDE_STEPS.length){
+      S.guideSeen=true; saveState(); hideModal('guide-modal');
+      if(S.agreed) showHintBar();
+    } else { showGuideStep(); }
+  });
+  var gskip=document.getElementById('guide-skip');
+  if(gskip) gskip.addEventListener('click',function(){
+    S.guideSeen=true; saveState(); hideModal('guide-modal');
+    if(S.agreed) showHintBar();
+  });
+
+  // Hash navigation
+  window.addEventListener('hashchange',function(){
+    var h=window.location.hash.replace('#','');
+    if(h) goToPage(h);
+  });
+
+  // Keyboard
+  document.addEventListener('keydown',function(e){
+    if(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')) return;
+    if(e.code==='Space'||e.key===' '){e.preventDefault();togglePlayback();}
+    else if(e.key==='ArrowUp'){setBpm(S.bpm+1);}
+    else if(e.key==='ArrowDown'){setBpm(S.bpm-1);}
+  });
+
+  // TAP (params page)
+  var tapb=document.getElementById('tap-btn');
+  if(tapb) tapb.addEventListener('click',onTap);
+  var tapap=document.getElementById('tap-apply');
+  if(tapap) tapap.addEventListener('click',function(){
+    var tv=document.getElementById('tap-val');
+    if(tv&&tv.textContent!=='– –'){ var v=parseInt(tv.textContent,10); if(!isNaN(v)) setBpm(v); }
+  });
+  var tapclr=document.getElementById('tap-clr');
+  if(tapclr) tapclr.addEventListener('click',function(){
+    tapTimes=[];
+    var tv=document.getElementById('tap-val');
+    if(tv) tv.textContent='– –';
+    var tc=document.getElementById('tap-cnt');
+    if(tc) tc.textContent='0';
   });
 }
 
@@ -1884,25 +1569,18 @@ function init(){
   applyTheme();
   bindAll();
   refreshAll();
-  document.body.style.fontSize = S.fontSize + 'px';
   requestAnimationFrame(visualLoop);
 
-  // initial flow: if not agreed -> agree modal; else if not seen guide -> theme picker
   setTimeout(function(){
-    if (!S.agreed){ showModal('agree-modal'); }
-    else if (!S.guideSeen){ renderThemePicker(); showModal('theme-modal'); }
-    else {
-      var hb = document.getElementById('hint-bar');
-      if (hb) hb.classList.remove('hi');
-    }
-  }, 500);
+    if(!S.agreed){ showModal('guide-modal'); }
+    else if(!S.guideSeen){ guideIdx=0; showGuideStep(); }
+    else { showHintBar(); }
+  }, 600);
 }
 
-if (document.readyState === 'loading'){
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+if (document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',init);
+} else { init(); }
 
 })();
 </script>

@@ -251,7 +251,7 @@ input.num-in:focus{border-color:var(--primary)}
 
 /* === MODAL (v4 animation) === */
 .guide-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;transition:opacity .3s}
-.guide-overlay.hidden{opacity:0;pointer-events:none}
+.guide-overlay.hidden{display:none}
 .guide-card{background:var(--surface);border-radius:var(--r-lg);padding:28px 24px;max-width:340px;width:100%;box-shadow:var(--shadow-lg);text-align:center;animation:guidePop .35s cubic-bezier(.2,.8,.2,1)}
 @keyframes guidePop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
 .guide-icon{width:64px;height:64px;border-radius:50%;background:rgba(var(--primary-rgb),.15);color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
@@ -1436,6 +1436,10 @@ function bindAll(){
   var ts=document.getElementById('btn-test-snd');
   if (ts) ts.addEventListener('click',playTestSound);
 
+  // Nav play toggle
+  var npt=document.getElementById('nav-play-toggle');
+  if(npt) npt.addEventListener('click',function(){ togglePlayback(); });
+
   // Back buttons
   var backs=document.querySelectorAll('[data-back]');
   for(var j=0;j<backs.length;j++){
@@ -1602,6 +1606,9 @@ function init(){
   bindAll();
   refreshAll();
   requestAnimationFrame(visualLoop);
+
+  var h=window.location.hash.replace('#','');
+  if(h && h.substring(0,3)==='pg-') goToPage(h);
 
   setTimeout(function(){
     if(!S.agreed){ showModal('agree-modal'); }

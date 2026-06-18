@@ -644,6 +644,20 @@ input.num-in:focus{border-color:var(--primary)}
   <div class="hint-close" id="hint-close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
 </div>
 
+<!-- AGREE MODAL -->
+<div class="guide-overlay hidden" id="agree-modal">
+  <div class="guide-card">
+    <div class="guide-icon">
+      <svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    </div>
+    <div class="guide-title">用户协议与隐私说明</div>
+    <div class="guide-desc">本应用完全在您的浏览器本地运行，使用 Web Audio API 生成节拍声音。所有设置仅保存在您设备的 localStorage 中，不会上传至任何服务器。继续使用即表示您同意本说明。</div>
+    <div class="guide-steps"></div>
+    <button class="guide-btn" id="agree-btn">同意并继续</button>
+    <button class="guide-btn skip" id="agree-cancel">不同意</button>
+  </div>
+</div>
+
 <!-- GUIDE MODAL -->
 <div class="guide-overlay hidden" id="guide-modal">
   <div class="guide-card">
@@ -673,6 +687,7 @@ var DEFAULT = {
   useCustom:false, customFreq:1400, customWave:'square', customDur:35,
   dark:false, useCustomColor:false, customColor:'#2563eb',
   firstAccent:true, showPulse:true, showFlash:true,
+  prStartBpm:60, prDur:60, prSteps:5,
   agreed:false, guideSeen:false
 };
 
@@ -1109,23 +1124,26 @@ function renderPractice(){
 // === THEME APPLICATION ===
 function applyTheme(){
   var body = document.body;
-  // Remove all theme classes
   var classes = body.className.split(' ');
   for (var i=0;i<classes.length;i++){
     if (classes[i].indexOf('t-')===0 || classes[i]==='dk') body.classList.remove(classes[i]);
   }
-  if (!S.useCustomColor){
-    body.classList.add('t-'+S.theme);
-  } else {
-    // Apply custom color by temporarily setting CSS var
+  body.classList.add('t-'+S.theme);
+  if (S.useCustomColor){
     var rgb = hexToRgb(S.customColor);
-    document.documentElement.style.setProperty('--primary', S.customColor);
-    document.documentElement.style.setProperty('--primary-rgb', rgb);
+    body.style.setProperty('--primary', S.customColor);
+    body.style.setProperty('--primary-rgb', rgb);
     var lighter = lighten(S.customColor);
     var darker = darken(S.customColor);
-    document.documentElement.style.setProperty('--primary-light', lighter);
-    document.documentElement.style.setProperty('--primary-dark', darker);
-    document.documentElement.style.setProperty('--glow', 'rgba('+rgb+',.35)');
+    body.style.setProperty('--primary-light', lighter);
+    body.style.setProperty('--primary-dark', darker);
+    body.style.setProperty('--glow', 'rgba('+rgb+',.35)');
+  } else {
+    body.style.removeProperty('--primary');
+    body.style.removeProperty('--primary-rgb');
+    body.style.removeProperty('--primary-light');
+    body.style.removeProperty('--primary-dark');
+    body.style.removeProperty('--glow');
   }
   if (S.dark) body.classList.add('dk');
 }
@@ -1351,9 +1369,9 @@ function refreshAll(){
     ['vol-n-rng','vol-n-val',S.volN],
     ['vol-s-rng','vol-s-val',S.volS],
     ['fs-rng','fs-val',S.fontSize],
-    ['pr-start-rng','pr-start-val',60],
-    ['pr-dur-rng','pr-dur-val',60],
-    ['pr-steps-rng','pr-steps-val',5]
+    ['pr-start-rng','pr-start-val',S.prStartBpm],
+    ['pr-dur-rng','pr-dur-val',S.prDur],
+    ['pr-steps-rng','pr-steps-val',S.prSteps]
   ];
   for (var k=0;k<sliders.length;k++){
     var sr=document.getElementById(sliders[k][0]);
@@ -1456,8 +1474,7 @@ function bindAll(){
   ];
   for(var t=0;t<togs.length;t++){
     var te=document.getElementById(togs[t][0]);
-    if(te) togs[t][1](te);
-    te.addEventListener('change',function(fn){ return function(el){ fn(el.target); }; }(togs[t][1]));
+    if(te) te.addEventListener('change',function(fn){ return function(el){ fn(el.target); }; }(togs[t][1]));
   }
 
   // Sliders
@@ -1482,11 +1499,11 @@ function bindAll(){
 
   // Practice custom sliders
   var psr=document.getElementById('pr-start-rng');
-  if(psr){ psr.addEventListener('input',function(){var v=this.value;document.getElementById('pr-start-val').textContent=v;updateSliderTrack(psr);}); updateSliderTrack(psr);}
+  if(psr){ psr.addEventListener('input',function(){S.prStartBpm=parseInt(this.value,10);document.getElementById('pr-start-val').textContent=S.prStartBpm;saveState();updateSliderTrack(psr);}); updateSliderTrack(psr);}
   var pdr=document.getElementById('pr-dur-rng');
-  if(pdr){ pdr.addEventListener('input',function(){var v=this.value;document.getElementById('pr-dur-val').textContent=v;updateSliderTrack(pdr);}); updateSliderTrack(pdr);}
+  if(pdr){ pdr.addEventListener('input',function(){S.prDur=parseInt(this.value,10);document.getElementById('pr-dur-val').textContent=S.prDur;saveState();updateSliderTrack(pdr);}); updateSliderTrack(pdr);}
   var pcr=document.getElementById('pr-steps-rng');
-  if(pcr){ pcr.addEventListener('input',function(){var v=this.value;document.getElementById('pr-steps-val').textContent=v;updateSliderTrack(pcr);}); updateSliderTrack(pcr);}
+  if(pcr){ pcr.addEventListener('input',function(){S.prSteps=parseInt(this.value,10);document.getElementById('pr-steps-val').textContent=S.prSteps;saveState();updateSliderTrack(pcr);}); updateSliderTrack(pcr);}
 
   var pcstart=document.getElementById('pr-custom-start');
   if(pcstart) pcstart.addEventListener('click',startPracticeCustom);
@@ -1502,7 +1519,7 @@ function bindAll(){
   var sabt=document.getElementById('sys-about');
   if(sabt) sabt.addEventListener('click',function(){ showToast('节拍器 v6.0 · Web Audio API'); });
   var sagi=document.getElementById('sys-agree');
-  if(sagi) sagi.addEventListener('click',function(){ showToast('用户协议可重新查阅'); });
+  if(sagi) sagi.addEventListener('click',function(){ showModal('agree-modal'); });
   var srst=document.getElementById('sys-rst');
   if(srst) srst.addEventListener('click',function(){
     if(confirm('确定重置所有设置吗？此操作不可撤销。')){
@@ -1515,6 +1532,21 @@ function bindAll(){
   // Hint bar close
   var hc=document.getElementById('hint-close');
   if(hc) hc.addEventListener('click',hideHintBar);
+
+  // Agree modal
+  var agb=document.getElementById('agree-btn');
+  if(agb) agb.addEventListener('click',function(){
+    S.agreed=true; saveState();
+    hideModal('agree-modal');
+    if(!S.guideSeen){ guideIdx=0; showGuideStep(); }
+    else { showHintBar(); }
+  });
+  var agc=document.getElementById('agree-cancel');
+  if(agc) agc.addEventListener('click',function(){
+    hideModal('agree-modal');
+    showToast('需要同意协议才能继续使用');
+    setTimeout(function(){ showModal('agree-modal'); }, 1500);
+  });
 
   // Guide modal
   var gnext=document.getElementById('guide-btn');
@@ -1572,7 +1604,7 @@ function init(){
   requestAnimationFrame(visualLoop);
 
   setTimeout(function(){
-    if(!S.agreed){ showModal('guide-modal'); }
+    if(!S.agreed){ showModal('agree-modal'); }
     else if(!S.guideSeen){ guideIdx=0; showGuideStep(); }
     else { showHintBar(); }
   }, 600);

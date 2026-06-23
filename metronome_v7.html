@@ -565,6 +565,152 @@ body.dk .hint-bar{background:rgba(21,27,48,.9)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .slide-up{animation:slideUp .4s var(--bounce)}
 @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.shimmer{background:linear-gradient(90deg,var(--surface) 25%,var(--surface-2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite}
+@keyframes ripple{0%{transform:scale(0);opacity:1}100%{transform:scale(4);opacity:0}}
+.ripple{position:absolute;border-radius:50%;background:rgba(var(--primary-rgb),.3);pointer-events:none;animation:ripple .6s ease-out forwards}
+@keyframes bounceIn{0%{transform:scale(0)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+.bounce-in{animation:bounceIn .4s var(--bounce)}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 5px var(--glow)}50%{box-shadow:0 0 25px var(--glow),0 0 50px var(--glow)}}
+.glow-pulse{animation:glowPulse 1.5s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.float{animation:float 3s ease-in-out infinite}
+@keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.rotate{animation:rotate 20s linear infinite}
+
+.beat-dot{transition:all .15s var(--bounce),transform .1s}
+.beat-dot[data-ac="1"]{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border-color:transparent;box-shadow:0 6px 20px var(--glow);transform:scale(1.08)}
+.beat-dot.bt{transform:scale(1.25) rotate(5deg);box-shadow:0 0 30px var(--glow);z-index:2;animation:beatPop .25s var(--bounce)}
+
+.play-btn{transition:transform .25s var(--bounce),box-shadow .25s,filter .25s}
+.play-btn:hover{filter:brightness(1.08)}
+.play-btn.playing{animation:none}
+.play-btn.playing::before{background:linear-gradient(135deg,rgba(255,255,255,.15),transparent 50%)}
+
+.nav-card{transition:all var(--trans);position:relative;overflow:hidden}
+.nav-card::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--trans);z-index:0}
+.nav-card:active::after{opacity:1}
+.nav-card:active .nav-icon,.nav-card:active .nav-t,.nav-card:active .nav-s{position:relative;z-index:1;color:#fff}
+.nav-card:active .nav-icon svg{stroke:#fff}
+
+.step-btn{position:relative;overflow:hidden}
+.step-btn::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--trans)}
+.step-btn:active::before{opacity:1}
+.step-btn:active{color:#fff;border-color:transparent}
+
+input[type=range].rng{transition:filter .2s}
+input[type=range].rng:hover{filter:brightness(1.05)}
+
+.card{transition:all var(--trans);position:relative;overflow:hidden}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.card:active{transform:translateY(0)}
+
+.ts-item{transition:all var(--trans);position:relative;overflow:hidden}
+.ts-item::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--trans)}
+.ts-item.active::before{opacity:1}
+.ts-item.active{color:#fff;border-color:transparent;z-index:1}
+
+.sub-item{transition:all var(--trans);position:relative;overflow:hidden}
+.sub-item::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--trans)}
+.sub-item.active::before{opacity:1}
+.sub-item.active{color:#fff;border-color:transparent;z-index:1}
+
+.sound-item{transition:all var(--trans);position:relative;overflow:hidden}
+.sound-item::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--trans)}
+.sound-item.active::before{opacity:1}
+.sound-item.active{color:#fff;border-color:transparent;z-index:1}
+.sound-item.active .sound-icon{color:#fff;background:rgba(255,255,255,.2);z-index:1;position:relative}
+
+.preset-btn{transition:all var(--trans);position:relative;overflow:hidden}
+.preset-btn::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--trans)}
+.preset-btn.active::before,.preset-btn:active::before{opacity:1}
+.preset-btn.active,.preset-btn:active{color:#fff;border-color:transparent;z-index:1}
+.preset-btn.active .n,.preset-btn:active .n{color:#fff}
+.preset-btn.active .l,.preset-btn:active .l{color:rgba(255,255,255,.75)}
+
+.wave-item{transition:all var(--trans);position:relative;overflow:hidden}
+.wave-item::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--trans)}
+.wave-item.active::before{opacity:1}
+.wave-item.active{color:#fff;border-color:transparent;z-index:1}
+
+.theme-item{transition:all var(--trans);position:relative;overflow:hidden}
+.theme-item::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--trans)}
+.theme-item.active::before{opacity:.15}
+.theme-item.active{border-color:var(--primary)}
+
+.practice-item{transition:all var(--trans);position:relative;overflow:hidden}
+.practice-item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--trans)}
+.practice-item.sel{border-color:var(--primary);background:linear-gradient(135deg,rgba(var(--primary-rgb),.08),rgba(var(--secondary-rgb),.04))}
+.practice-item.sel::before{opacity:1}
+
+.preset-row{transition:all var(--trans)}
+.preset-row:hover{background:var(--surface-3)}
+
+.q-swatch{transition:all var(--trans)}
+.q-swatch:hover{transform:scale(1.15)}
+.q-swatch.on{transform:scale(1.1);box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--primary);z-index:2}
+
+.pulse-ring{position:absolute;left:50%;top:50%;width:140px;height:140px;border-radius:50%;border:2px solid var(--primary);transform:translate(-50%,-50%);pointer-events:none;opacity:0}
+.pulse-ring.pulse{animation:pulseR .6s var(--trans)}
+.pulse-ring.r2{width:170px;height:170px;border-color:var(--secondary);animation-delay:.08s}
+.pulse-ring.r3{width:200px;height:200px;border-color:var(--accent);opacity:.6;animation-delay:.16s}
+@keyframes pulseR{0%{opacity:.7;transform:translate(-50%,-50%) scale(.85)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.4)}}
+
+.bpm-num{font-size:5.5em;font-weight:900;line-height:1;color:var(--primary);letter-spacing:-4px;font-variant-numeric:tabular-nums;position:relative;display:block;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;transition:transform .2s var(--bounce),filter .2s}
+.bpm-num.flash{transform:scale(1.08);filter:brightness(1.2)}
+
+.tap-btn{transition:transform .15s,box-shadow .15s,filter .15s}
+.tap-btn:hover{filter:brightness(1.08)}
+.tap-btn:active{transform:scale(.9);box-shadow:0 4px 12px var(--glow)}
+
+@keyframes sparkle{0%,100%{opacity:0;transform:scale(0)}50%{opacity:1;transform:scale(1)}}
+.sparkle{position:absolute;width:6px;height:6px;background:var(--primary);border-radius:50%;pointer-events:none;animation:sparkle .8s ease-out forwards}
+
+.particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit}
+.particle{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--primary);opacity:0;animation:particleFly .6s ease-out forwards}
+@keyframes particleFly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}}
+
+@keyframes slideInRight{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.slide-in-right{animation:slideInRight .3s ease-out}
+@keyframes slideOutLeft{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-20px)}}
+.slide-out-left{animation:slideOutLeft .3s ease-out}
+
+.page{display:none;animation:none}
+.page.active{display:block;animation:pageIn .4s var(--bounce)}
+.page.active{animation:pageIn .4s var(--bounce)}
+@keyframes pageIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+
+.sys-row{transition:background var(--trans)}
+.sys-row:not(.no):hover{background:var(--surface-2)}
+.sys-row:not(.no):active{background:var(--surface-3)}
+
+input.tgl{transition:all var(--trans);position:relative}
+input.tgl:hover{filter:brightness(1.05}
+
+.btn-apply{transition:all var(--trans-fast);position:relative;overflow:hidden}
+.btn-apply::before{content:"";position:absolute;inset:0;background:rgba(255,255,255,.2);opacity:0;transition:opacity var(--trans)}
+.btn-apply:hover::before{opacity:1}
+.btn-apply:active{transform:scale(.95)}
+
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--surface);padding:10px 20px;border-radius:999px;font-size:.85em;font-weight:600;z-index:9999;opacity:0;transition:all .4s cubic-bezier(.2,.8,.2,1);box-shadow:var(--shadow-lg);pointer-events:none;max-width:80%;text-align:center;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.toast.on{opacity:.96;transform:translateX(-50%) translateY(0)}
+
+.guide-overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;transition:opacity .3s;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.guide-card{background:var(--surface);border-radius:28px;padding:32px 24px;max-width:340px;width:100%;box-shadow:var(--shadow-xl);text-align:center;animation:modalPop .4s var(--bounce);border:1px solid var(--border);position:relative;overflow:hidden}
+.guide-icon{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,rgba(var(--primary-rgb),.15),rgba(var(--secondary-rgb),.1));color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;position:relative;z-index:1}
+.guide-icon svg{width:36px;height:36px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+@keyframes modalPop{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.guide-btn{width:100%;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-size:1em;font-weight:700;cursor:pointer;transition:all var(--trans-fast);box-shadow:var(--shadow-primary);position:relative;z-index:1;border:none}
+.guide-btn:active{transform:scale(.96);filter:brightness(.95)}
+.guide-btn.skip{background:transparent;color:var(--text-sec);font-size:.85em;font-weight:600;margin-top:8px;box-shadow:none}
+.guide-btn.skip:active{opacity:.6;transform:none}
+
+.hint-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:520px;width:100%;padding:0 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--border);z-index:100;display:flex;align-items:center;gap:10px;box-shadow:0 -8px 24px rgba(0,0,0,.08);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);transition:transform .4s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.hint-bar.hidden{transform:translateX(-50%) translateY(120%);opacity:0;pointer-events:none}
+.hint-close{transition:all var(--trans-fast)}
+.hint-close:hover{background:var(--surface-2)}
+.hint-close:active{transform:scale(.9)}
 </style>
 </head>
 <body class="t-indigo">
@@ -911,6 +1057,27 @@ body.dk .hint-bar{background:rgba(21,27,48,.9)}
       <button class="practice-stop-btn" id="practice-stop-btn">停止练习</button>
     </div>
 
+    <div class="card" id="beat-counter-card" style="display:none">
+      <div class="card-title"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>节拍统计</div>
+      <div style="display:flex;justify-content:space-around;text-align:center;margin-top:10px">
+        <div><div style="font-size:1.8em;font-weight:900;color:var(--primary);font-variant-numeric:tabular-nums" id="beat-counter">0</div><div style="font-size:.75em;color:var(--text-muted)">当前节拍</div></div>
+        <div><div style="font-size:1.8em;font-weight:900;color:var(--secondary);font-variant-numeric:tabular-nums" id="measure-counter">0</div><div style="font-size:.75em;color:var(--text-muted)">小节数</div></div>
+        <div><div style="font-size:1.8em;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums" id="session-time">00:00</div><div style="font-size:.75em;color:var(--text-muted)">练习时长</div></div>
+      </div>
+    </div>
+
+    <div class="card" id="quick-bpm-card" style="display:none">
+      <div class="card-title"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>快捷BPM</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+        <button class="preset-btn" style="flex:1;min-width:60px" data-quick-bpm="60">60</button>
+        <button class="preset-btn" style="flex:1;min-width:60px" data-quick-bpm="80">80</button>
+        <button class="preset-btn" style="flex:1;min-width:60px" data-quick-bpm="100">100</button>
+        <button class="preset-btn" style="flex:1;min-width:60px" data-quick-bpm="120">120</button>
+        <button class="preset-btn" style="flex:1;min-width:60px" data-quick-bpm="140">140</button>
+        <button class="preset-btn" style="flex:1;min-width:60px" data-quick-bpm="160">160</button>
+      </div>
+    </div>
+
     <div class="card" id="practice-list-card">
       <div class="card-title"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>练习模板</div>
       <div class="card-sub">选择一个模板开始针对性练习</div>
@@ -1066,11 +1233,14 @@ body.dk .hint-bar{background:rgba(21,27,48,.9)}
       专业级节拍器应用，支持多种拍号、节拍细分、摇摆节奏、TAP测速、练习模式等功能。<br>
       <br>
       <strong style="color:var(--primary)">键盘快捷键：</strong><br>
-      空格 - 播放/暂停<br>
+      空格 / P - 播放/暂停<br>
       ↑ / ↓ - 调整 BPM ±1<br>
       Shift+↑ / Shift+↓ - 调整 BPM ±10<br>
-      T - TAP 测速<br>
-      M - 静音切换
+      鼠标滚轮 - 调整 BPM<br>
+      数字键 1-6 - 快速设置 BPM<br>
+      T / R - TAP 测速<br>
+      M - 静音切换<br>
+      ESC - 停止 / 返回首页
     </div>
 
   </div>
@@ -1140,7 +1310,14 @@ var S = {
   accented: [],
   presets: [],
   hintShown: false,
-  guideDone: false
+  guideDone: false,
+  beatCounter: 0,
+  measureCounter: 0,
+  sessionStartTime: 0,
+  sessionTotalBeats: 0,
+  sessionTotalTime: 0,
+  showBeatCounter: false,
+  showQuickBpm: false
 };
 
 var THEMES = [
@@ -1243,6 +1420,12 @@ var practiceStep = 0;
 var practiceCurrentBpm = 0;
 var practiceStage = 0;
 var wakeLockObj = null;
+var sessionTimer = null;
+var beatCounterEl = null;
+var measureCounterEl = null;
+var sessionTimeEl = null;
+var isEditingBpm = false;
+var lastWheelTime = 0;
 
 function $(id){return document.getElementById(id)}
 
@@ -1714,6 +1897,7 @@ function visualLoop(){
     var evt = flashQueue.shift();
     if(evt.type==='beat'){
       triggerBeatVisual(evt.beat);
+      updateBeatCounterDisplay();
     }else if(evt.type==='sub'){
       triggerSubVisual(evt.sub);
     }else if(evt.type==='pulse'){
@@ -1772,8 +1956,13 @@ function startPlay(){
   $('play-icon').innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
   $('play-lbl').textContent = '播放中';
   $('nav-play-lbl').textContent = '暂停';
+  S.beatCounter = 0;
+  S.measureCounter = 0;
+  S.sessionStartTime = Date.now();
   scheduler();
   requestWakeLock();
+  startSessionTimer();
+  updateBeatCounterDisplay();
 }
 
 function stopPlay(){
@@ -1784,8 +1973,49 @@ function stopPlay(){
   $('play-lbl').textContent = '点击播放';
   $('nav-play-lbl').textContent = '播放';
   releaseWakeLock();
+  stopSessionTimer();
+  S.sessionTotalBeats += S.beatCounter;
+  var sessionDur = (Date.now()-S.sessionStartTime)/1000;
+  S.sessionTotalTime += sessionDur;
   document.querySelectorAll('.beat-dot.bt').forEach(function(el){el.classList.remove('bt')});
   document.querySelectorAll('.sub-beat-dot.on').forEach(function(el){el.classList.remove('on')});
+}
+
+function startSessionTimer(){
+  stopSessionTimer();
+  sessionTimer = setInterval(function(){
+    if(!isPlaying)return;
+    var elapsed = Math.floor((Date.now()-S.sessionStartTime)/1000);
+    var mins = Math.floor(elapsed/60);
+    var secs = elapsed%60;
+    if(sessionTimeEl)sessionTimeEl.textContent = (mins<10?'0':'')+mins+':'+(secs<10?'0':'')+secs;
+  },1000);
+}
+
+function stopSessionTimer(){
+  if(sessionTimer){
+    clearInterval(sessionTimer);
+    sessionTimer = null;
+  }
+}
+
+function updateBeatCounterDisplay(){
+  if(!isPlaying)return;
+  S.beatCounter++;
+  if(beatCounterEl)beatCounterEl.textContent = S.beatCounter;
+  if(currentBeat===0&&S.beatCounter>0){
+    S.measureCounter++;
+    if(measureCounterEl)measureCounterEl.textContent = S.measureCounter;
+  }
+}
+
+function updatePracticeListCard(){
+  var card = $('practice-list-card');
+  var bcCard = $('beat-counter-card');
+  var qbCard = $('quick-bpm-card');
+  if(card)card.style.display = isPlaying?'none':'block';
+  if(bcCard)bcCard.style.display = isPlaying?'block':'none';
+  if(qbCard)qbCard.style.display = isPlaying?'block':'none';
 }
 
 function togglePlay(){
@@ -2125,8 +2355,8 @@ function updateAllUI(){
 }
 
 function bindEvents(){
-  $('play-btn').addEventListener('click',togglePlay);
-  $('nav-play-toggle').addEventListener('click',togglePlay);
+  $('play-btn').addEventListener('click',function(){togglePlay();updatePracticeListCard();});
+  $('nav-play-toggle').addEventListener('click',function(){togglePlay();updatePracticeListCard();});
 
   document.querySelectorAll('.step-btn').forEach(function(btn){
     btn.addEventListener('click',function(){
@@ -2329,6 +2559,14 @@ function bindEvents(){
     this.style.setProperty('--v',((this.value-1)/19*100)+'%');
   });
 
+  document.querySelectorAll('[data-quick-bpm]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var bpm = parseInt(this.dataset.quickBpm);
+      setBpm(bpm);
+      showToast('BPM: '+bpm);
+    });
+  });
+
   $('hint-close').addEventListener('click',function(){
     $('hint-bar').classList.add('hidden');
     S.hintShown = true;
@@ -2386,12 +2624,15 @@ function bindEvents(){
     if(e.code==='Space'){
       e.preventDefault();
       togglePlay();
+      updatePracticeListCard();
     }else if(e.code==='ArrowUp'){
       e.preventDefault();
       setBpm(S.bpm+(e.shiftKey?10:1));
+      showToast(S.bpm+' BPM',500);
     }else if(e.code==='ArrowDown'){
       e.preventDefault();
       setBpm(S.bpm-(e.shiftKey?10:1));
+      showToast(S.bpm+' BPM',500);
     }else if(e.code==='KeyT'){
       doTap();
     }else if(e.code==='KeyM'){
@@ -2404,7 +2645,35 @@ function bindEvents(){
       var activePage = document.querySelector('.page.active');
       if(activePage&&activePage.id!=='pg-home'){
         goToPage('pg-home');
+      }else if(isPlaying){
+        stopPlay();
+        updatePracticeListCard();
       }
+    }else if(e.code==='KeyR'){
+      if(e.ctrlKey||e.metaKey)return;
+      doTap();
+    }else if(e.code==='KeyP'){
+      if(e.ctrlKey||e.metaKey)return;
+      togglePlay();
+      updatePracticeListCard();
+    }else if(e.code==='Digit1'){
+      setBpm(60);
+      showToast('BPM: 60',500);
+    }else if(e.code==='Digit2'){
+      setBpm(80);
+      showToast('BPM: 80',500);
+    }else if(e.code==='Digit3'){
+      setBpm(100);
+      showToast('BPM: 100',500);
+    }else if(e.code==='Digit4'){
+      setBpm(120);
+      showToast('BPM: 120',500);
+    }else if(e.code==='Digit5'){
+      setBpm(140);
+      showToast('BPM: 140',500);
+    }else if(e.code==='Digit6'){
+      setBpm(160);
+      showToast('BPM: 160',500);
     }
   });
 
@@ -2427,9 +2696,13 @@ function checkAutoDark(){
 
 function init(){
   loadState();
+  beatCounterEl = $('beat-counter');
+  measureCounterEl = $('measure-counter');
+  sessionTimeEl = $('session-time');
   renderGuideSteps();
   bindEvents();
   updateAllUI();
+  initWheelBpm();
 
   if(S.autoDark){
     checkAutoDark();
@@ -2458,6 +2731,33 @@ function init(){
   }
 
   requestAnimationFrame(visualLoop);
+}
+
+function initWheelBpm(){
+  var bpmDisp = $('bpm-disp');
+  if(!bpmDisp)return;
+  bpmDisp.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var now = Date.now();
+    if(now-lastWheelTime<50)return;
+    lastWheelTime = now;
+    var delta = e.deltaY<0?1:-1;
+    if(e.shiftKey)delta *= 10;
+    setBpm(S.bpm+delta);
+    showToast(S.bpm+' BPM',500);
+  });
+  bpmDisp.addEventListener('dblclick',function(){
+    var bpmIn = $('bpm-in');
+    if(bpmIn){
+      bpmIn.style.display = 'block';
+      bpmIn.focus();
+      bpmIn.select();
+      bpmIn.addEventListener('blur',function(){
+        bpmIn.style.display = 'none';
+        setBpm(parseInt(bpmIn.value)||120);
+      },{once:true});
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded',init);

@@ -1832,7 +1832,7 @@ function clearTap(){
 }
 
 function goToPage(pageId){
-  var id = pageId.replace('pg-','');
+  var id = pageId.replace('#','').replace('pg-','');
   var pages = document.querySelectorAll('.page');
   pages.forEach(function(p){p.classList.remove('active')});
   var target = $('pg-'+id);
@@ -2362,10 +2362,10 @@ function bindEvents(){
   window.addEventListener('hashchange',function(){
     var hash = location.hash;
     if(hash&&hash.startsWith('#pg-')){
-      var page = hash.replace('#','');
+      var pageId = hash.substring(1);
       var pages = document.querySelectorAll('.page');
       pages.forEach(function(p){p.classList.remove('active')});
-      var target = $(page);
+      var target = $(pageId);
       if(target)target.classList.add('active');
     }
   });
@@ -2373,10 +2373,10 @@ function bindEvents(){
   window.addEventListener('popstate',function(){
     var hash = location.hash;
     if(hash&&hash.startsWith('#pg-')){
-      var page = hash.replace('#','');
+      var pageId = hash.substring(1);
       var pages = document.querySelectorAll('.page');
       pages.forEach(function(p){p.classList.remove('active')});
-      var target = $(page);
+      var target = $(pageId);
       if(target)target.classList.add('active');
     }
   });
@@ -2442,10 +2442,10 @@ function init(){
 
   var hash = location.hash;
   if(hash&&hash.startsWith('#pg-')){
-    var page = hash.replace('#','');
+    var pageId = hash.substring(1);
     var pages = document.querySelectorAll('.page');
     pages.forEach(function(p){p.classList.remove('active')});
-    var target = $(page);
+    var target = $(pageId);
     if(target)target.classList.add('active');
   }
 

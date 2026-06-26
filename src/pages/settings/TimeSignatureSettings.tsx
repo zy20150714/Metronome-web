@@ -27,16 +27,18 @@ const TimeSignatureSettings: React.FC = () => {
   };
 
   return (
-    <div 
-      className="min-h-screen p-4 sm:p-6"
+    <div
+      className="min-h-screen relative"
       style={{ backgroundColor: theme.background }}
     >
-      <div className="container mx-auto max-w-lg">
+      <div className="absolute inset-0 tech-bg grid-bg" />
+
+      <div className="container mx-auto max-w-lg relative z-10 p-4 sm:p-6">
         <div className="mb-8">
           <Link
             to="/settings"
-            className="inline-flex items-center gap-3 px-6 py-4 rounded-lg font-semibold transition-all duration-300"
-            style={{ 
+            className="inline-flex items-center gap-3 px-6 py-4 rounded-lg font-semibold transition-all duration-300 hover-lift"
+            style={{
               backgroundColor: theme.surface,
               color: theme.text,
               border: `1px solid ${theme.border}`,
@@ -52,46 +54,49 @@ const TimeSignatureSettings: React.FC = () => {
         </div>
 
         <div className="mb-6">
-          <h1 
+          <h1
             className="text-3xl font-bold mb-2"
-            style={{ fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : "'Inter', sans-serif", color: theme.text }}
+            style={{
+              fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : "'Inter', sans-serif",
+              color: theme.text
+            }}
           >
             🎼 拍号设置
           </h1>
           <p style={{ color: theme.textSecondary }}>调整节拍的小节数、节拍单位和细分</p>
         </div>
 
-        <div 
-          className="mb-6 p-6"
-          style={{ 
+        <div
+          className="mb-6 p-6 rounded-2xl"
+          style={{
             backgroundColor: theme.surface,
             border: `1px solid ${theme.border}`,
             borderRadius: theme.cornerRadius,
             boxShadow: theme.shadow
           }}
         >
-          <h2 
+          <h2
             className="text-lg font-semibold mb-4"
             style={{ color: theme.text }}
           >
             当前设置
           </h2>
-          
+
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <div 
+            <div
               className="p-4 rounded-xl flex flex-col items-center justify-center"
-              style={{ 
+              style={{
                 backgroundColor: `${theme.primary}15`,
                 border: `1px solid ${theme.primary}40`,
               }}
             >
-              <div 
+              <div
                 className="text-3xl font-bold"
                 style={{ color: theme.primary }}
               >
                 {currentNumerator}
               </div>
-              <div 
+              <div
                 className="text-3xl font-bold"
                 style={{ color: theme.primary }}
               >
@@ -99,9 +104,9 @@ const TimeSignatureSettings: React.FC = () => {
               </div>
             </div>
 
-            <div 
+            <div
               className="p-4 rounded-xl flex items-center justify-center"
-              style={{ 
+              style={{
                 backgroundColor: `${theme.primary}10`,
                 border: `1px solid ${theme.border}`,
               }}
@@ -111,14 +116,14 @@ const TimeSignatureSettings: React.FC = () => {
               </div>
             </div>
 
-            <div 
+            <div
               className="p-4 rounded-xl flex items-center justify-center"
-              style={{ 
+              style={{
                 backgroundColor: `${theme.primary}10`,
                 border: `1px solid ${theme.border}`,
               }}
             >
-              <div 
+              <div
                 className="text-4xl font-bold"
                 style={{ color: theme.primary }}
               >
@@ -128,21 +133,19 @@ const TimeSignatureSettings: React.FC = () => {
           </div>
 
           <div className="mb-6">
-            <div 
+            <div
               className="text-sm font-medium mb-4"
               style={{ color: theme.textSecondary }}
             >
               小节数
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-2">
+            <div className="flex flex-wrap gap-2">
               {numeratorOptions.map((num) => (
                 <button
                   key={`num-${num}`}
                   onClick={() => handleNumeratorChange(num)}
-                  className={`min-w-[50px] py-3 px-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 ${
-                    currentNumerator === num ? 'scale-105' : ''
-                  }`}
-                  style={{ 
+                  className="min-w-[50px] py-3 px-3 rounded-lg font-semibold transition-all hover:scale-105"
+                  style={{
                     backgroundColor: currentNumerator === num
                       ? theme.primary
                       : `${theme.primary}15`,
@@ -161,7 +164,7 @@ const TimeSignatureSettings: React.FC = () => {
           </div>
 
           <div className="mb-6">
-            <div 
+            <div
               className="text-sm font-medium mb-4"
               style={{ color: theme.textSecondary }}
             >
@@ -172,10 +175,8 @@ const TimeSignatureSettings: React.FC = () => {
                 <button
                   key={`den-${den}`}
                   onClick={() => handleDenominatorChange(den)}
-                  className={`flex-1 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 ${
-                    currentDenominator === den ? 'scale-105' : ''
-                  }`}
-                  style={{ 
+                  className="flex-1 py-3 rounded-lg font-semibold transition-all hover:scale-105"
+                  style={{
                     backgroundColor: currentDenominator === den
                       ? theme.primary
                       : `${theme.primary}15`,
@@ -194,22 +195,20 @@ const TimeSignatureSettings: React.FC = () => {
           </div>
 
           <div className="mb-6">
-            <div 
+            <div
               className="text-sm font-medium mb-4"
               style={{ color: theme.textSecondary }}
             >
               节拍细分
             </div>
-            <div className="flex gap-3 overflow-x-auto pb-2">
+            <div className="flex flex-wrap gap-3">
               {subdivisionConfigs.map((config) => (
                 <button
                   key={`sub-${config.value}`}
                   onClick={() => handleSubdivisionChange(config.value)}
                   title={config.description}
-                  className={`min-w-[80px] py-4 px-3 rounded-lg transition-all duration-300 flex flex-col items-center gap-2 hover:scale-105 ${
-                    state.subdivision === config.value ? 'scale-105' : ''
-                  }`}
-                  style={{ 
+                  className="min-w-[80px] py-4 px-3 rounded-lg transition-all hover:scale-105 flex flex-col items-center gap-2"
+                  style={{
                     backgroundColor: state.subdivision === config.value
                       ? theme.primary
                       : `${theme.primary}15`,
@@ -226,7 +225,7 @@ const TimeSignatureSettings: React.FC = () => {
                 </button>
               ))}
             </div>
-            <div 
+            <div
               className="text-xs mt-3"
               style={{ color: theme.textSecondary }}
             >

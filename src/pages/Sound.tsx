@@ -18,16 +18,18 @@ const Sound: React.FC = () => {
   const currentSound = soundTypes.find(s => s.id === state.soundType) || soundTypes[0];
 
   return (
-    <div 
-      className="min-h-screen p-4 sm:p-6"
+    <div
+      className="min-h-screen relative"
       style={{ backgroundColor: theme.background }}
     >
-      <div className="container mx-auto max-w-lg">
+      <div className="absolute inset-0 tech-bg grid-bg" />
+
+      <div className="container mx-auto max-w-lg relative z-10 p-4 sm:p-6">
         <div className="mb-8">
           <Link
             to="/"
-            className="inline-flex items-center gap-3 px-6 py-4 rounded-lg font-semibold transition-all duration-300"
-            style={{ 
+            className="inline-flex items-center gap-3 px-6 py-4 rounded-lg font-semibold transition-all duration-300 hover-lift"
+            style={{
               backgroundColor: theme.surface,
               color: theme.text,
               border: `1px solid ${theme.border}`,
@@ -43,27 +45,31 @@ const Sound: React.FC = () => {
         </div>
 
         <div className="mb-6">
-          <h1 
+          <h1
             className="text-3xl font-bold mb-2"
-            style={{ fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : "'Inter', sans-serif", color: theme.text }}
+            style={{
+              fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : "'Inter', sans-serif",
+              color: theme.text
+            }}
           >
             声音设置
           </h1>
           <p style={{ color: theme.textSecondary }}>选择节拍音色和调整音量</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           <Link
             to="/sound/main"
-            className="p-5 rounded-2xl transition-all hover:scale-105 group"
-            style={{ 
+            className="p-6 rounded-2xl transition-all duration-300 hover-lift"
+            style={{
               backgroundColor: theme.surface,
               border: `1px solid ${theme.border}`,
+              boxShadow: theme.shadow
             }}
           >
-            <div 
-              className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform"
-              style={{ 
+            <div
+              className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-3"
+              style={{
                 background: `linear-gradient(135deg, ${currentSound.color}20, ${currentSound.color}40)`,
                 border: `1px solid ${currentSound.color}40`,
               }}
@@ -76,7 +82,7 @@ const Sound: React.FC = () => {
             <p className="text-xs mb-2 leading-relaxed" style={{ color: theme.textSecondary }}>
               选择不同的节拍声音
             </p>
-            <div 
+            <div
               className="text-sm font-medium"
               style={{ color: currentSound.color }}
             >
@@ -86,15 +92,16 @@ const Sound: React.FC = () => {
 
           <Link
             to="/sound/main"
-            className="p-5 rounded-2xl transition-all hover:scale-105 group"
-            style={{ 
+            className="p-6 rounded-2xl transition-all duration-300 hover-lift"
+            style={{
               backgroundColor: theme.surface,
               border: `1px solid ${theme.border}`,
+              boxShadow: theme.shadow
             }}
           >
-            <div 
-              className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform"
-              style={{ 
+            <div
+              className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-3"
+              style={{
                 background: `linear-gradient(135deg, ${theme.primary}20, ${theme.glow}40)`,
                 border: `1px solid ${theme.primary}40`,
               }}
@@ -107,7 +114,7 @@ const Sound: React.FC = () => {
             <p className="text-xs mb-2 leading-relaxed" style={{ color: theme.textSecondary }}>
               调整重音和普通音量
             </p>
-            <div 
+            <div
               className="text-sm font-medium"
               style={{ color: theme.primary }}
             >

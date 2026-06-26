@@ -30,18 +30,16 @@ const SoundSettings: React.FC = () => {
   };
 
   return (
-    <div
-      className="min-h-screen relative"
+    <div 
+      className="min-h-screen p-4 sm:p-6"
       style={{ backgroundColor: theme.background }}
     >
-      <div className="absolute inset-0 tech-bg grid-bg" />
-
-      <div className="container mx-auto max-w-lg relative z-10 p-4 sm:p-6">
+      <div className="container mx-auto max-w-lg">
         <div className="mb-8">
           <Link
             to="/sound"
-            className="inline-flex items-center gap-3 px-6 py-4 rounded-lg font-semibold transition-all duration-300 hover-lift"
-            style={{
+            className="inline-flex items-center gap-3 px-6 py-4 rounded-lg font-semibold transition-all duration-300"
+            style={{ 
               backgroundColor: theme.surface,
               color: theme.text,
               border: `1px solid ${theme.border}`,
@@ -57,34 +55,31 @@ const SoundSettings: React.FC = () => {
         </div>
 
         <div className="mb-6">
-          <h1
+          <h1 
             className="text-3xl font-bold mb-2"
-            style={{
-              fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : "'Inter', sans-serif",
-              color: theme.text
-            }}
+            style={{ fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : "'Inter', sans-serif", color: theme.text }}
           >
             🔊 声音设置
           </h1>
           <p style={{ color: theme.textSecondary }}>调整节拍音色和音量</p>
         </div>
 
-        <div
-          className="mb-6 p-6 rounded-2xl"
-          style={{
+        <div 
+          className="mb-6 p-6"
+          style={{ 
             backgroundColor: theme.surface,
             border: `1px solid ${theme.border}`,
             borderRadius: theme.cornerRadius,
             boxShadow: theme.shadow
           }}
         >
-          <h2
+          <h2 
             className="text-lg font-semibold mb-4"
             style={{ color: theme.text }}
           >
             节拍音色
           </h2>
-          <div className="grid grid-cols-5 gap-3">
+          <div className="grid grid-cols-5 gap-2">
             {soundTypes.map((sound) => (
               <button
                 key={sound.id}
@@ -98,7 +93,7 @@ const SoundSettings: React.FC = () => {
                 }}
               >
                 <div className="text-2xl mb-2">{sound.icon}</div>
-                <div
+                <div 
                   className="text-xs font-medium"
                   style={{ color: state.soundType === sound.id ? theme.primary : theme.text }}
                 >
@@ -109,16 +104,16 @@ const SoundSettings: React.FC = () => {
           </div>
         </div>
 
-        <div
-          className="mb-6 p-6 rounded-2xl"
-          style={{
+        <div 
+          className="mb-6 p-6"
+          style={{ 
             backgroundColor: theme.surface,
             border: `1px solid ${theme.border}`,
             borderRadius: theme.cornerRadius,
             boxShadow: theme.shadow
           }}
         >
-          <h2
+          <h2 
             className="text-lg font-semibold mb-4"
             style={{ color: theme.text }}
           >
@@ -128,7 +123,7 @@ const SoundSettings: React.FC = () => {
             <button
               onClick={() => handleAccentVolumeChange(-5)}
               className="w-12 h-12 rounded-full font-bold text-xl transition-all hover:scale-110"
-              style={{
+              style={{ 
                 backgroundColor: '#ef444415',
                 color: theme.text,
                 border: `1px solid ${theme.border}`
@@ -136,9 +131,9 @@ const SoundSettings: React.FC = () => {
             >
               -
             </button>
-            <div
+            <div 
               className="flex-1 py-4 px-4 rounded-xl text-center text-2xl font-bold"
-              style={{
+              style={{ 
                 backgroundColor: '#ef444410',
                 color: '#ef4444'
               }}
@@ -148,7 +143,7 @@ const SoundSettings: React.FC = () => {
             <button
               onClick={() => handleAccentVolumeChange(5)}
               className="w-12 h-12 rounded-full font-bold text-xl transition-all hover:scale-110"
-              style={{
+              style={{ 
                 backgroundColor: '#ef444415',
                 color: theme.text,
                 border: `1px solid ${theme.border}`
@@ -164,22 +159,22 @@ const SoundSettings: React.FC = () => {
             value={state.volume.accent}
             onChange={(e) => dispatch({ type: 'SET_VOLUME', payload: { accent: parseInt(e.target.value) } })}
             className="w-full mt-4 h-2 rounded-full appearance-none cursor-pointer"
-            style={{
+            style={{ 
               background: `linear-gradient(to right, #ef4444 0%, #ef4444 ${state.volume.accent}%, ${theme.border} ${state.volume.accent}%, ${theme.border} 100%)`,
             }}
           />
         </div>
 
-        <div
-          className="p-6 rounded-2xl"
-          style={{
+        <div 
+          className="p-6"
+          style={{ 
             backgroundColor: theme.surface,
             border: `1px solid ${theme.border}`,
             borderRadius: theme.cornerRadius,
             boxShadow: theme.shadow
           }}
         >
-          <h2
+          <h2 
             className="text-lg font-semibold mb-4"
             style={{ color: theme.text }}
           >
@@ -189,7 +184,7 @@ const SoundSettings: React.FC = () => {
             <button
               onClick={() => handleNormalVolumeChange(-5)}
               className="w-12 h-12 rounded-full font-bold text-xl transition-all hover:scale-110"
-              style={{
+              style={{ 
                 backgroundColor: `${theme.primary}15`,
                 color: theme.text,
                 border: `1px solid ${theme.border}`
@@ -197,9 +192,9 @@ const SoundSettings: React.FC = () => {
             >
               -
             </button>
-            <div
+            <div 
               className="flex-1 py-4 px-4 rounded-xl text-center text-2xl font-bold"
-              style={{
+              style={{ 
                 backgroundColor: `${theme.primary}10`,
                 color: theme.primary
               }}
@@ -209,7 +204,7 @@ const SoundSettings: React.FC = () => {
             <button
               onClick={() => handleNormalVolumeChange(5)}
               className="w-12 h-12 rounded-full font-bold text-xl transition-all hover:scale-110"
-              style={{
+              style={{ 
                 backgroundColor: `${theme.primary}15`,
                 color: theme.text,
                 border: `1px solid ${theme.border}`
@@ -225,7 +220,7 @@ const SoundSettings: React.FC = () => {
             value={state.volume.normal}
             onChange={(e) => dispatch({ type: 'SET_VOLUME', payload: { normal: parseInt(e.target.value) } })}
             className="w-full mt-4 h-2 rounded-full appearance-none cursor-pointer"
-            style={{
+            style={{ 
               background: `linear-gradient(to right, ${theme.primary} 0%, ${theme.primary} ${state.volume.normal}%, ${theme.border} ${state.volume.normal}%, ${theme.border} 100%)`,
             }}
           />

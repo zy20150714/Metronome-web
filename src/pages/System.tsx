@@ -8,18 +8,16 @@ const System: React.FC = () => {
   const [showMusicTheory, setShowMusicTheory] = useState(false);
 
   return (
-    <div
-      className="min-h-screen relative"
+    <div 
+      className="min-h-screen p-4 sm:p-6"
       style={{ backgroundColor: theme.background }}
     >
-      <div className="absolute inset-0 tech-bg grid-bg" />
-
-      <div className="container mx-auto max-w-lg relative z-10 p-4 sm:p-6">
+      <div className="container mx-auto max-w-lg">
         <div className="mb-8">
           <Link
             to="/"
-            className="inline-flex items-center gap-3 px-6 py-4 rounded-lg font-semibold transition-all duration-300 hover-lift"
-            style={{
+            className="inline-flex items-center gap-3 px-6 py-4 rounded-lg font-semibold transition-all duration-300"
+            style={{ 
               backgroundColor: theme.surface,
               color: theme.text,
               border: `1px solid ${theme.border}`,
@@ -35,23 +33,22 @@ const System: React.FC = () => {
         </div>
 
         <div className="mb-6">
-          <h1
+          <h1 
             className="text-3xl font-bold mb-2"
-            style={{
-              fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : "'Inter', sans-serif",
-              color: theme.text
-            }}
+            style={{ fontFamily: theme.id === 'tech' ? "'Orbitron', monospace" : "'Inter', sans-serif", color: theme.text }}
           >
             系统设置
           </h1>
           <p style={{ color: theme.textSecondary }}>应用设置和帮助信息</p>
         </div>
 
-        <div className="mb-6">
+        <div 
+          className="mb-6"
+        >
           <button
             onClick={() => setShowTutorial(!showTutorial)}
-            className="w-full p-6 text-left transition-all duration-300 hover-lift rounded-2xl"
-            style={{
+            className="w-full p-6 text-left transition-all duration-300"
+            style={{ 
               backgroundColor: theme.surface,
               border: `1px solid ${theme.border}`,
               borderRadius: theme.cornerRadius,
@@ -60,8 +57,8 @@ const System: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center"
+                <div 
+                  className="w-12 h-12 rounded-lg flex items-center justify-center"
                   style={{ background: `${theme.primary}20` }}
                 >
                   <svg className="w-6 h-6" style={{ color: theme.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,11 +67,11 @@ const System: React.FC = () => {
                 </div>
                 <span className="font-semibold" style={{ color: theme.text }}>使用教程</span>
               </div>
-              <svg
-                className={`w-5 h-5 transition-transform duration-300 ${showTutorial ? 'rotate-180' : ''}`}
-                style={{ color: theme.textSecondary }}
-                fill="none"
-                stroke="currentColor"
+              <svg 
+                className={`w-5 h-5 transition-transform duration-300 ${showTutorial ? 'rotate-180' : ''}`} 
+                style={{ color: theme.textSecondary }} 
+                fill="none" 
+                stroke="currentColor" 
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -105,11 +102,13 @@ const System: React.FC = () => {
           </button>
         </div>
 
-        <div className="mb-6">
+        <div 
+          className="mb-6"
+        >
           <button
             onClick={() => setShowMusicTheory(!showMusicTheory)}
-            className="w-full p-6 text-left transition-all duration-300 hover-lift rounded-2xl"
-            style={{
+            className="w-full p-6 text-left transition-all duration-300"
+            style={{ 
               backgroundColor: theme.surface,
               border: `1px solid ${theme.border}`,
               borderRadius: theme.cornerRadius,
@@ -118,8 +117,8 @@ const System: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center"
+                <div 
+                  className="w-12 h-12 rounded-lg flex items-center justify-center"
                   style={{ background: `${theme.primary}20` }}
                 >
                   <svg className="w-6 h-6" style={{ color: theme.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,11 +127,11 @@ const System: React.FC = () => {
                 </div>
                 <span className="font-semibold" style={{ color: theme.text }}>乐理知识</span>
               </div>
-              <svg
-                className={`w-5 h-5 transition-transform duration-300 ${showMusicTheory ? 'rotate-180' : ''}`}
-                style={{ color: theme.textSecondary }}
-                fill="none"
-                stroke="currentColor"
+              <svg 
+                className={`w-5 h-5 transition-transform duration-300 ${showMusicTheory ? 'rotate-180' : ''}`} 
+                style={{ color: theme.textSecondary }} 
+                fill="none" 
+                stroke="currentColor" 
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -166,9 +165,9 @@ const System: React.FC = () => {
           </button>
         </div>
 
-        <div
-          className="p-6 rounded-2xl"
-          style={{
+        <div 
+          className="p-6"
+          style={{ 
             backgroundColor: theme.surface,
             border: `1px solid ${theme.border}`,
             borderRadius: theme.cornerRadius,
@@ -176,8 +175,8 @@ const System: React.FC = () => {
           }}
         >
           <div className="flex items-center gap-4">
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center"
+            <div 
+              className="w-12 h-12 rounded-lg flex items-center justify-center"
               style={{ background: `${theme.primary}20` }}
             >
               <svg className="w-6 h-6" style={{ color: theme.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24">

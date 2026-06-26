@@ -3,24 +3,26 @@ import { Link } from 'react-router-dom';
 import { useMetronome } from '../contexts/MetronomeContext';
 import { useMetronomePlayback } from '../hooks/useMetronomePlayback';
 import { useTheme } from '../contexts/ThemeContext';
-import BeatDisplay from '../components/BeatDisplay/BeatDisplay';
-import ControlPanel from '../components/ControlPanel/ControlPanel';
 
 const Home: React.FC = () => {
   useMetronomePlayback();
   const { state, dispatch } = useMetronome();
   const { theme } = useTheme();
 
+  const totalBeats = parseInt(state.timeSignature.split('/')[0]);
+
   const handleBPMChange = (value: number) => {
     dispatch({ type: 'SET_BPM', payload: Math.max(30, Math.min(300, value)) });
   };
 
-  return (
-    <div className="min-h-screen relative overflow-hidden pb-24" style={{ backgroundColor: theme.background }}>
-      <div className="absolute inset-0 tech-bg grid-bg" />
+  const handleTogglePlay = () => {
+    dispatch({ type: 'TOGGLE_PLAY' });
+  };
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl relative z-10">
-        <div className="text-center mb-8">
+  return (
+    <div className="min-h-screen relative overflow-hidden pb-24">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="text-center mb-12">
           <h1
             className="text-4xl md:text-5xl font-bold mb-3"
             style={{
@@ -39,9 +41,87 @@ const Home: React.FC = () => {
           </p>
         </div>
 
-        <BeatDisplay />
+        <div
+          className="p-8 mb-8 text-center"
+          style={{
+            backgroundColor: theme.surface,
+            borderRadius: '16px',
+            border: `1px solid ${theme.border}`,
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+          }}
+        >
+          <div
+            className="text-[72px] md:text-[88px] font-bold mb-2"
+            style={{
+              fontFamily: "'Orbitron', monospace",
+              background: theme.gradient,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}
+          >
+            {state.bpm}
+          </div>
+          <div
+            className="tracking-widest uppercase text-sm"
+            style={{ color: theme.textSecondary }}
+          >
+            每分钟节拍数
+          </div>
+        </div>
 
-        <ControlPanel />
+        <div
+          className="p-6 mb-8"
+          style={{
+            backgroundColor: theme.surface,
+            borderRadius: '16px',
+            border: `1px solid ${theme.border}`,
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+          }}
+        >
+          <div className="flex items-center justify-between mb-6">
+            <span style={{ color: theme.textSecondary, fontSize: '12px', letterSpacing: '0.1em' }}>
+              拍号
+            </span>
+            <span
+              className="text-2xl font-bold"
+              style={{
+                fontFamily: "'Orbitron', monospace",
+                color: theme.primary
+              }}
+            >
+              {state.timeSignature}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-center gap-3 md:gap-4">
+            {Array.from({ length: totalBeats }).map((_, i) => {
+              const beatNum = i + 1;
+              const isCurrent = beatNum === state.currentBeat;
+              const isAccent = beatNum === 1;
+
+              return (
+                <div
+                  key={beatNum}
+                  className="w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center font-bold text-lg transition-all duration-200"
+                  style={{
+                    backgroundColor: isCurrent
+                      ? isAccent ? theme.primary : theme.secondary
+                      : isAccent
+                        ? `${theme.primary}33`
+                        : `${theme.text}11`,
+                    border: isCurrent ? 'none' : `1px solid ${theme.border}`,
+                    boxShadow: isCurrent ? `0 0 15px ${theme.glow}` : 'none',
+                    transform: isCurrent ? 'scale(1.1)' : 'scale(1)',
+                    color: isCurrent ? '#ffffff' : theme.textSecondary
+                  }}
+                >
+                  {beatNum}
+                </div>
+              );
+            })}
+          </div>
+        </div>
 
         <div
           className="p-6 mb-8"
@@ -101,15 +181,29 @@ const Home: React.FC = () => {
           </div>
         </div>
 
+        <div className="flex justify-center mb-10">
+          <button
+            onClick={handleTogglePlay}
+            className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center transition-all duration-300"
+            style={{
+              background: state.isPlaying
+                ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                : theme.gradient,
+              boxShadow: state.isPlaying ? 'none' : `0 0 30px ${theme.glow}`
+            }}
+          >
+            <div className="w-0 h-0 border-t-[18px] border-t-transparent border-l-[32px] border-l-white border-b-[18px] border-b-transparent md:border-t-[20px] md:border-l-[36px] md:border-b-[20px] ml-1" />
+          </button>
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           <Link
             to="/settings"
-            className="p-6 text-center transition-all duration-300 hover-lift"
+            className="p-6 text-center transition-all duration-300"
             style={{
               backgroundColor: theme.surface,
               borderRadius: '16px',
-              border: `1px solid ${theme.border}`,
-              boxShadow: theme.shadow
+              border: `1px solid ${theme.border}`
             }}
           >
             <div className="text-3xl mb-2">⚙️</div>
@@ -118,12 +212,11 @@ const Home: React.FC = () => {
 
           <Link
             to="/sound"
-            className="p-6 text-center transition-all duration-300 hover-lift"
+            className="p-6 text-center transition-all duration-300"
             style={{
               backgroundColor: theme.surface,
               borderRadius: '16px',
-              border: `1px solid ${theme.border}`,
-              boxShadow: theme.shadow
+              border: `1px solid ${theme.border}`
             }}
           >
             <div className="text-3xl mb-2">🔊</div>
@@ -132,12 +225,11 @@ const Home: React.FC = () => {
 
           <Link
             to="/themes"
-            className="p-6 text-center transition-all duration-300 hover-lift"
+            className="p-6 text-center transition-all duration-300"
             style={{
               backgroundColor: theme.surface,
               borderRadius: '16px',
-              border: `1px solid ${theme.border}`,
-              boxShadow: theme.shadow
+              border: `1px solid ${theme.border}`
             }}
           >
             <div className="text-3xl mb-2">🎨</div>
@@ -146,12 +238,11 @@ const Home: React.FC = () => {
 
           <Link
             to="/system"
-            className="p-6 text-center transition-all duration-300 hover-lift"
+            className="p-6 text-center transition-all duration-300"
             style={{
               backgroundColor: theme.surface,
               borderRadius: '16px',
-              border: `1px solid ${theme.border}`,
-              boxShadow: theme.shadow
+              border: `1px solid ${theme.border}`
             }}
           >
             <div className="text-3xl mb-2">🔧</div>

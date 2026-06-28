@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover"/>
+<meta name="theme-color" content="#6366f1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<title>节拍器 Pro · v13</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;width:100%;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","SF Pro Display",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  line-height:1.5;background:var(--bg);color:var(--text);font-size:15px;
+  transition:background .5s ease,color .5s ease;
+  user-select:none;-webkit-user-select:none}
+button{font-family:inherit;border:0;cursor:pointer;background:none;color:inherit}
+input,select{font-family:inherit}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]{-moz-appearance:textfield}
+::-webkit-scrollbar{width:0;height:0}
+a{text-decoration:none;color:inherit}
+svg{display:block}
+
+:root{
+  --primary:#6366f1;--primary-rgb:99,102,241;--primary-light:#818cf8;--primary-dark:#4338ca;
+  --secondary:#8b5cf6;--secondary-rgb:139,92,246;
+  --accent:#ec4899;--accent-rgb:236,72,153;
+  --bg:#f8fafc;--surface:#ffffff;--surface-2:#f1f5f9;--surface-3:#e2e8f0;
+  --text:#0f172a;--text-sec:#475569;--text-muted:#94a3b8;
+  --border:rgba(15,23,42,.06);--border-strong:rgba(15,23,42,.12);
+  --glow:rgba(99,102,241,.25);
+  --shadow-xs:0 1px 2px rgba(15,23,42,.04);
+  --shadow-sm:0 2px 8px rgba(15,23,42,.06);
+  --shadow-md:0 8px 24px rgba(15,23,42,.08);
+  --shadow-lg:0 16px 40px rgba(15,23,42,.12);
+  --shadow-xl:0 24px 56px rgba(0,0,0,.25);
+  --shadow-primary:0 8px 32px var(--glow);
+  --r-xl:28px;--r-lg:20px;--r-md:16px;--r-sm:12px;--r-xs:8px;
+  --header-h:52px;--nav-h:70px;
+  --fast:.15s cubic-bezier(.4,0,.2,1);
+  --trans:.3s cubic-bezier(.2,.8,.2,1);
+  --bounce:cubic-bezier(.34,1.56,.64,1);
+}
+
+body.t-indigo{--primary:#6366f1;--primary-rgb:99,102,241;--primary-light:#818cf8;--primary-dark:#4338ca;--secondary:#8b5cf6;--secondary-rgb:139,92,246;--accent:#ec4899;--accent-rgb:236,72,153;--bg:#f8fafc;--surface:#ffffff;--surface-2:#f1f5f9;--surface-3:#e2e8f0;--text:#0f172a;--text-sec:#475569;--text-muted:#94a3b8;--border:rgba(15,23,42,.06);--border-strong:rgba(15,23,42,.12);--glow:rgba(99,102,241,.3)}
+body.t-rose{--primary:#e11d48;--primary-rgb:225,29,72;--primary-light:#fb7185;--primary-dark:#be123c;--secondary:#f43f5e;--secondary-rgb:244,63,94;--accent:#f97316;--accent-rgb:249,115,22;--bg:#fff1f2;--surface:#ffffff;--surface-2:#ffe4e6;--surface-3:#fecdd3;--text:#881337;--text-sec:#9f1239;--text-muted:#fb7185;--border:rgba(190,18,60,.08);--border-strong:rgba(190,18,60,.15);--glow:rgba(225,29,72,.3)}
+body.t-emerald{--primary:#059669;--primary-rgb:5,150,105;--primary-light:#34d399;--primary-dark:#047857;--secondary:#10b981;--secondary-rgb:16,185,129;--accent:#14b8a6;--accent-rgb:20,184,166;--bg:#ecfdf5;--surface:#ffffff;--surface-2:#d1fae5;--surface-3:#a7f3d0;--text:#064e3b;--text-sec:#065f46;--text-muted:#34d399;--border:rgba(4,120,87,.08);--border-strong:rgba(4,120,87,.15);--glow:rgba(5,150,105,.3)}
+body.t-amber{--primary:#d97706;--primary-rgb:217,119,6;--primary-light:#fbbf24;--primary-dark:#b45309;--secondary:#f59e0b;--secondary-rgb:245,158,11;--accent:#f97316;--accent-rgb:249,115,22;--bg:#fffbeb;--surface:#ffffff;--surface-2:#fef3c7;--surface-3:#fde68a;--text:#78350f;--text-sec:#92400e;--text-muted:#f59e0b;--border:rgba(180,83,9,.1);--border-strong:rgba(180,83,9,.18);--glow:rgba(217,119,6,.35)}
+body.t-sky{--primary:#0284c7;--primary-rgb:2,132,199;--primary-light:#38bdf8;--primary-dark:#0369a1;--secondary:#0ea5e9;--secondary-rgb:14,165,233;--accent:#6366f1;--accent-rgb:99,102,241;--bg:#f0f9ff;--surface:#ffffff;--surface-2:#e0f2fe;--surface-3:#bae6fd;--text:#0c4a6e;--text-sec:#075985;--text-muted:#0ea5e9;--border:rgba(3,105,161,.08);--border-strong:rgba(3,105,161,.15);--glow:rgba(2,132,199,.3)}
+body.t-violet{--primary:#7c3aed;--primary-rgb:124,58,237;--primary-light:#a78bfa;--primary-dark:#5b21b6;--secondary:#8b5cf6;--secondary-rgb:139,92,246;--accent:#ec4899;--accent-rgb:236,72,153;--bg:#faf5ff;--surface:#ffffff;--surface-2:#ede9fe;--surface-3:#ddd6fe;--text:#4c1d95;--text-sec:#5b21b6;--text-muted:#8b5cf6;--border:rgba(91,33,182,.08);--border-strong:rgba(91,33,182,.16);--glow:rgba(124,58,237,.32)}
+body.t-teal{--primary:#0d9488;--primary-rgb:13,148,136;--primary-light:#2dd4bf;--primary-dark:#0f766e;--secondary:#14b8a6;--secondary-rgb:20,184,166;--accent:#06b6d4;--accent-rgb:6,182,212;--bg:#f0fdfa;--surface:#ffffff;--surface-2:#ccfbf1;--surface-3:#99f6e4;--text:#134e4a;--text-sec:#115e59;--text-muted:#14b8a6;--border:rgba(15,118,110,.08);--border-strong:rgba(15,118,110,.15);--glow:rgba(13,148,136,.3)}
+body.t-pink{--primary:#db2777;--primary-rgb:219,39,119;--primary-light:#f472b6;--primary-dark:#be185d;--secondary:#ec4899;--secondary-rgb:236,72,153;--accent:#a855f7;--accent-rgb:168,85,247;--bg:#fdf2f8;--surface:#ffffff;--surface-2:#fce7f3;--surface-3:#fbcfe8;--text:#831843;--text-sec:#9d174d;--text-muted:#ec4899;--border:rgba(190,24,93,.08);--border-strong:rgba(190,24,93,.16);--glow:rgba(219,39,119,.32)}
+body.t-cyan{--primary:#0891b2;--primary-rgb:8,145,178;--primary-light:#22d3ee;--primary-dark:#0e7490;--secondary:#06b6d4;--secondary-rgb:6,182,212;--accent:#3b82f6;--accent-rgb:59,130,246;--bg:#ecfeff;--surface:#ffffff;--surface-2:#cffafe;--surface-3:#a5f3fc;--text:#164e63;--text-sec:#155e75;--text-muted:#0891b2;--border:rgba(14,116,144,.08);--border-strong:rgba(14,116,144,.15);--glow:rgba(8,145,178,.3)}
+body.t-fuchsia{--primary:#c026d3;--primary-rgb:192,38,211;--primary-light:#e879f9;--primary-dark:#a21caf;--secondary:#d946ef;--secondary-rgb:217,70,239;--accent:#ec4899;--accent-rgb:236,72,153;--bg:#fdf4ff;--surface:#ffffff;--surface-2:#fae8ff;--surface-3:#f5d0fe;--text:#701a75;--text-sec:#86198f;--text-muted:#c026d3;--border:rgba(162,28,175,.08);--border-strong:rgba(162,28,175,.16);--glow:rgba(192,38,211,.32)}
+body.t-orange{--primary:#ea580c;--primary-rgb:234,88,12;--primary-light:#fb923c;--primary-dark:#c2410c;--secondary:#f97316;--secondary-rgb:249,115,22;--accent:#eab308;--accent-rgb:234,179,8;--bg:#fff7ed;--surface:#ffffff;--surface-2:#ffedd5;--surface-3:#fed7aa;--text:#7c2d12;--text-sec:#9a3412;--text-muted:#f97316;--border:rgba(194,65,12,.1);--border-strong:rgba(194,65,12,.18);--glow:rgba(234,88,12,.35)}
+body.t-lime{--primary:#65a30d;--primary-rgb:101,163,13;--primary-light:#a3e635;--primary-dark:#4d7c0f;--secondary:#84cc16;--secondary-rgb:132,204,22;--accent:#10b981;--accent-rgb:16,185,129;--bg:#f7fee7;--surface:#ffffff;--surface-2:#ecfccb;--surface-3:#d9f99d;--text:#365314;--text-sec:#3f6212;--text-muted:#84cc16;--border:rgba(77,124,15,.1);--border-strong:rgba(77,124,15,.16);--glow:rgba(101,163,13,.32)}
+body.t-blue{--primary:#2563eb;--primary-rgb:37,99,235;--primary-light:#60a5fa;--primary-dark:#1d4ed8;--secondary:#3b82f6;--secondary-rgb:59,130,246;--accent:#06b6d4;--accent-rgb:6,182,212;--bg:#eff6ff;--surface:#ffffff;--surface-2:#dbeafe;--surface-3:#bfdbfe;--text:#1e3a8a;--text-sec:#1e40af;--text-muted:#3b82f6;--border:rgba(29,78,216,.08);--border-strong:rgba(29,78,216,.15);--glow:rgba(37,99,235,.3)}
+body.t-red{--primary:#dc2626;--primary-rgb:220,38,38;--primary-light:#f87171;--primary-dark:#b91c1c;--secondary:#ef4444;--secondary-rgb:239,68,68;--accent:#f97316;--accent-rgb:249,115,22;--bg:#fef2f2;--surface:#ffffff;--surface-2:#fee2e2;--surface-3:#fecaca;--text:#7f1d1d;--text-sec:#991b1b;--text-muted:#ef4444;--border:rgba(185,28,28,.1);--border-strong:rgba(185,28,28,.16);--glow:rgba(220,38,38,.32)}
+body.t-green{--primary:#16a34a;--primary-rgb:22,163,74;--primary-light:#4ade80;--primary-dark:#15803d;--secondary:#22c55e;--secondary-rgb:34,197,94;--accent:#84cc16;--accent-rgb:132,204,22;--bg:#f0fdf4;--surface:#ffffff;--surface-2:#dcfce7;--surface-3:#bbf7d0;--text:#14532d;--text-sec:#166534;--text-muted:#22c55e;--border:rgba(21,128,61,.08);--border-strong:rgba(21,128,61,.15);--glow:rgba(22,163,74,.3)}
+body.t-purple{--primary:#9333ea;--primary-rgb:147,51,234;--primary-light:#c084fc;--primary-dark:#7e22ce;--secondary:#a855f7;--secondary-rgb:168,85,247;--accent:#ec4899;--accent-rgb:236,72,153;--bg:#faf5ff;--surface:#ffffff;--surface-2:#f3e8ff;--surface-3:#e9d5ff;--text:#581c87;--text-sec:#6b21a8;--text-muted:#a855f7;--border:rgba(126,34,206,.08);--border-strong:rgba(126,34,206,.16);--glow:rgba(147,51,234,.3)}
+body.t-slate{--primary:#475569;--primary-rgb:71,85,105;--primary-light:#94a3b8;--primary-dark:#334155;--secondary:#64748b;--secondary-rgb:100,116,139;--accent:#0ea5e9;--accent-rgb:14,165,233;--bg:#f8fafc;--surface:#ffffff;--surface-2:#f1f5f9;--surface-3:#cbd5e1;--text:#0f172a;--text-sec:#334155;--text-muted:#64748b;--border:rgba(51,65,85,.08);--border-strong:rgba(51,65,85,.15);--glow:rgba(71,85,105,.25)}
+body.t-zinc{--primary:#3f3f46;--primary-rgb:63,63,70;--primary-light:#71717a;--primary-dark:#27272a;--secondary:#52525b;--secondary-rgb:82,82,91;--accent:#f59e0b;--accent-rgb:245,158,11;--bg:#fafafa;--surface:#ffffff;--surface-2:#f4f4f5;--surface-3:#e4e4e7;--text:#18181b;--text-sec:#3f3f46;--text-muted:#71717a;--border:rgba(39,39,42,.08);--border-strong:rgba(39,39,42,.14);--glow:rgba(63,63,70,.25)}
+
+body.dk{
+  --bg:#0b1020;--surface:#161c32;--surface-2:#111729;--surface-3:#1f2744;
+  --text:#e8edf5;--text-sec:#9aabc7;--text-muted:#5a6a8a;
+  --border:rgba(255,255,255,.07);--border-strong:rgba(255,255,255,.12);
+  --shadow-xs:0 1px 2px rgba(0,0,0,.4);
+  --shadow-sm:0 2px 8px rgba(0,0,0,.45);
+  --shadow-md:0 8px 24px rgba(0,0,0,.5);
+  --shadow-lg:0 16px 40px rgba(0,0,0,.55);
+  --shadow-xl:0 24px 56px rgba(0,0,0,.6);
+}
+
+.app{position:fixed;inset:0;max-width:520px;margin:0 auto;display:flex;flex-direction:column;
+  background:var(--bg);z-index:1}
+@media(min-width:560px){
+  body{background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;padding:16px}
+  .app{position:relative;border-radius:36px;inset:auto;width:100%;height:min(840px,calc(100vh - 32px));
+    border:1px solid rgba(255,255,255,.08);box-shadow:0 40px 80px rgba(0,0,0,.5);overflow:hidden}
+}
+
+.bg-glow{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bg-glow::before{content:"";position:absolute;top:-30%;left:-20%;width:140%;height:60%;
+  background:radial-gradient(ellipse at center,rgba(var(--primary-rgb),.12) 0%,transparent 70%);border-radius:50%}
+.bg-glow::after{content:"";position:absolute;bottom:-20%;right:-10%;width:80%;height:50%;
+  background:radial-gradient(ellipse at center,rgba(var(--secondary-rgb),.08) 0%,transparent 65%);border-radius:50%}
+
+.header{position:relative;z-index:50;flex-shrink:0;height:var(--header-h);
+  padding:env(safe-area-inset-top,0px) 16px 0;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--surface);border-bottom:1px solid var(--border)}
+.header-c{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}
+.header-title{font-size:1.05em;font-weight:800;color:var(--text);letter-spacing:.2px}
+.header-logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--secondary));
+  display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:var(--shadow-primary)}
+.header-logo svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.btn-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-sec);transition:background var(--fast),color var(--fast);flex-shrink:0;position:relative;overflow:hidden}
+.btn-icon::after{content:"";position:absolute;inset:0;background:var(--primary);opacity:0;transition:opacity var(--fast);border-radius:12px}
+.btn-icon:active::after{opacity:1}
+.btn-icon svg{position:relative;z-index:1}
+.btn-icon svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.btn-icon.hidden{visibility:hidden}
+
+.scroll-wrap{flex:1;position:relative;overflow:hidden;z-index:1;-webkit-overflow-scrolling:touch}
+.page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:8px 14px calc(96px + env(safe-area-inset-bottom,0px));
+  opacity:0;visibility:hidden;transition:opacity .2s ease,visibility 0s linear .2s}
+.page.active{opacity:1;visibility:visible;transition-delay:0s}
+
+.nav{flex-shrink:0;position:relative;z-index:60;
+  padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));
+  background:var(--surface);border-top:1px solid var(--border);
+  display:flex;gap:2px}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:8px 2px;border-radius:14px;color:var(--text-muted);transition:color var(--fast);cursor:pointer;position:relative}
+.nav-item::after{content:"";position:absolute;inset:0;background:rgba(var(--primary-rgb),.08);border-radius:14px;opacity:0;transition:opacity var(--fast)}
+.nav-item:active::after{opacity:1}
+.nav-item.on{color:var(--primary)}
+.nav-item.on .nav-ic{background:linear-gradient(135deg,rgba(var(--primary-rgb),.15),rgba(var(--secondary-rgb),.1));color:var(--primary)}
+.nav-ic,.nav-lbl{position:relative;z-index:1}
+.nav-ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;transition:all var(--fast)}
+.nav-ic svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.nav-lbl{font-size:.65em;font-weight:700}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:14px;margin-bottom:8px;box-shadow:0 1px 2px rgba(0,0,0,.03),0 4px 12px rgba(0,0,0,.04);position:relative;overflow:hidden;transition:all var(--fast)}
+.card-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.card-ic{width:32px;height:32px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(var(--primary-rgb),.12),rgba(var(--secondary-rgb),.08));
+  color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-ic svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.card-t{font-size:.92em;font-weight:800;color:var(--text);flex:1}
+.card-sub{color:var(--text-muted);font-size:.75em;margin-top:-8px;margin-bottom:10px}
+
+.bpm-card{background:linear-gradient(165deg,var(--surface) 0%,var(--surface-2) 100%);
+  border:1px solid var(--border);border-radius:var(--r-xl);padding:10px 16px 6px;
+  box-shadow:var(--shadow-lg);text-align:center;position:relative;overflow:hidden;margin-bottom:4px}
+.bpm-card::before{content:"";position:absolute;top:-40%;left:50%;transform:translateX(-50%);
+  width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(var(--primary-rgb),.15) 0%,transparent 60%);pointer-events:none}
+.pendulum-wrap{position:relative;height:42px;margin-bottom:2px;display:flex;align-items:center;justify-content:center}
+.pendulum{width:3px;height:44px;background:linear-gradient(180deg,var(--primary) 0%,var(--secondary) 100%);
+  border-radius:2px;position:relative;transform-origin:top center;transition:transform 0s linear}
+.pendulum::after{content:"";position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+  width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));
+  box-shadow:0 2px 8px var(--glow)}
+.pendulum-arc{position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:80px;height:40px;border-top:2px solid var(--border);border-radius:40px 40px 0 0;opacity:.5}
+.bpm-num{font-size:3.2em;font-weight:900;line-height:1;letter-spacing:-3px;
+  font-variant-numeric:tabular-nums;position:relative;display:inline-block;cursor:pointer;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  transition:filter .12s ease;margin-top:2px}
+.bpm-num.flash{filter:brightness(1.3) drop-shadow(0 0 12px var(--glow))}
+.bpm-unit{color:var(--text-muted);font-size:.65em;letter-spacing:5px;margin-top:1px;
+  text-transform:uppercase;font-weight:700;display:block}
+.bpm-speed{color:var(--primary);font-weight:800;font-size:.72em;margin-top:3px;letter-spacing:2px}
+.bpm-tags{display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;margin-top:6px}
+.bpm-tag{background:var(--surface);padding:2px 8px;border-radius:999px;
+  font-size:.65em;color:var(--text-sec);font-weight:600;border:1px solid var(--border)}
+
+.bpm-ctrl{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px;position:relative;z-index:1}
+.btn-circle{width:40px;height:40px;border-radius:14px;background:var(--surface);
+  border:1px solid var(--border);color:var(--text);font-size:1.25em;font-weight:800;
+  box-shadow:var(--shadow-sm);transition:background var(--fast),color var(--fast),border-color var(--fast);
+  display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.btn-circle::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--fast);border-radius:14px}
+.btn-circle:active::after{opacity:1}
+.btn-circle span{position:relative;z-index:1}
+.btn-circle.big{width:44px;height:44px;font-size:1.4em;border-radius:15px}
+.bpm-input{width:78px;height:40px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-md);color:var(--primary);font-size:1.3em;font-weight:900;text-align:center;
+  outline:none;box-shadow:var(--shadow-sm);transition:all var(--trans)}
+.bpm-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--glow)}
+
+.rng-wrap{margin-top:4px;padding:0 4px;position:relative;z-index:1}
+.rng{position:relative;-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;outline:none;cursor:pointer;margin:0}
+.rng-track{position:absolute;left:13px;right:13px;top:50%;transform:translateY(-50%);height:8px;border-radius:999px;background:var(--surface-3);overflow:hidden;z-index:0}
+.rng-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--primary),var(--secondary));width:50%;transition:width .05s}
+.rng::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;
+  background:var(--surface);border:3px solid var(--primary);cursor:pointer;
+  box-shadow:0 4px 12px var(--glow);transition:transform var(--fast);position:relative;z-index:2}
+.rng::-webkit-slider-thumb:active{transform:scale(1.2)}
+.rng::-moz-range-track{height:8px;border-radius:999px;background:transparent;border:0}
+.rng::-moz-range-thumb{width:24px;height:24px;border-radius:50%;
+  background:var(--surface);border:3px solid var(--primary);cursor:pointer}
+
+.beat-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:8px 10px 6px;box-shadow:var(--shadow-md);margin-bottom:2px;position:relative;overflow:hidden}
+.beat-panel::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary),var(--secondary),var(--accent))}
+.beats{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;align-items:center}
+.beat-dot{width:36px;height:36px;border-radius:11px;border:2px solid var(--border-strong);background:var(--surface-2);
+  color:var(--text-muted);display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:.85em;transition:all .15s var(--bounce);
+  user-select:none;touch-action:manipulation;cursor:pointer;
+  font-variant-numeric:tabular-nums}
+.beat-dot[data-ac="1"]{background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;border-color:transparent;box-shadow:0 4px 16px var(--glow)}
+.beat-dot.bt{transform:scale(1.15);box-shadow:0 0 24px var(--glow);z-index:2}
+.beat-sub{display:flex;justify-content:center;align-items:center;gap:4px;margin-top:4px;height:6px}
+.beat-sub-dot{width:5px;height:5px;border-radius:50%;background:var(--surface-3);transition:all .1s}
+.beat-sub-dot.on{background:var(--primary);transform:scale(1.4);box-shadow:0 0 6px var(--glow)}
+.beat-info{display:flex;justify-content:space-between;align-items:center;
+  margin:6px 4px 0;padding-top:6px;border-top:1px solid var(--border)}
+.beat-ts{font-weight:800;color:var(--text);font-size:.82em}
+.beat-sub-txt{color:var(--text-muted);font-size:.7em}
+
+.play-wrap{display:flex;flex-direction:column;align-items:center;margin:4px 0 8px;position:relative}
+.play-rings{position:relative;width:100px;height:100px;flex-shrink:0}
+.play-ring{position:absolute;border-radius:50%;pointer-events:none;border:2px solid var(--primary);
+  left:50%;top:50%;transform:translate(-50%,-50%);opacity:0}
+.play-ring.go{animation:pulseRing .5s var(--trans) forwards}
+.play-ring.r1{width:68px;height:68px}
+.play-ring.r2{width:82px;height:82px;border-color:var(--secondary);animation-delay:.05s}
+.play-ring.r3{width:96px;height:96px;border-color:var(--accent);animation-delay:.1s;opacity:.4}
+@keyframes pulseRing{0%{opacity:.7;transform:translate(-50%,-50%) scale(.92)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.2)}}
+.play-btn{width:68px;height:68px;border-radius:50%;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  background:linear-gradient(135deg,var(--primary) 0%,var(--secondary) 100%);
+  color:#fff;box-shadow:0 8px 24px var(--glow),inset 0 2px 0 rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;
+  transition:box-shadow .2s;z-index:5;border:0;cursor:pointer;outline:none}
+.play-btn::before{content:"";position:absolute;inset:0;border-radius:50%;
+  background:linear-gradient(135deg,rgba(255,255,255,.25),transparent 55%);pointer-events:none}
+.play-btn::after{content:"";position:absolute;inset:5px;border-radius:50%;border:2px solid transparent;
+  border-top-color:rgba(255,255,255,.35);border-right-color:rgba(255,255,255,.15);opacity:0;transition:opacity .3s}
+.play-btn.playing::after{animation:spin 1.8s linear infinite;opacity:1}
+@keyframes spin{to{transform:rotate(360deg)}}
+.play-btn:active{box-shadow:0 4px 16px var(--glow)}
+.play-btn.playing{background:linear-gradient(135deg,#ef4444,#f97316);box-shadow:0 8px 24px rgba(239,68,68,.4)}
+.play-btn svg{width:28px;height:28px;fill:currentColor;stroke:currentColor;stroke-width:0;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.15));position:relative;z-index:1;margin-left:3px}
+.play-btn.playing svg{margin-left:0}
+.play-label{text-align:center;color:var(--text-sec);font-size:.72em;margin-top:4px;font-weight:600}
+
+.stat-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}
+.stat-mini-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:8px 6px;text-align:center;box-shadow:var(--shadow-xs)}
+.stat-mini-n{font-size:1.2em;font-weight:900;color:var(--primary);font-variant-numeric:tabular-nums;line-height:1}
+.stat-mini-l{font-size:.6em;color:var(--text-muted);font-weight:600;margin-top:2px}
+
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.quick-item{padding:14px;border-radius:var(--r-md);border:1px solid var(--border);
+  background:var(--surface);display:flex;align-items:center;gap:12px;transition:background var(--fast),border-color var(--fast);cursor:pointer;position:relative;overflow:hidden}
+.quick-item::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--fast)}
+.quick-item:active::after{opacity:1}
+.quick-item:active .quick-ic,.quick-item:active .quick-n,.quick-item:active .quick-d{color:#fff}
+.quick-ic{width:38px;height:38px;border-radius:11px;
+  background:linear-gradient(135deg,rgba(var(--primary-rgb),.12),rgba(var(--secondary-rgb),.08));
+  color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:color var(--fast),background var(--fast);position:relative;z-index:1}
+.quick-ic svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.quick-info{flex:1;min-width:0;position:relative;z-index:1}
+.quick-n{font-weight:700;font-size:.88em;color:var(--text);transition:color var(--fast)}
+.quick-d{font-size:.72em;color:var(--text-muted);transition:color var(--fast);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.preset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.preset-btn{padding:12px 6px;border-radius:var(--r-sm);border:1px solid var(--border);
+  background:var(--surface-2);text-align:center;cursor:pointer;transition:background var(--fast),border-color var(--fast),box-shadow var(--fast);position:relative;overflow:hidden}
+.preset-btn::after{content:"";position:absolute;inset:0;background:rgba(var(--primary-rgb),.1);opacity:0;transition:opacity var(--fast)}
+.preset-btn:active::after{opacity:1}
+.preset-btn.on{background:linear-gradient(135deg,var(--primary),var(--secondary));border-color:transparent;box-shadow:var(--shadow-primary)}
+.preset-n{font-size:1.1em;font-weight:900;color:var(--text);font-variant-numeric:tabular-nums;position:relative;z-index:1}
+.preset-btn.on .preset-n{color:#fff}
+.preset-l{font-size:.65em;color:var(--text-muted);font-weight:600;margin-top:2px;position:relative;z-index:1}
+.preset-btn.on .preset-l{color:rgba(255,255,255,.85)}
+.preset-fav{width:26px;height:26px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--text-muted);margin-top:6px;transition:color var(--fast),transform var(--fast);cursor:pointer;position:relative;z-index:2}
+.preset-fav:active{color:var(--primary)}
+.preset-fav.on{color:#fbbf24}
+
+.sig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sig-grid.two{grid-template-columns:repeat(2,1fr)}
+.sig-btn{padding:14px 6px;border-radius:var(--r-sm);border:1px solid var(--border);
+  background:var(--surface-2);color:var(--text);font-size:.95em;font-weight:800;text-align:center;
+  transition:background var(--fast),border-color var(--fast),box-shadow var(--fast);cursor:pointer;position:relative;overflow:hidden}
+.sig-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--fast)}
+.sig-btn.on::after{opacity:1}
+.sig-btn.on{color:#fff;border-color:transparent;box-shadow:var(--shadow-primary)}
+.sig-btn:active::after{opacity:.8}
+.sig-btn span{position:relative;z-index:1}
+
+.sub-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.sub-btn{padding:12px 6px;border-radius:var(--r-sm);border:1px solid var(--border);
+  background:var(--surface-2);color:var(--text-sec);font-size:.75em;font-weight:700;
+  text-align:center;transition:background var(--fast),border-color var(--fast),box-shadow var(--fast);cursor:pointer;display:flex;flex-direction:column;gap:3px;align-items:center;position:relative;overflow:hidden}
+.sub-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--fast)}
+.sub-sym{font-size:1.4em;font-weight:900;position:relative;z-index:1}
+.sub-btn.on{color:#fff;border-color:transparent;box-shadow:var(--shadow-primary)}
+.sub-btn.on::after{opacity:1}
+.sub-btn span:last-child{position:relative;z-index:1}
+.sub-btn:active::after{opacity:.8}
+
+.sound-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.sound-btn{padding:14px 10px;border-radius:var(--r-sm);border:1px solid var(--border);
+  background:var(--surface-2);color:var(--text-sec);font-size:.75em;font-weight:700;
+  text-align:center;transition:background var(--fast),border-color var(--fast),box-shadow var(--fast);cursor:pointer;display:flex;align-items:center;gap:10px;position:relative;overflow:hidden}
+.sound-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--fast)}
+.sound-ic{width:40px;height:40px;border-radius:11px;
+  background:linear-gradient(135deg,rgba(var(--primary-rgb),.15),rgba(var(--secondary-rgb),.1));
+  color:var(--primary);display:flex;align-items:center;justify-content:center;transition:color var(--fast),background var(--fast);flex-shrink:0;position:relative;z-index:1}
+.sound-ic svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sound-btn.on{color:#fff;border-color:transparent;box-shadow:var(--shadow-primary)}
+.sound-btn.on::after{opacity:1}
+.sound-btn.on .sound-ic{background:rgba(255,255,255,.2);color:#fff}
+.sound-btn span{position:relative;z-index:1}
+.sound-btn:active::after{opacity:.8}
+
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.theme-btn{padding:12px 10px;border-radius:var(--r-md);border:2px solid var(--border);background:var(--surface);
+  font-size:.78em;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:8px;
+  transition:border-color var(--fast),box-shadow var(--fast);cursor:pointer;position:relative;overflow:hidden}
+.theme-btn::after{content:"";position:absolute;inset:0;background:rgba(var(--primary-rgb),.05);opacity:0;transition:opacity var(--fast)}
+.theme-btn.on{border-color:var(--primary);box-shadow:var(--shadow-primary)}
+.theme-btn:active::after{opacity:1}
+.theme-btn span{position:relative;z-index:1}
+.theme-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  border:2px solid rgba(255,255,255,.8);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+
+.set-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+.set-row:last-child{border-bottom:0}
+.set-ic{width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(var(--primary-rgb),.12),rgba(var(--secondary-rgb),.08));
+  color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.set-ic svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.set-info{flex:1;min-width:0}
+.set-n{font-weight:700;font-size:.88em;color:var(--text)}
+.set-d{font-size:.72em;color:var(--text-muted);margin-top:1px}
+
+.toggle{-webkit-appearance:none;appearance:none;width:50px;height:28px;
+  background:var(--surface-3);border-radius:999px;position:relative;cursor:pointer;outline:none;
+  transition:all var(--trans);flex-shrink:0}
+.toggle::after{content:"";position:absolute;width:22px;height:22px;border-radius:50%;
+  background:#fff;top:3px;left:3px;transition:all var(--trans);
+  box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.toggle:checked{background:linear-gradient(135deg,var(--primary),var(--secondary))}
+.toggle:checked::after{left:25px;box-shadow:0 2px 10px var(--glow)}
+
+.vol-row{display:flex;align-items:center;gap:8px;margin-top:10px}
+.vol-row:first-of-type{margin-top:0}
+.vol-lbl{color:var(--text-sec);font-size:.82em;font-weight:600;width:70px;flex-shrink:0}
+.vol-val{width:36px;text-align:right;color:var(--primary);font-weight:800;font-size:.85em;font-variant-numeric:tabular-nums}
+
+.tap-area{display:flex;align-items:center;gap:16px}
+.tap-btn{width:100px;height:100px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;font-size:1.05em;font-weight:900;letter-spacing:1px;
+  box-shadow:0 12px 32px var(--glow);transition:box-shadow var(--fast);
+  cursor:pointer;flex-shrink:0;position:relative;overflow:hidden;border:0}
+.tap-btn::before{content:"";position:absolute;inset:0;border-radius:50%;
+  background:linear-gradient(135deg,rgba(255,255,255,.25),transparent 55%)}
+.tap-btn::after{content:"";position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.2);opacity:0;transition:opacity var(--fast)}
+.tap-btn:active::after{opacity:1}
+.tap-btn span{position:relative;z-index:1}
+.tap-info{flex:1}
+.tap-lbl{font-size:.78em;color:var(--text-sec)}
+.tap-val{font-size:2.8em;font-weight:900;line-height:1;letter-spacing:-2px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-variant-numeric:tabular-nums}
+.tap-sub{font-size:.72em;color:var(--text-muted);margin-top:4px}
+.tap-sub b{color:var(--primary);font-weight:700}
+
+.tap-actions{display:flex;gap:10px;margin-top:16px}
+.tap-btn-s{flex:1;height:44px;border-radius:14px;font-weight:700;font-size:.88em;
+  border:1px solid var(--border);cursor:pointer;transition:background var(--fast),border-color var(--fast),box-shadow var(--fast);position:relative;overflow:hidden}
+.tap-btn-s::after{content:"";position:absolute;inset:0;opacity:0;transition:opacity var(--fast);border-radius:14px}
+.tap-btn-s.sec{background:var(--surface-2);color:var(--text-sec)}
+.tap-btn-s.sec::after{background:rgba(0,0,0,.05)}
+.tap-btn-s.pri{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border-color:transparent;box-shadow:var(--shadow-primary)}
+.tap-btn-s.pri::after{background:rgba(255,255,255,.15)}
+.tap-btn-s:active::after{opacity:1}
+.tap-btn-s span{position:relative;z-index:1}
+
+.practice-list{display:flex;flex-direction:column;gap:10px}
+.practice-item{padding:16px;border-radius:var(--r-md);border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;transition:background var(--fast),border-color var(--fast);
+  display:flex;align-items:center;gap:12px;position:relative;overflow:hidden}
+.practice-item::after{content:"";position:absolute;inset:0;background:rgba(var(--primary-rgb),.05);opacity:0;transition:opacity var(--fast)}
+.practice-item:active::after{opacity:1}
+.practice-item.on{border-color:var(--primary);
+  background:linear-gradient(135deg,rgba(var(--primary-rgb),.08),rgba(var(--secondary-rgb),.04))}
+.practice-item.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;z-index:1;
+  background:linear-gradient(180deg,var(--primary),var(--secondary))}
+.practice-ic{width:42px;height:42px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(var(--primary-rgb),.12),rgba(var(--secondary-rgb),.08));
+  color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.practice-ic svg{width:21px;height:21px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.practice-info{flex:1;position:relative;z-index:1}
+.practice-n{font-weight:800;font-size:.92em}
+.practice-d{color:var(--text-sec);font-size:.75em;margin-top:3px}
+.practice-badge{font-size:.68em;padding:4px 10px;border-radius:999px;
+  background:var(--surface-2);color:var(--text-sec);font-weight:700;white-space:nowrap;
+  border:1px solid var(--border);position:relative;z-index:1}
+.practice-item.on .practice-badge{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border-color:transparent}
+
+.practice-run{background:linear-gradient(165deg,var(--surface),var(--surface-2));
+  border:1px solid var(--border);border-radius:var(--r-xl);padding:24px 20px;text-align:center;
+  box-shadow:var(--shadow-lg);margin-bottom:12px;position:relative;overflow:hidden}
+.practice-run::before{content:"";position:absolute;top:-30%;left:50%;transform:translateX(-50%);
+  width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(var(--primary-rgb),.12),transparent 60%);pointer-events:none}
+.practice-stage{color:var(--primary);font-weight:800;font-size:.85em;letter-spacing:1px}
+.practice-cd{font-size:3.8em;font-weight:900;color:var(--text);
+  font-variant-numeric:tabular-nums;letter-spacing:-2px;margin-top:4px;line-height:1;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.practice-prog{height:10px;background:var(--surface-3);border-radius:999px;margin:16px 10px 0;overflow:hidden}
+.practice-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));
+  border-radius:999px;transition:width .4s ease;width:0%}
+.practice-stop{margin-top:18px;padding:13px 28px;border-radius:999px;
+  background:rgba(239,68,68,.1);color:#ef4444;font-weight:800;font-size:.88em;
+  border:1px solid rgba(239,68,68,.25);transition:background var(--fast),color var(--fast),border-color var(--fast);cursor:pointer;display:inline-flex;align-items:center;gap:8px;position:relative;overflow:hidden}
+.practice-stop::after{content:"";position:absolute;inset:0;background:#ef4444;opacity:0;transition:opacity var(--fast);border-radius:999px}
+.practice-stop:active::after{opacity:1}
+.practice-stop:active{color:#fff;border-color:#ef4444}
+.practice-stop svg{width:15px;height:15px;stroke:currentColor;stroke-width:2.5;fill:none;position:relative;z-index:1}
+.practice-stop span{position:relative;z-index:1}
+
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.stat-item{padding:12px 6px;border-radius:var(--r-md);background:var(--surface-2);border:1px solid var(--border);text-align:center}
+.stat-n{font-size:1.5em;font-weight:900;color:var(--primary);font-variant-numeric:tabular-nums;line-height:1}
+.stat-l{font-size:.65em;color:var(--text-muted);font-weight:600;margin-top:3px}
+
+.guide-mask{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.65);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  transition:opacity .4s}
+.guide-mask.hide{opacity:0;pointer-events:none}
+.guide-box{background:var(--surface);border-radius:28px;padding:28px 22px 24px;max-width:360px;width:100%;
+  box-shadow:var(--shadow-xl);text-align:center;position:relative;overflow:hidden;
+  animation:guidePop .5s var(--bounce)}
+.guide-box::before{content:"";position:absolute;top:-45%;left:50%;transform:translateX(-50%);
+  width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(var(--primary-rgb),.14),transparent 60%);pointer-events:none}
+@keyframes guidePop{from{opacity:0;transform:scale(.82) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.guide-ic{width:72px;height:72px;border-radius:20px;
+  background:linear-gradient(135deg,rgba(var(--primary-rgb),.18),rgba(var(--secondary-rgb),.12));
+  color:var(--primary);display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;position:relative;z-index:1;box-shadow:var(--shadow-md)}
+.guide-ic svg{width:36px;height:36px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.guide-t{font-size:1.3em;font-weight:900;color:var(--text);margin-bottom:6px;position:relative;z-index:1}
+.guide-d{color:var(--text-sec);font-size:.85em;line-height:1.65;margin-bottom:20px;position:relative;z-index:1}
+.guide-themes{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px;position:relative;z-index:1}
+.guide-theme{aspect-ratio:1;border-radius:14px;border:3px solid transparent;cursor:pointer;
+  transition:border-color var(--fast),box-shadow var(--fast);position:relative;box-shadow:var(--shadow-sm)}
+.guide-theme.on{border-color:var(--text);box-shadow:var(--shadow-lg)}
+.guide-theme::after{content:"";position:absolute;inset:0;border-radius:14px;background:rgba(0,0,0,.15);opacity:0;transition:opacity var(--fast)}
+.guide-theme:active::after{opacity:1}
+.guide-dots{display:flex;justify-content:center;gap:8px;margin-bottom:18px;position:relative;z-index:1}
+.guide-dot{width:9px;height:9px;border-radius:999px;background:var(--surface-3);transition:all var(--trans)}
+.guide-dot.on{background:linear-gradient(135deg,var(--primary),var(--secondary));width:28px}
+.guide-btn{width:100%;padding:16px;border-radius:16px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;font-size:1em;font-weight:800;cursor:pointer;transition:box-shadow var(--fast);
+  box-shadow:var(--shadow-primary);position:relative;z-index:1;border:0;overflow:hidden}
+.guide-btn::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.15);opacity:0;transition:opacity var(--fast);border-radius:16px}
+.guide-btn:active::after{opacity:1}
+.guide-btn.sec{background:var(--surface-2);color:var(--text-sec);font-weight:700;font-size:.85em;
+  margin-top:10px;box-shadow:none;border:1px solid var(--border)}
+.guide-btn.sec::after{background:rgba(0,0,0,.05)}
+.guide-btn[disabled]{opacity:.4;cursor:not-allowed;pointer-events:none}
+
+.guide-legal{max-height:180px;overflow-y:auto;background:var(--surface-2);border-radius:12px;padding:12px;margin:12px 0 14px;
+  text-align:left;font-size:.75em;color:var(--text-sec);line-height:1.7;-webkit-overflow-scrolling:touch}
+.guide-legal h4{color:var(--text);font-size:.85em;margin:8px 0 4px;font-weight:700}
+.guide-legal h4:first-child{margin-top:0}
+.guide-legal p{margin-bottom:6px}
+.guide-agree{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;cursor:pointer;
+  padding:10px 12px;border-radius:12px;background:var(--surface-2);border:2px solid transparent;transition:all var(--fast)}
+.guide-agree.on{background:rgba(var(--primary-rgb),.08);border-color:var(--primary)}
+.guide-check{width:22px;height:22px;border-radius:7px;border:2px solid var(--border-strong);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all var(--fast)}
+.guide-agree.on .guide-check{background:linear-gradient(135deg,var(--primary),var(--secondary));border-color:transparent}
+.guide-check svg{width:12px;height:12px;stroke:#fff;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0;transform:scale(.5);transition:all var(--fast)}
+.guide-agree.on .guide-check svg{opacity:1;transform:scale(1)}
+.guide-agree-txt{font-size:.8em;color:var(--text-sec);line-height:1.5}
+.guide-agree-txt b{color:var(--text);font-weight:700}
+.guide-agree-txt a{color:var(--primary);font-weight:600;text-decoration:underline}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.feat-item{background:var(--surface-2);border-radius:12px;padding:12px 10px;text-align:center}
+.feat-ic{width:36px;height:36px;border-radius:10px;margin:0 auto 6px;
+  background:linear-gradient(135deg,rgba(var(--primary-rgb),.15),rgba(var(--secondary-rgb),.1));
+  color:var(--primary);display:flex;align-items:center;justify-content:center}
+.feat-ic svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.feat-n{font-size:.75em;font-weight:700;color:var(--text)}
+.feat-d{font-size:.65em;color:var(--text-muted);margin-top:2px}
+
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);
+  background:var(--text);color:var(--surface);padding:10px 20px;border-radius:999px;
+  font-size:.85em;font-weight:700;z-index:9999;opacity:0;
+  transition:all .4s var(--bounce);box-shadow:var(--shadow-lg);
+  pointer-events:none;max-width:85%;text-align:center}
+.toast.show{opacity:.95;transform:translateX(-50%) translateY(0)}
+
+.page-t{font-size:1.4em;font-weight:900;color:var(--text);margin-bottom:4px;letter-spacing:-.3px}
+.page-d{color:var(--text-sec);font-size:.85em;margin-bottom:12px;line-height:1.5}
+
+.fav-empty{text-align:center;padding:20px;color:var(--text-muted);font-size:.8em}
+
+.custom-ts{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.custom-ts .lbl{font-size:.82em;color:var(--text-sec);font-weight:700;white-space:nowrap}
+.num-in{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);
+  color:var(--text);font-weight:800;text-align:center;width:54px;height:40px;font-size:1.05em;outline:none;
+  transition:border-color var(--fast)}
+.num-in:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--glow)}
+.ts-slash{color:var(--text-muted);font-weight:900;font-size:1.2em}
+.ts-sel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);
+  color:var(--text);font-weight:700;padding:0 8px;height:40px;outline:none;cursor:pointer;font-size:.95em}
+.ts-sel:focus{border-color:var(--primary)}
+.btn-apply-ts{height:44px;border-radius:var(--r-sm);padding:0 20px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;font-weight:700;font-size:.88em;box-shadow:var(--shadow-primary);
+  transition:box-shadow var(--fast);border:0;cursor:pointer;position:relative;overflow:hidden}
+.btn-apply-ts::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.15);opacity:0;transition:opacity var(--fast);border-radius:var(--r-sm)}
+.btn-apply-ts:active::after{opacity:1}
+.btn-apply-ts span{position:relative;z-index:1}
+
+.about-hero{text-align:center;padding:20px 10px 10px}
+.about-logo{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--primary),var(--secondary));
+  display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:var(--shadow-primary);color:#fff}
+.about-logo svg{width:32px;height:32px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.about-ver{font-size:1.3em;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.about-sub{color:var(--text-muted);font-size:.8em;margin-top:4px}
+.about-ai{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:6px 14px;border-radius:999px;
+  background:linear-gradient(135deg,rgba(var(--primary-rgb),.1),rgba(var(--secondary-rgb),.06));
+  border:1px solid var(--border);font-size:.75em;font-weight:700;color:var(--text-sec)}
+.about-ai svg{width:14px;height:14px;stroke:var(--primary);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.about-list{margin-top:8px}
+.about-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all var(--fast)}
+.about-item:last-child{border-bottom:0}
+.about-item:active{background:var(--surface-2);margin:0 -14px;padding:14px}
+.about-ic{width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(var(--primary-rgb),.12),rgba(var(--secondary-rgb),.08));
+  color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.about-ic svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.about-info{flex:1}
+.about-n{font-weight:700;font-size:.88em}
+.about-d{font-size:.72em;color:var(--text-muted);margin-top:1px}
+.about-arrow{color:var(--text-muted);font-size:1.1em}
+
+.legal-content{color:var(--text-sec);font-size:.8em;line-height:1.8;padding:4px 0}
+.legal-content h3{color:var(--text);font-size:.95em;font-weight:800;margin:16px 0 8px}
+.legal-content h3:first-child{margin-top:0}
+.legal-content p{margin-bottom:8px}
+
+@media(max-width:360px){
+  .bpm-num{font-size:2.6em}
+  .play-btn{width:56px;height:56px}
+  .play-btn svg{width:22px;height:22px}
+  .beat-dot{width:32px;height:32px;font-size:.78em;border-radius:10px}
+  .sig-grid{grid-template-columns:repeat(2,1fr)}
+  .sound-grid{grid-template-columns:1fr}
+  .preset-grid{grid-template-columns:repeat(2,1fr)}
+  .theme-grid{grid-template-columns:repeat(2,1fr)}
+  .guide-themes{grid-template-columns:repeat(5,1fr)}
+  .tap-btn{width:84px;height:84px;font-size:.9em}
+  .tap-val{font-size:2.2em}
+  .pendulum-wrap{height:40px}
+  .pendulum{height:36px}
+}
+</style>
+</head>
+<body class="t-indigo">
+<div class="app">
+  <div class="bg-glow"></div>
+  
+  <header class="header">
+    <button class="btn-icon hidden" id="btn-back">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="header-c">
+      <div class="header-logo"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+      <span class="header-title" id="hdr-title">节拍器 Pro</span>
+    </div>
+    <button class="btn-icon" id="btn-menu">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+    </button>
+  </header>
+
+  <div class="scroll-wrap" id="scroll-wrap">
+    <section class="page active" id="pg-home">
+      <div class="bpm-card">
+        <div class="pendulum-wrap">
+          <div class="pendulum-arc"></div>
+          <div class="pendulum" id="pendulum"></div>
+        </div>
+        <div class="bpm-num" id="bpm-disp">120</div>
+        <span class="bpm-unit">BPM</span>
+        <div class="bpm-speed" id="bpm-speed">Moderato</div>
+        <div class="bpm-tags" id="bpm-tags"></div>
+      </div>
+
+      <div class="bpm-ctrl">
+        <button class="btn-circle big" data-bpm="-5"><span>−</span></button>
+        <button class="btn-circle" data-bpm="-1"><span>-</span></button>
+        <input type="number" class="bpm-input" id="bpm-in" value="120" min="20" max="300"/>
+        <button class="btn-circle" data-bpm="1"><span>+</span></button>
+        <button class="btn-circle big" data-bpm="5"><span>+</span></button>
+      </div>
+
+      <div class="rng-wrap">
+        <div class="rng-track"><div class="rng-fill" id="bpm-fill"></div></div>
+        <input type="range" class="rng" id="bpm-rng" min="20" max="300" value="120"/>
+      </div>
+
+      <div class="stat-mini" id="stat-mini" style="display:none">
+        <div class="stat-mini-item"><div class="stat-mini-n" id="m-beats">0</div><div class="stat-mini-l">节拍</div></div>
+        <div class="stat-mini-item"><div class="stat-mini-n" id="m-bars">0</div><div class="stat-mini-l">小节</div></div>
+        <div class="stat-mini-item"><div class="stat-mini-n" id="m-time">0:00</div><div class="stat-mini-l">时长</div></div>
+      </div>
+
+      <div class="beat-panel">
+        <div class="beats" id="beats"></div>
+        <div class="beat-sub" id="beat-sub"></div>
+        <div class="beat-info">
+          <span class="beat-ts" id="beat-ts">4/4</span>
+          <span class="beat-sub-txt" id="beat-sub-txt">四分音符</span>
+        </div>
+      </div>
+
+      <div class="play-wrap">
+        <div class="play-rings">
+          <div class="play-ring r1" id="r1"></div>
+          <div class="play-ring r2" id="r2"></div>
+          <div class="play-ring r3" id="r3"></div>
+          <button class="play-btn" id="play-btn">
+            <svg id="play-ic" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </button>
+        </div>
+        <div class="play-label" id="play-label">点击开始</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <span class="card-t">快捷操作</span>
+        </div>
+        <div class="quick-grid">
+          <div class="quick-item" data-goto="pg-tap">
+            <div class="quick-ic"><svg viewBox="0 0 24 24"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg></div>
+            <div class="quick-info"><div class="quick-n">敲击测速</div><div class="quick-d">Tap Tempo</div></div>
+          </div>
+          <div class="quick-item" data-goto="pg-practice">
+            <div class="quick-ic"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+            <div class="quick-info"><div class="quick-n">练习模式</div><div class="quick-d">渐进式训练</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <span class="card-t">常用速度</span>
+        </div>
+        <div class="preset-grid" id="preset-grid"></div>
+      </div>
+
+      <div class="card" id="fav-card" style="display:none">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div>
+          <span class="card-t">我的收藏</span>
+        </div>
+        <div class="preset-grid" id="fav-grid"></div>
+      </div>
+    </section>
+
+    <section class="page" id="pg-params">
+      <h1 class="page-t">参数设置</h1>
+      <p class="page-d">调整节拍、拍子和音色</p>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <span class="card-t">拍号</span>
+        </div>
+        <div class="card-sub">点击上方预设快速选择，或自定义任意拍号</div>
+        <div class="sig-grid" id="sig-grid"></div>
+        <div class="custom-ts">
+          <span class="lbl">自定义</span>
+          <input class="num-in" id="ct-beats" type="number" min="1" max="32" value="4"/>
+          <span class="ts-slash">/</span>
+          <select class="ts-sel" id="ct-bv">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="4" selected>4</option>
+            <option value="8">8</option>
+            <option value="16">16</option>
+            <option value="32">32</option>
+          </select>
+          <button class="btn-apply-ts" id="ct-apply"><span>应用</span></button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/></svg></div>
+          <span class="card-t">细分音符</span>
+        </div>
+        <div class="sub-grid" id="sub-grid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg></div>
+          <span class="card-t">音色选择</span>
+        </div>
+        <div class="sound-grid" id="sound-grid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg></div>
+          <span class="card-t">音量控制</span>
+        </div>
+        <div class="vol-row">
+          <span class="vol-lbl">重音</span>
+          <div class="rng-wrap" style="flex:1;margin:0">
+            <div class="rng-track"><div class="rng-fill" id="vol-accent-fill"></div></div>
+            <input type="range" class="rng" id="vol-accent" min="0" max="100" value="85"/>
+          </div>
+          <span class="vol-val" id="vol-accent-v">85</span>
+        </div>
+        <div class="vol-row">
+          <span class="vol-lbl">正常拍</span>
+          <div class="rng-wrap" style="flex:1;margin:0">
+            <div class="rng-track"><div class="rng-fill" id="vol-beat-fill"></div></div>
+            <input type="range" class="rng" id="vol-beat" min="0" max="100" value="65"/>
+          </div>
+          <span class="vol-val" id="vol-beat-v">65</span>
+        </div>
+        <div class="vol-row">
+          <span class="vol-lbl">细分拍</span>
+          <div class="rng-wrap" style="flex:1;margin:0">
+            <div class="rng-track"><div class="rng-fill" id="vol-sub-fill"></div></div>
+            <input type="range" class="rng" id="vol-sub" min="0" max="100" value="40"/>
+          </div>
+          <span class="vol-val" id="vol-sub-v">40</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <span class="card-t">节拍反馈</span>
+        </div>
+        <div class="set-row" style="border:0;padding-bottom:0">
+          <div class="set-info">
+            <div class="set-n">震动反馈</div>
+            <div class="set-d">节拍时手机震动</div>
+          </div>
+          <input type="checkbox" class="toggle" id="tog-vib" checked/>
+        </div>
+        <div class="set-row">
+          <div class="set-info">
+            <div class="set-n">闪烁动画</div>
+            <div class="set-d">节拍闪烁与摆锤效果</div>
+          </div>
+          <input type="checkbox" class="toggle" id="tog-flash" checked/>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="pg-practice">
+      <h1 class="page-t">练习模式</h1>
+      <p class="page-d">渐进式节拍训练，循序渐进提升</p>
+
+      <div id="practice-list-wrap">
+        <div class="card">
+          <div class="card-h">
+            <div class="card-ic"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+            <span class="card-t">训练方案</span>
+          </div>
+          <div class="practice-list" id="practice-list"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div class="card-ic"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>
+            <span class="card-t">练习统计</span>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-item"><div class="stat-n" id="stat-beats">0</div><div class="stat-l">总节拍</div></div>
+            <div class="stat-item"><div class="stat-n" id="stat-bars">0</div><div class="stat-l">小节数</div></div>
+            <div class="stat-item"><div class="stat-n" id="stat-time">0:00</div><div class="stat-l">练习时长</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="practice-run-wrap" style="display:none">
+        <div class="practice-run">
+          <div class="practice-stage" id="pr-stage">准备中...</div>
+          <div class="practice-cd" id="pr-cd">--</div>
+          <div class="practice-prog"><div class="practice-bar" id="pr-bar"></div></div>
+        </div>
+        <div style="text-align:center">
+          <button class="practice-stop" id="pr-stop">
+            <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+            <span>停止练习</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="pg-tap">
+      <h1 class="page-t">敲击测速</h1>
+      <p class="page-d">按任意节奏点击按钮，自动计算BPM</p>
+
+      <div class="card">
+        <div class="tap-area">
+          <button class="tap-btn" id="tap-btn"><span>TAP</span></button>
+          <div class="tap-info">
+            <div class="tap-lbl">检测 BPM</div>
+            <div class="tap-val" id="tap-val">---</div>
+            <div class="tap-sub">点击 <b id="tap-cnt">0</b> 次</div>
+          </div>
+        </div>
+        <div class="tap-actions">
+          <button class="tap-btn-s sec" id="tap-reset"><span>重置</span></button>
+          <button class="tap-btn-s pri" id="tap-apply"><span>使用此 BPM</span></button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+          <span class="card-t">使用说明</span>
+        </div>
+        <div style="color:var(--text-sec);font-size:.8em;line-height:1.7">
+          跟着你想要的速度，连续点击TAP按钮（建议点击4次以上），系统会自动计算出BPM。<br><br>
+          点击"使用此BPM"即可将速度应用到节拍器。<br><br>
+          <b style="color:var(--primary)">小提示：</b>也可以按键盘空格键敲击。
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="pg-settings">
+      <h1 class="page-t">设置</h1>
+      <p class="page-d">个性化你的节拍器</p>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/></svg></div>
+          <span class="card-t">主题颜色</span>
+        </div>
+        <div class="theme-grid" id="theme-grid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></div>
+          <span class="card-t">外观</span>
+        </div>
+        <div class="set-row" style="border:0;padding-bottom:0">
+          <div class="set-info">
+            <div class="set-n">深色模式</div>
+            <div class="set-d">使用暗色主题保护眼睛</div>
+          </div>
+          <input type="checkbox" class="toggle" id="tog-dark"/>
+        </div>
+        <div class="set-row">
+          <div class="set-info">
+            <div class="set-n">保持屏幕常亮</div>
+            <div class="set-d">练习时屏幕不自动关闭</div>
+          </div>
+          <input type="checkbox" class="toggle" id="tog-wake" checked/>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <span class="card-t">节奏设置</span>
+        </div>
+        <div class="set-row" style="border:0;padding-bottom:0">
+          <div class="set-info">
+            <div class="set-n">摇摆节奏 (Swing)</div>
+            <div class="set-d">让节拍带有摇摆感</div>
+          </div>
+          <input type="checkbox" class="toggle" id="tog-swing"/>
+        </div>
+        <div class="vol-row">
+          <span class="vol-lbl">摇摆强度</span>
+          <div class="rng-wrap" style="flex:1;margin:0">
+            <div class="rng-track"><div class="rng-fill" id="swing-fill"></div></div>
+            <input type="range" class="rng" id="swing-amt" min="0" max="100" value="50"/>
+          </div>
+          <span class="vol-val" id="swing-v">50</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="text-align:center;padding:8px 0">
+          <button id="btn-fav-add" style="width:100%;padding:12px;border-radius:14px;background:linear-gradient(135deg,rgba(var(--primary-rgb),.1),rgba(var(--secondary-rgb),.06));border:1px dashed var(--border-strong);font-size:.85em;font-weight:700;color:var(--primary);cursor:pointer;transition:all var(--fast)">
+            ⭐ 收藏当前 BPM
+          </button>
+          <button id="btn-goto-about" style="margin-top:8px;width:100%;padding:12px;border-radius:14px;background:var(--surface-2);border:1px solid var(--border);font-size:.85em;font-weight:700;color:var(--text-sec);cursor:pointer;transition:all var(--fast)">
+            关于节拍器 Pro
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="pg-about">
+      <h1 class="page-t">关于</h1>
+      <p class="page-d">节拍器 Pro - 专业级精准节拍工具</p>
+
+      <div class="card">
+        <div class="about-hero">
+          <div class="about-logo"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <div class="about-ver">节拍器 Pro v12</div>
+          <div class="about-sub">精准 · 专业 · 精美</div>
+          <div class="about-ai">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 18a8 8 0 118-8 8 8 0 01-8 8z"/><path d="M12 6v6l4 2"/></svg>
+            AI 辅助开发
+          </div>
+        </div>
+        <div class="about-list">
+          <div class="about-item" data-goto="pg-legal">
+            <div class="about-ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+            <div class="about-info">
+              <div class="about-n">用户协议</div>
+              <div class="about-d">使用条款与隐私政策</div>
+            </div>
+            <div class="about-arrow">›</div>
+          </div>
+          <div class="about-item" id="btn-guide2">
+            <div class="about-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <div class="about-info">
+              <div class="about-n">使用引导</div>
+              <div class="about-d">重新查看新手引导</div>
+            </div>
+            <div class="about-arrow">›</div>
+          </div>
+          <div class="about-item" id="btn-reset">
+            <div class="about-ic"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></div>
+            <div class="about-info">
+              <div class="about-n">重置数据</div>
+              <div class="about-d">清除所有设置和收藏</div>
+            </div>
+            <div class="about-arrow">›</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="text-align:center;color:var(--text-muted);font-size:.72em;line-height:1.8;padding:8px 0">
+          © 2026 节拍器 Pro<br>
+          基于 Web Audio API 构建<br>
+          感谢使用 ♪
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="pg-legal">
+      <h1 class="page-t">用户协议</h1>
+      <p class="page-d">使用条款与隐私政策</p>
+
+      <div class="card">
+        <div class="legal-content">
+          <h3>一、服务说明</h3>
+          <p>节拍器 Pro 是一款免费的在线节拍器工具，为音乐学习者和从业者提供精准的节拍辅助功能。本应用所有功能均在本地浏览器中运行，无需服务器支持。</p>
+
+          <h3>二、数据存储</h3>
+          <p>本应用使用浏览器的 localStorage 存储您的个人设置（包括主题选择、BPM收藏、音量设置等）。这些数据仅保存在您的本地设备中，不会上传到任何服务器，我们不会收集任何个人信息。</p>
+
+          <h3>三、音频权限</h3>
+          <p>本应用需要使用浏览器的 Web Audio API 来播放节拍声音。首次使用时需要您与页面交互（如点击播放按钮）以激活音频功能，这是浏览器的安全策略要求。</p>
+
+          <h3>四、免责声明</h3>
+          <p>本应用按"现状"提供，不保证适用于所有场景。音频精度可能受到设备性能、浏览器实现和系统调度的影响。对于因使用本应用而产生的任何直接或间接损失，我们不承担责任。</p>
+
+          <h3>五、AI 辅助开发说明</h3>
+          <p>本应用由 AI 辅助开发完成，包括代码生成、界面设计和功能实现。AI 技术帮助提升了开发效率和产品质量，但最终产品经过了人工测试和优化。</p>
+
+          <h3>六、使用建议</h3>
+          <p>建议在安静环境下使用，音量适中以保护听力。长时间练习请注意休息。如果遇到音频延迟或不同步问题，建议关闭其他占用资源的应用或刷新页面。</p>
+
+          <h3>七、协议更新</h3>
+          <p>本协议可能会随版本更新而修订。继续使用即表示您同意修订后的协议条款。</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <nav class="nav" id="nav">
+    <div class="nav-item on" data-page="pg-home">
+      <div class="nav-ic"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="nav-lbl">首页</span>
+    </div>
+    <div class="nav-item" data-page="pg-params">
+      <div class="nav-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+      <span class="nav-lbl">参数</span>
+    </div>
+    <div class="nav-item" data-page="pg-practice">
+      <div class="nav-ic"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <span class="nav-lbl">练习</span>
+    </div>
+    <div class="nav-item" data-page="pg-tap">
+      <div class="nav-ic"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <span class="nav-lbl">测速</span>
+    </div>
+    <div class="nav-item" data-page="pg-settings">
+      <div class="nav-ic"><svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg></div>
+      <span class="nav-lbl">设置</span>
+    </div>
+  </nav>
+</div>
+
+<div class="guide-mask hide" id="guide">
+  <div class="guide-box">
+    <div class="guide-ic" id="guide-ic">
+      <svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/></svg>
+    </div>
+    <div class="guide-t" id="guide-t">选择主题颜色</div>
+    <div class="guide-d" id="guide-d">选择你喜欢的颜色主题，打造专属节拍器</div>
+    <div id="guide-content">
+      <div class="guide-themes" id="guide-themes"></div>
+    </div>
+    <div class="guide-dots" id="guide-dots"></div>
+    <button class="guide-btn" id="guide-next" disabled>请先选择主题</button>
+    <button class="guide-btn sec" id="guide-skip" style="display:none">跳过引导</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var $all=function(s){return document.querySelectorAll(s)};
+
+  var THEMES=['indigo','rose','emerald','amber','sky','violet','teal','pink','cyan','fuchsia','orange','lime','blue','red','green','purple','slate','zinc'];
+  var THEME_NAMES={'indigo':'靛蓝','rose':'玫瑰红','emerald':'翠绿','amber':'琥珀','sky':'天蓝','violet':'紫罗兰','teal':'青碧','pink':'粉红','cyan':'青蓝','fuchsia':'紫红','orange':'橙黄','lime':'青柠','blue':'海蓝','red':'烈焰红','green':'森林绿','purple':'紫水晶','slate':'石板灰','zinc':'经典黑'};
+  var THEME_COLORS={'indigo':'#6366f1','rose':'#e11d48','emerald':'#059669','amber':'#d97706','sky':'#0284c7','violet':'#7c3aed','teal':'#0d9488','pink':'#db2777','cyan':'#0891b2','fuchsia':'#c026d3','orange':'#ea580c','lime':'#65a30d','blue':'#2563eb','red':'#dc2626','green':'#16a34a','purple':'#9333ea','slate':'#475569','zinc':'#3f3f46'};
+
+  var TIME_SIGS=[{b:2,n:4},{b:3,n:4},{b:4,n:4},{b:5,n:4},{b:6,n:8},{b:7,n:8}];
+  var SUBS=[{v:1,s:'♩',n:'无细分'},{v:2,s:'♫',n:'八分音符'},{v:3,s:'♪♪',n:'三连音'},{v:4,s:'♬♬',n:'十六分'}];
+  var SOUNDS=[
+    {id:'click',n:'Click (电子)',ic:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'},
+    {id:'beep',n:'Beep (蜂鸣)',ic:'<path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/>'},
+    {id:'wood',n:'木鱼',ic:'<path d="M2 16.1A5 5 0 015.9 20M2 12.05A9 9 0 019.95 20M2 8V6a2 2 0 012-2h16a2 2 0 012 2v12a2 2 0 01-2 2h-6"/><line x1="2" y1="20" x2="2" y2="20"/>'},
+    {id:'cow',n:'牛铃',ic:'<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>'},
+    {id:'hihat',n:'踩镲',ic:'<path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="10"/>'},
+    {id:'rim',n:'边击',ic:'<rect x="3" y="3" width="18" height="18" rx="2"/>'}
+  ];
+  var PRESETS=[{bpm:60,l:'Largo'},{bpm:80,l:'Andante'},{bpm:100,l:'Moderato'},{bpm:120,l:'Allegro'},{bpm:140,l:'Vivace'},{bpm:160,l:'Presto'}];
+  var SPEED_NAMES=[
+    {max:60,n:'Grave'},{max:66,n:'Largo'},{max:76,n:'Adagio'},{max:108,n:'Andante'},
+    {max:120,n:'Moderato'},{max:156,n:'Allegro'},{max:176,n:'Vivace'},{max:200,n:'Presto'},{max:999,n:'Prestissimo'}
+  ];
+
+  var PRACTICES=[
+    {id:'warmup',n:'热身练习',d:'60→80 BPM 循序渐进',stages:[{bpm:60,bars:4},{bpm:70,bars:4},{bpm:80,bars:4}]},
+    {id:'steady',n:'稳定节拍',d:'固定BPM持续练习',stages:[{bpm:100,bars:16}]},
+    {id:'speedup',n:'渐进提速',d:'80→140 BPM 逐步提升',stages:[{bpm:80,bars:4},{bpm:100,bars:4},{bpm:120,bars:4},{bpm:140,bars:4}]},
+    {id:'endurance',n:'耐力训练',d:'120 BPM长时间练习',stages:[{bpm:120,bars:32}]},
+    {id:'beginner',n:'新手入门',d:'60 BPM 慢速稳定练习',stages:[{bpm:60,bars:8}]},
+    {id:'advanced',n:'高级训练',d:'100→160 BPM 快速提升',stages:[{bpm:100,bars:4},{bpm:120,bars:4},{bpm:140,bars:4},{bpm:160,bars:4}]}
+  ];
+
+  var ST={
+    bpm:120,beats:4,beatNote:4,sub:1,sound:'click',
+    volAccent:85,volBeat:65,volSub:40,
+    theme:'indigo',dark:false,
+    vib:true,flash:true,wake:true,swing:false,swingAmt:50,
+    guided:false,guideTheme:null,favs:[]
+  };
+
+  var audioCtx=null;
+  var isPlaying=false;
+  var nextNoteTime=0;
+  var currentBeat=0;
+  var currentSub=0;
+  var timerID=null;
+  var lookahead=25;
+  var scheduleAheadTime=.1;
+  var flashQueue=[];
+  var rafId=null;
+  var startTime=0;
+  var totalBeats=0;
+  var totalBars=0;
+  var beatPhase=0;
+  var lastBeatTime=0;
+  var pendulumAngle=0;
+
+  var practiceMode=null;
+  var practiceStage=0;
+  var practiceBeats=0;
+
+  var tapTimes=[];
+  var tapBpm=null;
+
+  var guideStep=0;
+  var guideAgreed=false;
+  var wakeLock=null;
+
+  function loadState(){
+    try{
+      var s=localStorage.getItem('metronome_v13');
+      if(!s)s=localStorage.getItem('metronome_v12');
+      if(s){
+        var d=JSON.parse(s);
+        for(var k in d)if(d.hasOwnProperty(k))ST[k]=d[k];
+      }
+    }catch(e){}
+  }
+  function saveState(){
+    try{localStorage.setItem('metronome_v13',JSON.stringify(ST))}catch(e){}
+  }
+
+  function toast(msg){
+    var t=$('toast');
+    t.textContent=msg;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t=setTimeout(function(){t.classList.remove('show')},1800);
+  }
+
+  function applyTheme(){
+    document.body.className='t-'+ST.theme+(ST.dark?' dk':'');
+    var meta=document.querySelector('meta[name=theme-color]');
+    if(meta)meta.content=THEME_COLORS[ST.theme]||'#6366f1';
+    requestAnimationFrame(updateAllSliders);
+  }
+
+  function speedName(bpm){
+    for(var i=0;i<SPEED_NAMES.length;i++){
+      if(bpm<=SPEED_NAMES[i].max)return SPEED_NAMES[i].n;
+    }
+    return 'Prestissimo';
+  }
+
+  function updateBPM(bpm,silent){
+    bpm=Math.max(20,Math.min(300,Math.round(bpm)));
+    ST.bpm=bpm;
+    var bd=$('bpm-disp');if(bd)bd.textContent=bpm;
+    var bi=$('bpm-in');if(bi)bi.value=bpm;
+    var br=$('bpm-rng');if(br)br.value=bpm;
+    var bs=$('bpm-speed');if(bs)bs.textContent=speedName(bpm);
+    updateTags();
+    var bf=$('bpm-fill');if(br&&bf)updateSliderFill(br,bf);
+    if(!silent)saveState();
+  }
+
+  function updateTags(){
+    var tags=[];
+    if(ST.bpm>=60&&ST.bpm<=80)tags.push('慢速');
+    if(ST.bpm>=90&&ST.bpm<=120)tags.push('中速');
+    if(ST.bpm>=140)tags.push('快速');
+    tags.push(ST.beats+'/'+ST.beatNote+'拍');
+    if(ST.sub>1)tags.push(SUBS[ST.sub-1].n);
+    var el=$('bpm-tags');
+    el.innerHTML='';
+    tags.forEach(function(t){
+      var s=document.createElement('span');
+      s.className='bpm-tag';
+      s.textContent=t;
+      el.appendChild(s);
+    });
+  }
+
+  function updateSliderFill(input,fill){
+    var min=parseFloat(input.min),max=parseFloat(input.max),val=parseFloat(input.value);
+    var p=((val-min)/(max-min))*100;
+    if(fill)fill.style.width=p+'%';
+  }
+
+  function updateAllSliders(){
+    updateSliderFill($('bpm-rng'),$('bpm-fill'));
+    updateSliderFill($('vol-accent'),$('vol-accent-fill'));
+    updateSliderFill($('vol-beat'),$('vol-beat-fill'));
+    updateSliderFill($('vol-sub'),$('vol-sub-fill'));
+    updateSliderFill($('swing-amt'),$('swing-fill'));
+  }
+
+  function renderBeats(){
+    var bc=$('beats');
+    bc.innerHTML='';
+    for(var i=0;i<ST.beats;i++){
+      var d=document.createElement('div');
+      d.className='beat-dot';
+      d.setAttribute('data-ac',i===0?'1':'0');
+      d.textContent=i+1;
+      bc.appendChild(d);
+    }
+    var bs=$('beat-sub');
+    bs.innerHTML='';
+    for(var j=0;j<ST.sub;j++){
+      var sd=document.createElement('div');
+      sd.className='beat-sub-dot';
+      bs.appendChild(sd);
+    }
+    $('beat-ts').textContent=ST.beats+'/'+ST.beatNote;
+    $('beat-sub-txt').textContent=SUBS[ST.sub-1].n;
+  }
+
+  function initAudio(){
+    if(!audioCtx){
+      try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}
+    }
+    if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+  }
+
+  function playClick(type){
+    if(!audioCtx)return;
+    var vol=type==='accent'?ST.volAccent/100:type==='beat'?ST.volBeat/100:ST.volSub/100;
+    var t=audioCtx.currentTime;
+    var osc=audioCtx.createOscillator();
+    var gain=audioCtx.createGain();
+    var freq=type==='accent'?1500:type==='beat'?1000:700;
+    var dur=0.06;
+
+    if(ST.sound==='click'){osc.type='square';dur=0.05}
+    else if(ST.sound==='beep'){osc.type='sine';dur=0.08}
+    else if(ST.sound==='wood'){osc.type='triangle';freq=type==='accent'?800:type==='beat'?500:350;dur=0.07}
+    else if(ST.sound==='cow'){osc.type='sawtooth';freq=type==='accent'?2000:type==='beat'?1400:1000;dur=0.09}
+    else if(ST.sound==='hihat'){osc.type='square';freq=type==='accent'?8000:type==='beat'?6000:5000;dur=0.03;vol*=0.6}
+    else if(ST.sound==='rim'){osc.type='triangle';freq=type==='accent'?2500:type==='beat'?1800:1200;dur=0.04}
+
+    osc.frequency.value=freq;
+    gain.gain.setValueAtTime(vol,t);
+    gain.gain.exponentialRampToValueAtTime(0.001,t+dur);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(t);
+    osc.stop(t+dur);
+  }
+
+  function nextNote(){
+    var secPerBeat=60/ST.bpm;
+    var subInt=secPerBeat/ST.sub;
+    if(ST.swing&&ST.sub===2){
+      var swingF=ST.swingAmt/100*0.5;
+      nextNoteTime+=subInt*(currentSub===0?(1+swingF):(1-swingF));
+    }else{
+      nextNoteTime+=subInt;
+    }
+    currentSub++;
+    if(currentSub>=ST.sub){
+      currentSub=0;
+      currentBeat++;
+      beatPhase=currentBeat%2===0?1:-1;
+      if(currentBeat>=ST.beats){currentBeat=0;totalBars++;beatPhase=1}
+    }
+  }
+
+  function schedNote(beat,sub,time){
+    var type=sub===0?(beat===0?'accent':'beat'):'sub';
+    playClick(type);
+    flashQueue.push({beat:beat,sub:sub,time:time});
+  }
+
+  function scheduler(){
+    while(nextNoteTime<audioCtx.currentTime+scheduleAheadTime){
+      schedNote(currentBeat,currentSub,nextNoteTime);
+      nextNote();
+    }
+    timerID=setTimeout(scheduler,lookahead);
+  }
+
+  function updatePendulum(){
+    if(!isPlaying){
+      var pen=$('pendulum');
+      pen.style.transition='transform .3s ease-out';
+      pen.style.transform='rotate(0deg)';
+      return;
+    }
+    var now=audioCtx?audioCtx.currentTime:0;
+    var secPerBeat=60/ST.bpm;
+    var sinceLast=now-lastBeatTime;
+    var progress=Math.min(1,sinceLast/(secPerBeat*1.05));
+    var angle=30*Math.sin(progress*Math.PI)*beatPhase;
+    var pen=$('pendulum');
+    pen.style.transition='none';
+    pen.style.transform='rotate('+angle+'deg)';
+  }
+
+  function drawLoop(){
+    var now=audioCtx?audioCtx.currentTime:0;
+    var cur=null;
+    while(flashQueue.length&&flashQueue[0].time<now)cur=flashQueue.shift();
+
+    if(cur&&ST.flash){
+      var dots=$all('.beat-dot');
+      dots.forEach(function(d){d.classList.remove('bt')});
+      var subs=$all('.beat-sub-dot');
+      subs.forEach(function(d){d.classList.remove('on')});
+
+      if(cur.sub===0){
+        lastBeatTime=cur.time;
+        beatPhase=cur.beat%2===0?1:-1;
+        if(dots[cur.beat]){
+          dots[cur.beat].classList.add('bt');
+          var bpmDisp=$('bpm-disp');
+          if(bpmDisp){bpmDisp.classList.add('flash');setTimeout(function(){bpmDisp.classList.remove('flash')},90)}
+          ['r1','r2','r3'].forEach(function(id,i){
+            var el=$(id);
+            if(el){el.classList.remove('go');setTimeout(function(){el.classList.add('go')},10+i*12)}
+          });
+        }
+        totalBeats++;
+      }
+      if(subs[cur.sub])subs[cur.sub].classList.add('on');
+
+      if(ST.vib&&navigator.vibrate&&cur.sub===0){
+        navigator.vibrate(cur.beat===0?25:12);
+      }
+    }
+
+    updatePendulum();
+
+    if(isPlaying){
+      var el=Math.floor((Date.now()-startTime)/1000);
+      var sb=$('stat-beats');if(sb)sb.textContent=totalBeats;
+      var sbar=$('stat-bars');if(sbar)sbar.textContent=totalBars;
+      var st=$('stat-time');if(st)st.textContent=Math.floor(el/60)+':'+(el%60<10?'0':'')+(el%60);
+      var mb=$('m-beats');if(mb)mb.textContent=totalBeats;
+      var mbar=$('m-bars');if(mbar)mbar.textContent=totalBars;
+      var mt=$('m-time');if(mt)mt.textContent=Math.floor(el/60)+':'+(el%60<10?'0':'')+(el%60);
+      var smini=$('stat-mini');if(smini)smini.style.display='grid';
+
+      if(practiceMode){
+        practiceBeats++;
+        var stage=practiceMode.stages[practiceStage];
+        var need=stage.bars*ST.beats*ST.sub;
+        var prbar=$('pr-bar');if(prbar)prbar.style.width=Math.min(100,(practiceBeats/need)*100)+'%';
+        var prcd=$('pr-cd');if(prcd)prcd.textContent=stage.bpm;
+        var prst=$('pr-stage');if(prst)prst.textContent='阶段 '+(practiceStage+1)+'/'+practiceMode.stages.length;
+
+        if(practiceBeats>=need){
+          practiceBeats=0;practiceStage++;
+          if(practiceStage>=practiceMode.stages.length){
+            stopPractice();toast('练习完成！太棒了！');
+          }else{
+            var ns=practiceMode.stages[practiceStage];
+            updateBPM(ns.bpm);
+            if(prcd)prcd.textContent=ns.bpm;
+            if(prst)prst.textContent='阶段 '+(practiceStage+1)+'/'+practiceMode.stages.length;
+            toast('进入下一阶段: '+ns.bpm+' BPM');
+          }
+        }
+      }
+    }else{
+      var smini2=$('stat-mini');if(smini2)smini2.style.display='none';
+    }
+    rafId=requestAnimationFrame(drawLoop);
+  }
+
+  function start(){
+    initAudio();
+    if(isPlaying)return;
+    isPlaying=true;
+    currentBeat=0;currentSub=0;
+    totalBeats=0;totalBars=0;
+    nextNoteTime=audioCtx.currentTime+0.08;
+    lastBeatTime=nextNoteTime-60/ST.bpm;
+    beatPhase=1;
+    flashQueue=[];
+    startTime=Date.now();
+    scheduler();
+    var pb=$('play-btn');if(pb)pb.classList.add('playing');
+    var pic=$('play-ic');if(pic)pic.innerHTML='<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>';
+    var plbl=$('play-label');if(plbl)plbl.textContent='点击暂停';
+    if(ST.wake&&'wakeLock' in navigator){
+      navigator.wakeLock.request('screen').then(function(wl){wakeLock=wl}).catch(function(){});
+    }
+  }
+
+  function stop(){
+    isPlaying=false;
+    clearTimeout(timerID);
+    flashQueue=[];
+    var pb=$('play-btn');if(pb)pb.classList.remove('playing');
+    var pic=$('play-ic');if(pic)pic.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
+    var plbl=$('play-label');if(plbl)plbl.textContent='点击开始';
+    $all('.beat-dot').forEach(function(d){d.classList.remove('bt')});
+    $all('.beat-sub-dot').forEach(function(d){d.classList.remove('on')});
+    var pen=$('pendulum');if(pen){pen.style.transition='transform .3s ease';pen.style.transform='rotate(0deg)'}
+    if(wakeLock){wakeLock.release().catch(function(){});wakeLock=null}
+  }
+
+  function startPractice(p){
+    practiceMode=p;practiceStage=0;practiceBeats=0;
+    ST.beats=4;ST.beatNote=4;ST.sub=1;
+    renderBeats();updateTags();
+    updateBPM(p.stages[0].bpm);
+    $('practice-list-wrap').style.display='none';
+    $('practice-run-wrap').style.display='block';
+    $('pr-stage').textContent='阶段 1/'+p.stages.length;
+    $('pr-cd').textContent=p.stages[0].bpm;
+    $('pr-bar').style.width='0%';
+    start();toast('开始练习: '+p.n);
+  }
+
+  function stopPractice(){
+    practiceMode=null;practiceStage=0;practiceBeats=0;stop();
+    $('practice-list-wrap').style.display='block';
+    $('practice-run-wrap').style.display='none';
+  }
+
+  function updatePracticeUI(){
+    $all('.practice-item').forEach(function(el){
+      el.classList.toggle('on',practiceMode&&el.dataset.id===practiceMode.id);
+    });
+  }
+
+  function goToPage(pid){
+    var id=pid.replace('#','').replace('pg-','');
+    var pages=$all('.page');
+    var target=$('pg-'+id);
+    pages.forEach(function(p){p.classList.remove('active')});
+    if(target){
+      target.classList.add('active');
+      if(history.replaceState)history.replaceState(null,'','#pg-'+id);
+      $all('.nav-item').forEach(function(n){
+        n.classList.toggle('on',n.dataset.page==='pg-'+id);
+      });
+      var titles={'pg-home':'节拍器 Pro','pg-params':'参数设置','pg-practice':'练习模式','pg-tap':'敲击测速','pg-settings':'设置','pg-about':'关于','pg-legal':'用户协议'};
+      var hdr=$('hdr-title');if(hdr)hdr.textContent=titles['pg-'+id]||'节拍器 Pro';
+      var back=$('btn-back');if(back)back.classList.toggle('hidden',id==='home');
+      var sw=$('scroll-wrap');if(sw)sw.scrollTop=0;
+    }else{
+      goToPage('pg-home');
+    }
+  }
+
+  function renderFavs(){
+    var grid=$('fav-grid');
+    var card=$('fav-card');
+    grid.innerHTML='';
+    if(!ST.favs||!ST.favs.length){card.style.display='none';return}
+    card.style.display='block';
+    ST.favs.forEach(function(bpm,i){
+      var b=document.createElement('div');
+      b.className='preset-btn';
+      b.innerHTML='<div class="preset-n">'+bpm+'</div><div class="preset-l">收藏</div>';
+      b.onclick=function(){updateBPM(bpm)};
+      var del=document.createElement('div');
+      del.className='preset-fav';
+      del.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>';
+      del.onclick=function(e){e.stopPropagation();ST.favs.splice(i,1);saveState();renderFavs();toast('已移除收藏')};
+      b.appendChild(del);
+      grid.appendChild(b);
+    });
+  }
+
+  function addFav(){
+    var bpm=ST.bpm;
+    if(!ST.favs)ST.favs=[];
+    if(ST.favs.indexOf(bpm)>=0){toast('BPM '+bpm+' 已在收藏中');return}
+    ST.favs.push(bpm);ST.favs.sort(function(a,b){return a-b});
+    saveState();renderFavs();toast('已收藏 '+bpm+' BPM');
+  }
+
+  function initGuide(){
+    var grid=$('guide-themes');
+    grid.innerHTML='';
+    THEMES.forEach(function(t){
+      var el=document.createElement('div');
+      el.className='guide-theme';
+      el.style.background='linear-gradient(135deg,'+THEME_COLORS[t]+','+THEME_COLORS[t]+'dd)';
+      el.onclick=function(){
+        ST.guideTheme=t;ST.theme=t;applyTheme();
+        $all('.guide-theme').forEach(function(o){o.classList.remove('on')});
+        el.classList.add('on');
+        updateGuideNext();
+      };
+      grid.appendChild(el);
+    });
+    var dots=$('guide-dots');
+    dots.innerHTML='';
+    for(var i=0;i<4;i++){
+      var d=document.createElement('div');
+      d.className='guide-dot'+(i===0?' on':'');
+      dots.appendChild(d);
+    }
+    guideStep=0;guideAgreed=false;
+    updateGuideStep();
+  }
+
+  function updateGuideNext(){
+    var nextBtn=$('guide-next');
+    if(guideStep===0){
+      nextBtn.disabled=!ST.guideTheme;
+      nextBtn.textContent=ST.guideTheme?'下一步':'请先选择主题';
+    }else if(guideStep===1){
+      nextBtn.disabled=false;
+      nextBtn.textContent='下一步';
+    }else if(guideStep===2){
+      nextBtn.disabled=!guideAgreed;
+      nextBtn.textContent=guideAgreed?'下一步':'请先阅读并同意协议';
+    }else{
+      nextBtn.disabled=false;
+      nextBtn.textContent='开始使用';
+    }
+    $('guide-skip').style.display=guideStep>0&&guideStep<2?'block':'none';
+  }
+
+  function updateGuideStep(){
+    var gc=$('guide-content');
+    var steps=[
+      {t:'选择主题颜色',d:'选择你喜欢的颜色主题，打造专属节拍器',ic:'palette'},
+      {t:'功能一览',d:'强大功能助你高效练习',ic:'music'},
+      {t:'用户协议',d:'请阅读并同意用户协议和隐私政策',ic:'doc'},
+      {t:'准备好了吗？',d:'点击开始，享受精准节拍带来的练习体验吧！',ic:'play'}
+    ];
+    var s=steps[guideStep];
+    $('guide-t').textContent=s.t;
+    $('guide-d').textContent=s.d;
+
+    var icons={
+      palette:'<circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/>',
+      music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+      doc:'<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+      play:'<polygon points="5 3 19 12 5 21 5 3"/>'
+    };
+    $('guide-ic').innerHTML='<svg viewBox="0 0 24 24">'+icons[s.ic]+'</svg>';
+
+    var dots=$all('.guide-dot');
+    dots.forEach(function(d,i){d.classList.toggle('on',i===guideStep)});
+
+    if(guideStep===0){
+      gc.innerHTML='<div class="guide-themes" id="guide-themes"></div>';
+      var grid=$('guide-themes');
+      THEMES.forEach(function(t){
+        var el=document.createElement('div');
+        el.className='guide-theme'+(t===ST.guideTheme?' on':'');
+        el.style.background='linear-gradient(135deg,'+THEME_COLORS[t]+','+THEME_COLORS[t]+'dd)';
+        el.onclick=function(){
+          ST.guideTheme=t;ST.theme=t;applyTheme();
+          $all('.guide-theme').forEach(function(o){o.classList.remove('on')});
+          el.classList.add('on');
+          updateGuideNext();
+        };
+        grid.appendChild(el);
+      });
+    }else if(guideStep===1){
+      gc.innerHTML='<div class="feat-grid">'+
+        '<div class="feat-item"><div class="feat-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="feat-n">精准节拍</div><div class="feat-d">Web Audio 调度</div></div>'+
+        '<div class="feat-item"><div class="feat-ic"><svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/></svg></div><div class="feat-n">18 种主题</div><div class="feat-d">个性随心切换</div></div>'+
+        '<div class="feat-item"><div class="feat-ic"><svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg></div><div class="feat-n">6 种音色</div><div class="feat-d">Click/木鱼/牛铃等</div></div>'+
+        '<div class="feat-item"><div class="feat-ic"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="feat-n">练习模式</div><div class="feat-d">渐进式训练</div></div>'+
+        '<div class="feat-item"><div class="feat-ic"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="10"/></svg></div><div class="feat-n">自定义拍号</div><div class="feat-d">任意几分之几拍</div></div>'+
+        '<div class="feat-item"><div class="feat-ic"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div class="feat-n">敲击测速</div><div class="feat-d">Tap Tempo</div></div>'+
+      '</div>';
+    }else if(guideStep===2){
+      gc.innerHTML='<div class="guide-legal">'+
+        '<h4>一、服务说明</h4><p>节拍器 Pro 是免费在线节拍器工具，所有功能均在本地浏览器运行。</p>'+
+        '<h4>二、数据存储</h4><p>使用 localStorage 存储您的设置，数据仅保存在本地，不会上传服务器。</p>'+
+        '<h4>三、AI 辅助开发</h4><p>本应用由 AI 辅助开发完成，经过人工测试优化。</p>'+
+        '<h4>四、免责声明</h4><p>按"现状"提供，不保证适用于所有场景，音频精度受设备影响。</p>'+
+      '</div>'+
+      '<div class="guide-agree'+(guideAgreed?' on':'')+'" id="guide-agree-btn">'+
+        '<div class="guide-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>'+
+        '<div class="guide-agree-txt">我已阅读并同意 <b>《用户协议》</b> 和 <b>《隐私政策》</b></div>'+
+      '</div>';
+      $('guide-agree-btn').addEventListener('click',function(){
+        guideAgreed=!guideAgreed;
+        this.classList.toggle('on',guideAgreed);
+        updateGuideNext();
+      });
+    }else{
+      gc.innerHTML='<div style="padding:10px 0;color:var(--text-sec);font-size:.82em;line-height:1.7">'+
+        '🎵 支持键盘空格键控制播放/暂停<br>'+
+        '⚙️ 在设置中可以随时切换主题和音色<br>'+
+        '⭐ 可以收藏常用BPM方便快速切换<br>'+
+        '📱 支持深色模式和屏幕常亮'+
+      '</div>';
+    }
+    updateGuideNext();
+  }
+
+  function finishGuide(){
+    ST.guided=true;if(!ST.guideTheme)ST.guideTheme=ST.theme;saveState();
+    $('guide').classList.add('hide');
+    if(!rafId)rafId=requestAnimationFrame(drawLoop);
+  }
+
+  function init(){
+    loadState();applyTheme();
+
+    $('vol-accent').value=ST.volAccent;$('vol-beat').value=ST.volBeat;$('vol-sub').value=ST.volSub;
+    $('tog-vib').checked=ST.vib;$('tog-flash').checked=ST.flash;
+    $('tog-dark').checked=ST.dark;$('tog-wake').checked=ST.wake;
+    $('tog-swing').checked=ST.swing;$('swing-amt').value=ST.swingAmt;
+    $('vol-accent-v').textContent=ST.volAccent;$('vol-beat-v').textContent=ST.volBeat;
+    $('vol-sub-v').textContent=ST.volSub;$('swing-v').textContent=ST.swingAmt;
+
+    if(!ST.beatNote)ST.beatNote=4;
+
+    function renderSigGrid(){
+      var sigGrid=$('sig-grid');
+      sigGrid.innerHTML='';
+      TIME_SIGS.forEach(function(ts){
+        var b=document.createElement('div');
+        b.className='sig-btn'+(ts.b===ST.beats&&ts.n===ST.beatNote?' on':'');
+        b.textContent=ts.b+'/'+ts.n;
+        b.onclick=function(){
+          ST.beats=ts.b;ST.beatNote=ts.n;
+          renderSigGrid();renderBeats();updateTags();saveState();
+        };
+        sigGrid.appendChild(b);
+      });
+      $('ct-beats').value=ST.beats;
+      $('ct-bv').value=ST.beatNote;
+    }
+    renderSigGrid();
+
+    var subGrid=$('sub-grid');
+    SUBS.forEach(function(s,i){
+      var b=document.createElement('div');
+      b.className='sub-btn'+(i+1===ST.sub?' on':'');
+      b.innerHTML='<span class="sub-sym">'+s.s+'</span><span>'+s.n+'</span>';
+      b.onclick=function(){
+        ST.sub=i+1;
+        $all('.sub-btn').forEach(function(x){x.classList.remove('on')});
+        b.classList.add('on');renderBeats();updateTags();saveState();
+      };
+      subGrid.appendChild(b);
+    });
+
+    var soundGrid=$('sound-grid');
+    SOUNDS.forEach(function(s){
+      var b=document.createElement('div');
+      b.className='sound-btn'+(s.id===ST.sound?' on':'');
+      b.innerHTML='<div class="sound-ic"><svg viewBox="0 0 24 24">'+s.ic+'</svg></div><span>'+s.n+'</span>';
+      b.onclick=function(){
+        ST.sound=s.id;
+        $all('.sound-btn').forEach(function(x){x.classList.remove('on')});
+        b.classList.add('on');initAudio();playClick('beat');saveState();
+      };
+      soundGrid.appendChild(b);
+    });
+
+    var presetGrid=$('preset-grid');
+    PRESETS.forEach(function(p){
+      var b=document.createElement('div');
+      b.className='preset-btn'+(p.bpm===ST.bpm?' on':'');
+      b.innerHTML='<div class="preset-n">'+p.bpm+'</div><div class="preset-l">'+p.l+'</div>';
+      b.onclick=function(){
+        updateBPM(p.bpm);
+        $all('.preset-btn').forEach(function(x){x.classList.remove('on')});
+        b.classList.add('on');
+      };
+      presetGrid.appendChild(b);
+    });
+
+    var themeGrid=$('theme-grid');
+    THEMES.forEach(function(t){
+      var b=document.createElement('div');
+      b.className='theme-btn'+(t===ST.theme?' on':'');
+      b.innerHTML='<div class="theme-dot" style="background:linear-gradient(135deg,'+THEME_COLORS[t]+','+THEME_COLORS[t]+'aa)"></div><span>'+THEME_NAMES[t]+'</span>';
+      b.onclick=function(){
+        ST.theme=t;applyTheme();
+        $all('.theme-btn').forEach(function(x){x.classList.remove('on')});
+        b.classList.add('on');saveState();
+      };
+      themeGrid.appendChild(b);
+    });
+
+    var pList=$('practice-list');
+    PRACTICES.forEach(function(p){
+      var el=document.createElement('div');
+      el.className='practice-item';el.dataset.id=p.id;
+      el.innerHTML='<div class="practice-ic"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="practice-info"><div class="practice-n">'+p.n+'</div><div class="practice-d">'+p.d+'</div></div><div class="practice-badge">'+p.stages.length+' 阶段</div>';
+      el.onclick=function(){startPractice(p)};
+      pList.appendChild(el);
+    });
+
+    renderBeats();updateBPM(ST.bpm,true);updateAllSliders();renderFavs();
+
+    function bind(el,evt,fn){if(el)el.addEventListener(evt,fn)}
+    function rngBind(input,fill,key,valEl){
+      if(!input)return;
+      input.addEventListener('input',function(e){
+        var v=parseInt(e.target.value);
+        if(key)ST[key]=v;
+        if(valEl)valEl.textContent=v;
+        updateSliderFill(input,fill);
+      });
+      input.addEventListener('change',function(){saveState()});
+    }
+
+    bind($('bpm-in'),'input',function(e){updateBPM(parseInt(e.target.value)||120,true)});
+    bind($('bpm-in'),'change',function(e){updateBPM(parseInt(e.target.value)||120)});
+
+    rngBind($('bpm-rng'),$('bpm-fill'),null,null);
+    bind($('bpm-rng'),'input',function(e){updateBPM(parseInt(e.target.value),true)});
+
+    rngBind($('vol-accent'),$('vol-accent-fill'),'volAccent',$('vol-accent-v'));
+    rngBind($('vol-beat'),$('vol-beat-fill'),'volBeat',$('vol-beat-v'));
+    rngBind($('vol-sub'),$('vol-sub-fill'),'volSub',$('vol-sub-v'));
+    rngBind($('swing-amt'),$('swing-fill'),'swingAmt',$('swing-v'));
+
+    $all('[data-bpm]').forEach(function(b){
+      b.addEventListener('click',function(){updateBPM(ST.bpm+parseInt(b.dataset.bpm));initAudio()});
+    });
+
+    bind($('bpm-disp'),'dblclick',function(){var bi=$('bpm-in');if(bi){bi.focus();bi.select()}});
+    bind($('bpm-disp'),'wheel',function(e){e.preventDefault();updateBPM(ST.bpm+(e.deltaY<0?1:-1))},{passive:false});
+
+    bind($('play-btn'),'click',function(){
+      if(practiceMode)stopPractice();
+      else{if(isPlaying)stop();else{start();if(!rafId)rafId=requestAnimationFrame(drawLoop)}}
+    });
+
+    $all('.nav-item').forEach(function(n){n.addEventListener('click',function(){goToPage(n.dataset.page)})});
+    $all('[data-goto]').forEach(function(el){el.addEventListener('click',function(){goToPage(el.dataset.goto)})});
+    bind($('btn-back'),'click',function(){goToPage('pg-home')});
+    bind($('btn-menu'),'click',function(){goToPage('pg-settings')});
+
+    function togBind(id,key){
+      var el=$(id);
+      if(el)el.addEventListener('change',function(e){ST[key]=e.target.checked;if(key==='dark')applyTheme();saveState()});
+    }
+    togBind('tog-vib','vib');togBind('tog-flash','flash');
+    togBind('tog-dark','dark');togBind('tog-wake','wake');togBind('tog-swing','swing');
+
+    bind($('pr-stop'),'click',stopPractice);
+
+    bind($('tap-btn'),'click',doTap);
+    bind($('tap-reset'),'click',resetTap);
+    bind($('tap-apply'),'click',applyTap);
+
+    bind($('btn-fav-add'),'click',addFav);
+    bind($('btn-goto-about'),'click',function(){goToPage('pg-about')});
+    bind($('btn-guide2'),'click',function(){
+      ST.guided=false;ST.guideTheme=ST.theme;guideStep=0;initGuide();
+      var g=$('guide');if(g)g.classList.remove('hide');
+    });
+    bind($('btn-reset'),'click',function(){
+      if(confirm('确定要重置所有数据吗？\n\n将清除：主题设置、音量、收藏BPM、所有偏好设置')){
+        try{localStorage.removeItem('metronome_v13');localStorage.removeItem('metronome_v12')}catch(e){}
+        location.reload();
+      }
+    });
+    bind($('ct-apply'),'click',function(){
+      var cb=$('ct-beats');var cv=$('ct-bv');
+      var b=cb?parseInt(cb.value)||4:4;
+      var v=cv?parseInt(cv.value)||4:4;
+      b=Math.max(1,Math.min(32,b));
+      ST.beats=b;ST.beatNote=v;
+      saveState();renderSigGrid();renderBeats();updateTags();
+      toast('已应用 '+b+'/'+v+' 拍');
+    });
+
+    document.addEventListener('keydown',function(e){
+      if(e.code==='Space'&&document.activeElement.tagName!=='INPUT'){
+        e.preventDefault();
+        var pt=$('pg-tap');
+        if(pt&&pt.classList.contains('active'))doTap();
+        else if(practiceMode)stopPractice();
+        else{if(isPlaying)stop();else{start();if(!rafId)rafId=requestAnimationFrame(drawLoop)}}
+      }
+    });
+
+    bind($('guide-next'),'click',function(){
+      if(guideStep<3){guideStep++;updateGuideStep()}
+      else finishGuide();
+    });
+    bind($('guide-skip'),'click',finishGuide);
+
+    var guideEl=$('guide');
+    if(!ST.guided){initGuide();if(guideEl)guideEl.classList.remove('hide')}
+    else{if(guideEl)guideEl.classList.add('hide');if(!isPlaying)rafId=requestAnimationFrame(drawLoop)}
+
+    if(location.hash&&location.hash.startsWith('#pg-'))goToPage(location.hash);
+
+    window.addEventListener('hashchange',function(){if(location.hash.startsWith('#pg-'))goToPage(location.hash)});
+
+    setTimeout(updateAllSliders,50);
+  }
+
+  function doTap(){
+    var now=Date.now();
+    if(tapTimes.length&&now-tapTimes[tapTimes.length-1]>2000)tapTimes=[];
+    tapTimes.push(now);
+    if(tapTimes.length>8)tapTimes.shift();
+    var tb=$('tap-btn');
+    if(tb&&tb.animate){
+      tb.animate([{boxShadow:'0 8px 24px var(--glow)'},{boxShadow:'0 12px 32px var(--glow)'},{boxShadow:'0 8px 24px var(--glow)'}],{duration:120,easing:'ease-out'});
+    }
+    if(tapTimes.length>=2){
+      var ints=[];
+      for(var i=1;i<tapTimes.length;i++)ints.push(tapTimes[i]-tapTimes[i-1]);
+      var avg=ints.reduce(function(a,b){return a+b},0)/ints.length;
+      tapBpm=Math.min(300,Math.max(20,Math.round(60000/avg)));
+      var tv=$('tap-val');if(tv)tv.textContent=tapBpm;
+      var tc=$('tap-cnt');if(tc)tc.textContent=tapTimes.length;
+      initAudio();playClick('beat');
+    }
+  }
+  function resetTap(){
+    tapTimes=[];tapBpm=null;
+    var tv=$('tap-val');if(tv)tv.textContent='---';
+    var tc=$('tap-cnt');if(tc)tc.textContent='0'
+  }
+  function applyTap(){
+    if(tapBpm){updateBPM(tapBpm);goToPage('pg-home');toast('已设置为 '+tapBpm+' BPM');resetTap()}
+    else toast('请先点击测速');
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+  else init();
+})();
+</script>
+</body>
+</html>

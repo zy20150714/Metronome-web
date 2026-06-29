@@ -591,7 +591,50 @@ body.t-neon .practice-bar{
 .guide-ic svg{width:36px;height:36px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .guide-t{font-size:1.3em;font-weight:900;color:var(--text);margin-bottom:6px;position:relative;z-index:1}
 .guide-d{color:var(--text-sec);font-size:.85em;line-height:1.65;margin-bottom:20px;position:relative;z-index:1}
-.guide-themes{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px;position:relative;z-index:1}
+.guide-themes-scroll{max-height:200px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  margin-bottom:16px;position:relative;z-index:1;border-radius:12px}
+.guide-themes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:4px}
+.guide-theme-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;
+  border-radius:12px;cursor:pointer;transition:all var(--fast);border:2px solid transparent;
+  background:var(--surface-2)}
+.guide-theme-btn:active{transform:scale(.95)}
+.guide-theme-btn.on{border-color:var(--primary);background:rgba(var(--primary-rgb),.1)}
+.guide-theme-dot{width:28px;height:28px;border-radius:10px;box-shadow:var(--shadow-sm)}
+.guide-theme-name{font-size:.62em;color:var(--text-sec);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+
+.guide-agree{margin-bottom:14px;text-align:left;position:relative;z-index:1}
+.guide-checkbox{display:flex;align-items:flex-start;gap:8px;cursor:pointer}
+.guide-checkbox input{display:none}
+.guide-checkmark{width:18px;height:18px;border-radius:5px;border:2px solid var(--text-muted);
+  flex-shrink:0;margin-top:1px;position:relative;transition:all var(--fast)}
+.guide-checkbox input:checked + .guide-checkmark{background:var(--primary);border-color:var(--primary)}
+.guide-checkbox input:checked + .guide-checkmark::after{content:"✓";position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);color:#fff;font-size:.8em;font-weight:900}
+.guide-agree-text{font-size:.72em;color:var(--text-sec);line-height:1.5}
+.guide-link{color:var(--primary);text-decoration:underline;cursor:pointer;font-weight:700}
+
+.modal-mask{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.6);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;transition:opacity .3s;pointer-events:none}
+.modal-mask.show{opacity:1;pointer-events:auto}
+.modal-mask.hide{opacity:0;pointer-events:none}
+.modal-box{background:var(--surface);border-radius:20px;max-width:380px;width:100%;
+  max-height:75vh;display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:var(--shadow-xl);animation:modalPop .35s var(--bounce)}
+@keyframes modalPop{from{opacity:0;transform:scale(.9) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;
+  align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-size:1.05em;font-weight:900;color:var(--text)}
+.modal-close{width:32px;height:32px;border-radius:50%;border:0;background:var(--surface-2);
+  color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:.9em;transition:all var(--fast)}
+.modal-close:active{transform:scale(.9)}
+.modal-body{padding:16px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
+.modal-body p{font-size:.82em;line-height:1.7;color:var(--text-sec);margin-bottom:10px}
+.modal-body h3{font-size:.95em;font-weight:800;color:var(--text);margin:14px 0 8px}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0}
+.modal-footer .guide-btn{width:100%}
 .guide-theme{aspect-ratio:1;border-radius:14px;border:3px solid transparent;cursor:pointer;
   transition:border-color var(--fast),box-shadow var(--fast);position:relative;box-shadow:var(--shadow-sm)}
 .guide-theme.on{border-color:var(--text);box-shadow:var(--shadow-lg)}
@@ -786,11 +829,46 @@ body.t-neon .practice-bar{
   .sound-grid{grid-template-columns:1fr}
   .preset-grid{grid-template-columns:repeat(2,1fr)}
   .theme-grid{grid-template-columns:repeat(2,1fr)}
-  .guide-themes{grid-template-columns:repeat(5,1fr)}
+  .guide-themes{grid-template-columns:repeat(3,1fr)}
   .tap-btn{width:84px;height:84px;font-size:.9em}
   .tap-val{font-size:2.2em}
   .pendulum-wrap{height:40px}
   .pendulum{height:36px}
+  .page{padding-bottom:90px}
+  .card{padding:12px;margin-bottom:8px}
+  .card-h{margin-bottom:8px}
+  .card-t{font-size:.88em}
+  .page-t{font-size:1.3em}
+  .feat-grid{grid-template-columns:repeat(2,1fr)}
+  .vis-style-grid{grid-template-columns:repeat(3,1fr)}
+  .bg-sound-grid{grid-template-columns:repeat(3,1fr)}
+  .data-actions{grid-template-columns:repeat(2,1fr)}
+  .nav-item{padding:6px 0}
+  .nav-ic{width:20px;height:20px}
+  .nav-lbl{font-size:.65em}
+  .guide-box{padding:20px 16px 18px;max-width:320px}
+  .guide-t{font-size:1.1em}
+  .guide-d{font-size:.78em;margin-bottom:14px}
+  .guide-ic{width:56px;height:56px;margin-bottom:12px}
+  .guide-ic svg{width:28px;height:28px}
+  .guide-themes-scroll{max-height:160px}
+}
+
+@media(min-height:800px){
+  .guide-themes-scroll{max-height:280px}
+}
+
+@media(max-height:600px){
+  .bpm-card{padding:6px 12px 2px}
+  .bpm-num{font-size:2.4em}
+  .pendulum-wrap{height:28px}
+  .pendulum{height:26px}
+  .play-rings{width:72px;height:72px}
+  .play-btn{width:52px;height:52px}
+  .play-btn svg{width:20px;height:20px}
+  .card{padding:10px;margin-bottom:6px}
+  .guide-box{max-height:85vh;overflow-y:auto}
+  .guide-themes-scroll{max-height:120px}
 }
 
 .play-ring{will-change:transform,opacity}
@@ -1493,7 +1571,7 @@ body.t-neon .practice-bar{
           <div class="about-sub">究极进化版 · 22种主题 · 20+功能</div>
           <div class="about-ai">
             <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            AI 驱动的专业节拍器
+            AI 辅助开发 · 专业节拍器
           </div>
         </div>
         <div class="feat-grid">
@@ -1559,10 +1637,34 @@ body.t-neon .practice-bar{
       </div>
       <div class="guide-t" id="guide-title">欢迎使用节拍器 Pro</div>
       <div class="guide-d" id="guide-desc">选择一个你喜欢的主题颜色开始吧</div>
-      <div class="guide-themes" id="guide-themes"></div>
+      <div class="guide-themes-scroll" id="guide-themes-scroll">
+        <div class="guide-themes" id="guide-themes"></div>
+      </div>
       <div class="guide-dots" id="guide-dots"></div>
+      <div class="guide-agree" id="guide-agree" style="display:none">
+        <label class="guide-checkbox">
+          <input type="checkbox" id="guide-agree-check">
+          <span class="guide-checkmark"></span>
+          <span class="guide-agree-text">
+            我已阅读并同意 <span class="guide-link" id="guide-user-terms">用户协议</span> 和 <span class="guide-link" id="guide-privacy">隐私政策</span>
+          </span>
+        </label>
+      </div>
       <button class="guide-btn" id="guide-btn">开始使用</button>
       <button class="guide-btn sec" id="guide-skip">跳过引导</button>
+    </div>
+  </div>
+
+  <div class="modal-mask hide" id="terms-mask">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="terms-title">用户协议</div>
+        <button class="modal-close" id="terms-close">✕</button>
+      </div>
+      <div class="modal-body" id="terms-body"></div>
+      <div class="modal-footer">
+        <button class="guide-btn" id="terms-ok">我知道了</button>
+      </div>
     </div>
   </div>
 
@@ -1925,7 +2027,7 @@ function render_sounds(){
 }
 
 function render_themes(container,on_select){
-  var c=container||$('theme-grid');c.innerHTML='';
+  var c=container||$('theme-grid');if(!c)return;c.innerHTML='';
   THEMES.forEach(function(t){
     var d=document.createElement('div');d.className='theme-btn'+(CFG.theme===t.id?' on':'');
     d.innerHTML='<div class="theme-dot" style="background:linear-gradient(135deg,'+t.c1+','+t.c2+')"></div><span>'+t.name+'</span>';
@@ -2050,7 +2152,6 @@ function show_page(id){
   $('btn-back').classList.toggle('hidden',!back);
   $('scroll-wrap').scrollTop=0;
   if(id==='pg-practice')render_stats();
-  if(id==='pg-settings')render_themes();
 }
 
 function init_nav(){
@@ -2473,7 +2574,9 @@ function init_data_mgmt(){
   });
   $('btn-reset').addEventListener('click',function(){
     if(confirm('确定要重置所有数据吗？此操作不可撤销。')){
-      localStorage.removeItem(LS_KEY);localStorage.removeItem(STATS_KEY);localStorage.removeItem(HIST_KEY);location.reload();
+      localStorage.removeItem(LS_KEY);localStorage.removeItem(STATS_KEY);localStorage.removeItem(HIST_KEY);
+      localStorage.removeItem('metro_v14_shown');
+      location.reload();
     }
   });
   $('btn-share').addEventListener('click',function(){
@@ -2543,27 +2646,100 @@ function init_share_load(){
 
 function init_guide(){
   if(localStorage.getItem('metro_v14_shown'))return;
-  var mask=$('guide-mask'),step=0;
+  var mask=$('guide-mask'),step=0,agreed=false;
   var steps=[
-    {title:'欢迎使用节拍器 Pro',desc:'选择一个你喜欢的主题颜色开始吧',show_themes:true},
-    {title:'敲击测速',desc:'不知道歌曲的BPM？用敲击测速功能，跟着节奏点几下就知道了'},
-    {title:'练习模式',desc:'渐进式训练，帮助你逐步提升速度和稳定性'},
-    {title:'调音器',desc:'内置A4参考音，随时为你的乐器调音'},
-    {title:'准备好了吗？',desc:'点击下方按钮开始使用，享受精准的节拍体验'}
+    {title:'欢迎使用节拍器 Pro',desc:'由AI辅助开发的专业级节拍器，为你提供精准稳定的节奏体验',icon:'🎵',show_themes:true,show_agree:false},
+    {title:'选择你的专属主题',desc:'22款精心设计的主题，上下滑动查看更多，点击选择你喜欢的',icon:'🎨',show_themes:true,show_agree:false},
+    {title:'核心功能都在这里',desc:'底部导航栏四个页面：首页是节拍控制，参数调节速度音色，练习有多种训练模式，设置个性化配置',icon:'🧭',show_themes:false,show_agree:false},
+    {title:'敲击测速 & 调音器',desc:'首页快捷操作里有「敲击测速」和「调音器」，不知道BPM？敲两下就知道了；乐器需要调音？一键生成参考音',icon:'🎯',show_themes:false,show_agree:false},
+    {title:'环境音量自动调节',desc:'在设置页面可以开启「环境音量自动调节」，根据环境噪音自动调整节拍器音量，嘈杂环境也能听清楚',icon:'🎤',show_themes:false,show_agree:false},
+    {title:'开始使用前',desc:'请先阅读并同意用户协议和隐私政策，然后我们就可以开始了',icon:'📋',show_themes:false,show_agree:true}
   ];
+  function render_guide_themes(){
+    var c=$('guide-themes');c.innerHTML='';
+    THEMES.forEach(function(t){
+      var d=document.createElement('div');d.className='guide-theme-btn'+(CFG.theme===t.id?' on':'');
+      d.innerHTML='<div class="guide-theme-dot" style="background:linear-gradient(135deg,'+t.c1+','+t.c2+')"></div><span class="guide-theme-name">'+t.name+'</span>';
+      d.addEventListener('click',function(){
+        apply_theme(t.id);save_cfg();
+        qsa('.guide-theme-btn').forEach(function(b){b.classList.remove('on');});
+        d.classList.add('on');
+      });c.appendChild(d);
+    });
+  }
+  function update_icons(icon){
+    var ic=$('guide-ic');
+    if(icon==='🎵'){ic.innerHTML='<svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';}
+    else if(icon==='🎨'){ic.innerHTML='<svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/></svg>';}
+    else if(icon==='🧭'){ic.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>';}
+    else if(icon==='🎯'){ic.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';}
+    else if(icon==='🎤'){ic.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>';}
+    else{ic.innerHTML='<svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';}
+  }
   function rs(){
-    var s=steps[step];$('guide-title').textContent=s.title;$('guide-desc').textContent=s.desc;
-    $('guide-themes').style.display=s.show_themes?'grid':'none';
-    if(s.show_themes){render_themes($('guide-themes'),function(){setTimeout(ns,300);});}
+    var s=steps[step];
+    $('guide-title').textContent=s.title;
+    $('guide-desc').textContent=s.desc;
+    update_icons(s.icon);
+    $('guide-themes-scroll').style.display=s.show_themes?'block':'none';
+    $('guide-agree').style.display=s.show_agree?'block':'none';
+    if(s.show_themes){render_guide_themes();}
     var dots=$('guide-dots');dots.innerHTML='';
     for(var i=0;i<steps.length;i++){var d=document.createElement('div');d.className='guide-dot'+(i===step?' on':'');dots.appendChild(d);}
     $('guide-btn').textContent=step===steps.length-1?'开始使用':'下一步';
+    $('guide-skip').style.display=step===steps.length-1?'none':'block';
+    update_agree_state();
   }
-  function ns(){step++;if(step>=steps.length){fg();return;}rs();}
+  function update_agree_state(){
+    var is_last=step===steps.length-1;
+    var btn=$('guide-btn');
+    if(is_last){
+      agreed=$('guide-agree-check').checked;
+      btn.style.opacity=agreed?'1':'0.5';
+      btn.style.pointerEvents=agreed?'auto':'none';
+    }else{btn.style.opacity='1';btn.style.pointerEvents='auto';}
+  }
+  function ns(){
+    if(step===steps.length-1&&!agreed){toast('请先同意用户协议和隐私政策');return;}
+    step++;if(step>=steps.length){fg();return;}rs();
+  }
   function fg(){mask.classList.add('hide');localStorage.setItem('metro_v14_shown','1');}
   $('guide-btn').addEventListener('click',ns);
-  $('guide-skip').addEventListener('click',fg);
+  $('guide-skip').addEventListener('click',function(){
+    if(step===steps.length-1){toast('请先同意用户协议和隐私政策');return;}
+    fg();
+  });
+  $('guide-agree-check').addEventListener('change',update_agree_state);
+  $('guide-user-terms').addEventListener('click',function(e){
+    e.stopPropagation();show_terms('user');
+  });
+  $('guide-privacy').addEventListener('click',function(e){
+    e.stopPropagation();show_terms('privacy');
+  });
+  $('terms-close').addEventListener('click',function(){$('terms-mask').classList.remove('show');$('terms-mask').classList.add('hide');});
+  $('terms-ok').addEventListener('click',function(){$('terms-mask').classList.remove('show');$('terms-mask').classList.add('hide');});
+  $('terms-mask').addEventListener('click',function(e){
+    if(e.target===$('terms-mask')){$('terms-mask').classList.remove('show');$('terms-mask').classList.add('hide');}
+  });
   rs();mask.classList.remove('hide');
+}
+
+function show_terms(type){
+  var mask=$('terms-mask'),title=$('terms-title'),body=$('terms-body');
+  if(type==='user'){
+    title.textContent='用户协议';
+    body.innerHTML='<h3>一、服务说明</h3><p>欢迎使用节拍器 Pro。本应用是一款由AI辅助开发的专业节拍器工具，旨在为音乐爱好者和专业音乐人提供精准稳定的节奏训练服务。</p>'+
+      '<h3>二、使用规范</h3><p>1. 请在合适的场景使用本应用，避免因使用不当造成听力损伤。</p><p>2. 请勿将本应用用于商业用途或非法用途。</p><p>3. 请妥善保管您的设置数据，建议定期导出备份。</p>'+
+      '<h3>三、免责声明</h3><p>1. 本应用按"现状"提供，不对使用效果做任何明示或暗示的保证。</p><p>2. 因使用本应用造成的任何直接或间接损失，开发者不承担责任。</p><p>3. 我们保留随时修改或中断服务的权利。</p>'+
+      '<h3>四、知识产权</h3><p>本应用的所有内容、代码、设计均受相关法律法规保护，未经授权不得复制、修改或传播。</p>';
+  }else{
+    title.textContent='隐私政策';
+    body.innerHTML='<h3>一、信息收集</h3><p>本应用尊重并保护所有用户的个人隐私。我们承诺不会收集、存储或上传您的任何个人信息。</p>'+
+      '<h3>二、本地存储</h3><p>1. 您的所有设置数据（如BPM、主题、音量等）仅保存在您的设备本地存储中。</p><p>2. 我们无法访问您的个人数据，也不会将其发送到任何服务器。</p>'+
+      '<h3>三、麦克风权限</h3><p>1. 环境音量检测功能需要麦克风权限。</p><p>2. 麦克风采集的环境声音仅用于实时音量分析，不会被录制或上传。</p><p>3. 您可以随时在设置中关闭此功能。</p>'+
+      '<h3>四、数据安全</h3><p>所有数据均存储在您的设备本地，您可以随时通过"清除数据"功能删除所有数据。</p>';
+  }
+  mask.classList.remove('hide');mask.classList.add('show');
 }
 
 function init_timer(){

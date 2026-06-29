@@ -14,7 +14,7 @@ export type SubdivisionType =
   | 'septuplet'
   | 'nonuplet';
 
-export type SoundType = 'click' | 'drum' | 'wood' | 'electronic' | 'metal';
+export type SoundType = 'click' | 'drum' | 'wood' | 'electronic' | 'metal' | 'custom';
 
 export interface Volume {
   accent: number;
@@ -41,7 +41,9 @@ export type MetronomeAction =
   | { type: 'SET_VOLUME'; payload: Partial<Volume> }
   | { type: 'NEXT_BEAT' }
   | { type: 'NEXT_SUBDIVISION' }
-  | { type: 'RESET_BEAT' };
+  | { type: 'RESET_BEAT' }
+  | { type: 'SET_CURRENT_BEAT'; payload: number }
+  | { type: 'SET_CURRENT_SUBDIVISION'; payload: number };
 
 export interface SoundConfig {
   accentFrequency: number;

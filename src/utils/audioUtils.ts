@@ -12,6 +12,7 @@ export const soundNames: Record<SoundType, string> = {
 
 class AudioUtils {
   private audioContext: AudioContext | null = null;
+  private masterGain: GainNode | null = null;
   private soundConfigs: Record<SoundType, SoundConfig> = {
     click: {
       accentFrequency: 1000,
@@ -45,19 +46,30 @@ class AudioUtils {
     },
   };
 
-  private getAudioContext(): AudioContext | null {
+  private customSoundConfig: SoundConfig = {
+    accentFrequency: 1200,
+    secondaryFrequency: 800,
+    normalFrequency: 600,
+    duration: 0.06,
+  };
+
+  private customWaveType: OscillatorType = 'sine';
+
+  public getAudioContext(): AudioContext | null {
     try {
       if (!this.audioContext) {
         const AudioContextConstructor = window.AudioContext || (window as { webkitAudioContext?: new () => AudioContext }).webkitAudioContext;
         if (AudioContextConstructor) {
           this.audioContext = new AudioContextConstructor();
+          this.masterGain = this.audioContext.createGain();
+          this.masterGain.gain.value = 1;
+          this.masterGain.connect(this.audioContext.destination);
         } else {
           console.warn('Web Audio API is not supported in this browser');
           return null;
         }
       }
       
-      // 确保音频上下文处于运行状态
       if (this.audioContext.state === 'suspended') {
         this.audioContext.resume().catch(err => {
           console.warn('Failed to resume audio context:', err);
@@ -71,9 +83,31 @@ class AudioUtils {
     }
   }
 
-  private playTone(frequency: number, volume: number, duration: number, type: OscillatorType = 'sine'): void {
+  public setMasterVolume(volume: number): void {
+    if (this.masterGain && this.audioContext) {
+      const normalizedVolume = Math.min(Math.max(volume / 100, 0), 1);
+      this.masterGain.gain.setTargetAtTime(normalizedVolume, this.audioContext.currentTime, 0.01);
+    }
+  }
+
+  public getMasterVolume(): number {
+    return this.masterGain ? this.masterGain.gain.value * 100 : 100;
+  }
+
+  public setCustomSoundConfig(config: Partial<SoundConfig> & { waveType?: OscillatorType }): void {
+    if (config.waveType) {
+      this.customWaveType = config.waveType;
+    }
+    this.customSoundConfig = { ...this.customSoundConfig, ...config };
+  }
+
+  public getCustomSoundConfig(): SoundConfig & { waveType: OscillatorType } {
+    return { ...this.customSoundConfig, waveType: this.customWaveType };
+  }
+
+  private playTone(frequency: number, volume: number, duration: number, type: OscillatorType = 'sine', startTime?: number): void {
     const audioContext = this.getAudioContext();
-    if (!audioContext) {
+    if (!audioContext || !this.masterGain) {
       return;
     }
 
@@ -81,29 +115,28 @@ class AudioUtils {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
-      // 兼容旧浏览器的振荡器类型
-      const supportedTypes = ['sine', 'square', 'sawtooth', 'triangle'];
+      const supportedTypes: OscillatorType[] = ['sine', 'square', 'sawtooth', 'triangle'];
       if (!supportedTypes.includes(type)) {
         type = 'sine';
       }
       oscillator.type = type;
 
-      // 兼容旧浏览器的频率设置
+      const start = startTime || audioContext.currentTime;
+      
       if (oscillator.frequency.setValueAtTime) {
-        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        oscillator.frequency.setValueAtTime(frequency, start);
       } else {
         (oscillator.frequency as AudioParam & { value: number }).value = frequency;
       }
 
       const normalizedVolume = Math.min(volume / 100, 0.8);
       
-      // 兼容旧浏览器的增益设置
       if (gainNode.gain.setValueAtTime) {
-        gainNode.gain.setValueAtTime(normalizedVolume, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0, start);
+        gainNode.gain.linearRampToValueAtTime(normalizedVolume, start + 0.005);
         if (gainNode.gain.exponentialRampToValueAtTime) {
-          gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, start + duration);
         } else {
-          // 降级方案：直接设置值
           setTimeout(() => {
             (gainNode.gain as AudioParam & { value: number }).value = 0.001;
           }, duration * 1000);
@@ -116,34 +149,36 @@ class AudioUtils {
       }
 
       oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+      gainNode.connect(this.masterGain);
 
-      // 兼容旧浏览器的启动和停止方法
       if (oscillator.start) {
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + duration);
+        oscillator.start(start);
+        oscillator.stop(start + duration + 0.02);
       } else {
-        (oscillator as OscillatorNode & { noteOn: (time: number) => void }).noteOn(audioContext.currentTime);
-        (oscillator as OscillatorNode & { noteOff: (time: number) => void }).noteOff(audioContext.currentTime + duration);
+        (oscillator as OscillatorNode & { noteOn: (time: number) => void }).noteOn(start);
+        (oscillator as OscillatorNode & { noteOff: (time: number) => void }).noteOff(start + duration + 0.02);
       }
     } catch (error) {
       console.warn('Error playing tone:', error);
     }
   }
 
-  public playAccent(soundType: SoundType, volume: number): void {
-    const config = this.soundConfigs[soundType];
-    this.playTone(config.accentFrequency, volume, config.duration, 'sine');
+  public playAccent(soundType: SoundType, volume: number, startTime?: number): void {
+    const config = soundType === 'custom' ? this.customSoundConfig : this.soundConfigs[soundType] || this.soundConfigs.click;
+    const waveType = soundType === 'custom' ? this.customWaveType : 'sine';
+    this.playTone(config.accentFrequency, volume, config.duration, waveType, startTime);
   }
 
-  public playSecondary(soundType: SoundType, volume: number): void {
-    const config = this.soundConfigs[soundType];
-    this.playTone(config.secondaryFrequency, volume * 0.9, config.duration * 0.8, 'sine');
+  public playSecondary(soundType: SoundType, volume: number, startTime?: number): void {
+    const config = soundType === 'custom' ? this.customSoundConfig : this.soundConfigs[soundType] || this.soundConfigs.click;
+    const waveType = soundType === 'custom' ? this.customWaveType : 'sine';
+    this.playTone(config.secondaryFrequency, volume * 0.9, config.duration * 0.8, waveType, startTime);
   }
 
-  public playNormal(soundType: SoundType, volume: number): void {
-    const config = this.soundConfigs[soundType];
-    this.playTone(config.normalFrequency, volume * 0.8, config.duration * 0.7, 'sine');
+  public playNormal(soundType: SoundType, volume: number, startTime?: number): void {
+    const config = soundType === 'custom' ? this.customSoundConfig : this.soundConfigs[soundType] || this.soundConfigs.click;
+    const waveType = soundType === 'custom' ? this.customWaveType : 'sine';
+    this.playTone(config.normalFrequency, volume * 0.8, config.duration * 0.7, waveType, startTime);
   }
 
   public playSound(soundType: SoundType, isAccent: boolean, isSecondary: boolean, volume: number): void {
@@ -160,12 +195,30 @@ class AudioUtils {
     }
   }
 
+  public scheduleSound(soundType: SoundType, isAccent: boolean, isSecondary: boolean, volume: number, time: number): void {
+    try {
+      if (isAccent) {
+        this.playAccent(soundType, volume, time);
+      } else if (isSecondary) {
+        this.playSecondary(soundType, volume, time);
+      } else {
+        this.playNormal(soundType, volume, time);
+      }
+    } catch (error) {
+      console.warn('Error scheduling sound:', error);
+    }
+  }
+
   public preload(): void {
     this.getAudioContext();
   }
 
   public isSupported(): boolean {
     return !!(window.AudioContext || (window as { webkitAudioContext?: new () => AudioContext }).webkitAudioContext);
+  }
+
+  public testSound(soundType: SoundType, isAccent: boolean = true): void {
+    this.playSound(soundType, isAccent, false, 70);
   }
 }
 

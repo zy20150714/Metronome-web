@@ -87,6 +87,18 @@ const metronomeReducer = (state: MetronomeState, action: MetronomeAction): Metro
         currentSubdivision: 1,
       };
     
+    case 'SET_CURRENT_BEAT':
+      return {
+        ...state,
+        currentBeat: action.payload,
+      };
+    
+    case 'SET_CURRENT_SUBDIVISION':
+      return {
+        ...state,
+        currentSubdivision: action.payload,
+      };
+    
     default:
       return state;
   }

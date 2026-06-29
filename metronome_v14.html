@@ -470,6 +470,17 @@ body.t-neon .preset-btn.on{
 .vol-lbl{color:var(--text-sec);font-size:.82em;font-weight:600;width:70px;flex-shrink:0}
 .vol-val{width:36px;text-align:right;color:var(--primary);font-weight:800;font-size:.85em;font-variant-numeric:tabular-nums}
 
+.vol-preview-btns{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.vol-preview-btn{flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);
+  background:var(--surface-2);font-size:.78em;font-weight:700;cursor:pointer;transition:all var(--fast);
+  text-align:center}
+.vol-preview-btn:active{transform:scale(.98)}
+.vol-preview-btn.accent{background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(239,68,68,.08));border-color:rgba(239,68,68,.25)}
+.vol-preview-btn.accent:active{background:linear-gradient(135deg,rgba(239,68,68,.2),rgba(239,68,68,.15))}
+.vol-preview-btn.normal{background:linear-gradient(135deg,rgba(var(--primary-rgb),.12),rgba(var(--secondary-rgb),.08));
+  border-color:rgba(var(--primary-rgb),.25)}
+.vol-preview-btn.normal:active{background:linear-gradient(135deg,rgba(var(--primary-rgb),.2),rgba(var(--secondary-rgb),.15))}
+
 .tap-area{display:flex;align-items:center;gap:16px}
 .tap-btn{width:100px;height:100px;border-radius:50%;
   background:linear-gradient(135deg,var(--primary),var(--secondary));
@@ -720,6 +731,21 @@ body.t-neon .practice-bar{
 .vis-name{font-size:.65em;font-weight:600;color:var(--text-sec)}
 .vis-style-btn.on .vis-name{color:var(--primary)}
 
+.ambient-level-display{display:flex;align-items:center;justify-content:space-between;padding:12px;
+  background:var(--surface-2);border-radius:var(--r-md);margin-bottom:8px}
+.ambient-label{font-size:.82em;font-weight:600;color:var(--text-sec)}
+.ambient-value{font-size:1.2em;font-weight:900;font-variant-numeric:tabular-nums;color:var(--primary)}
+.ambient-bar{height:8px;background:var(--surface-3);border-radius:999px;margin-bottom:12px;overflow:hidden}
+.ambient-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--secondary));
+  border-radius:999px;transition:width .3s ease}
+.ambient-controls{margin-bottom:8px}
+.ambient-btn{width:100%;padding:14px;border-radius:12px;border:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(var(--primary-rgb),.12),rgba(var(--secondary-rgb),.08));
+  color:var(--primary);font-size:.88em;font-weight:700;cursor:pointer;transition:all var(--fast)}
+.ambient-btn:active{transform:scale(.98)}
+.ambient-btn.active{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border-color:transparent}
+.ambient-settings{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+
 .accel-ramp{display:flex;gap:8px;margin-top:8px}
 .accel-btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);
   background:var(--surface-2);font-size:.72em;font-weight:700;color:var(--text-sec);
@@ -767,6 +793,20 @@ body.t-neon .practice-bar{
   .pendulum{height:36px}
 }
 
+.play-ring{will-change:transform,opacity}
+.beat-dot{will-change:transform,background-color,box-shadow}
+.pendulum{will-change:transform}
+.bpm-num{will-change:contents,transform}
+.play-btn{will-change:transform,box-shadow}
+.play-btn.playing{will-change:transform,box-shadow,background}
+
+@keyframes beatPulse{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes ripple{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.5);opacity:0}}
+
+@media(prefers-reduced-motion:reduce){
+  .play-ring,.beat-dot,.pendulum,.bpm-num,.play-btn{animation:none!important;transition:none!important}
+}
+
 @media(min-width:560px) and (max-height:700px){
   .app{height:calc(100vh - 20px);border-radius:24px}
   .bpm-card{padding:6px 12px 2px}
@@ -778,6 +818,49 @@ body.t-neon .practice-bar{
   .play-btn svg{width:22px;height:22px}
   .card{padding:10px;margin-bottom:6px}
 }
+
+.theme-open-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);cursor:pointer;
+  transition:all var(--fast)}
+.theme-open-btn:active{background:var(--surface-3)}
+.theme-preview-grid{display:flex;gap:6px}
+.theme-preview-dot{width:28px;height:28px;border-radius:8px;box-shadow:var(--shadow-sm)}
+.theme-open-arrow{color:var(--text-muted);font-size:1.5em;font-weight:300;transition:transform var(--fast)}
+.theme-open-btn:active .theme-open-arrow{transform:translateX(3px)}
+
+.theme-picker-mask{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.5);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;transition:opacity .3s;pointer-events:none}
+.theme-picker-mask.show{opacity:1;pointer-events:auto}
+.theme-picker-mask.hide{opacity:0;pointer-events:none}
+.theme-picker-sheet{background:var(--surface);width:100%;max-width:480px;
+  border-radius:28px 28px 0 0;padding:20px 16px 32px;
+  box-shadow:var(--shadow-xl);
+  transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.theme-picker-mask.show .theme-picker-sheet{transform:translateY(0)}
+.theme-picker-header{text-align:center;margin-bottom:20px;position:relative}
+.theme-picker-title{font-size:1.3em;font-weight:900;color:var(--text);margin-bottom:4px}
+.theme-picker-subtitle{font-size:.8em;color:var(--text-sec)}
+.theme-picker-close{position:absolute;top:0;right:0;width:32px;height:32px;border-radius:50%;
+  background:var(--surface-2);border:0;color:var(--text-sec);font-size:1em;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all var(--fast)}
+.theme-picker-close:active{background:var(--surface-3)}
+.theme-picker-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.theme-item{padding:14px;border-radius:var(--r-lg);border:2px solid transparent;
+  background:var(--surface-2);cursor:pointer;transition:all var(--fast);position:relative;overflow:hidden}
+.theme-item:active{transform:scale(.98)}
+.theme-item.selected{border-color:var(--primary);box-shadow:var(--shadow-primary)}
+.theme-item::before{content:"";position:absolute;top:0;right:0;width:50px;height:50px;
+  border-radius:0 var(--r-lg) 0 100%;opacity:.15}
+.theme-item.selected::after{content:"✓";position:absolute;top:8px;right:8px;width:20px;height:20px;
+  border-radius:50%;background:var(--primary);color:#fff;font-size:.7em;font-weight:700;
+  display:flex;align-items:center;justify-content:center}
+.theme-gradient{height:40px;border-radius:var(--r-sm);margin-bottom:8px;display:flex;
+  align-items:center;justify-content:center}
+.theme-gradient svg{width:20px;height:20px;color:rgba(255,255,255,.9)}
+.theme-name{font-weight:800;font-size:.88em;color:var(--text)}
+.theme-desc{font-size:.72em;color:var(--text-muted);margin-top:2px}
 </style>
 </head>
 <body class="t-indigo">
@@ -1031,6 +1114,14 @@ body.t-neon .practice-bar{
           </div>
           <span class="vol-val" id="vol-sub-v">40</span>
         </div>
+        <div class="vol-preview-btns">
+          <button class="vol-preview-btn accent" id="vol-preview-accent">
+            <span>🎵 试听重音</span>
+          </button>
+          <button class="vol-preview-btn normal" id="vol-preview-normal">
+            <span>🔔 试听普通</span>
+          </button>
+        </div>
       </div>
 
       <div class="card">
@@ -1243,9 +1334,12 @@ body.t-neon .practice-bar{
       <div class="card">
         <div class="card-h">
           <div class="card-ic"><svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/></svg></div>
-          <span class="card-t">主题颜色 <span class="badge-new">22种</span></span>
+          <span class="card-t">主题颜色</span>
         </div>
-        <div class="theme-grid" id="theme-grid"></div>
+        <button class="theme-open-btn" id="theme-open-btn">
+          <div class="theme-preview-grid" id="theme-preview-grid"></div>
+          <div class="theme-open-arrow">›</div>
+        </button>
       </div>
 
       <div class="card">
@@ -1315,6 +1409,44 @@ body.t-neon .practice-bar{
           <div class="vis-style-btn" data-vis="bars"><div class="vis-icon">📊</div><div class="vis-name">频谱条</div></div>
           <div class="vis-style-btn" data-vis="pulse"><div class="vis-icon">💗</div><div class="vis-name">脉冲</div></div>
           <div class="vis-style-btn" data-vis="minimal"><div class="vis-icon">✨</div><div class="vis-name">极简</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ic"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg></div>
+          <span class="card-t">环境音量自动调节 <span class="badge-new">绝技</span></span>
+        </div>
+        <div class="card-sub">开启麦克风检测，根据环境噪音自动调节音量</div>
+        <div class="ambient-level-display">
+          <div class="ambient-label">环境噪音</div>
+          <div class="ambient-value" id="ambient-level">-- dB</div>
+        </div>
+        <div class="ambient-bar">
+          <div class="ambient-fill" id="ambient-fill"></div>
+        </div>
+        <div class="ambient-controls">
+          <button class="ambient-btn" id="ambient-toggle">
+            <span>🎤 开启麦克风检测</span>
+          </button>
+        </div>
+        <div class="ambient-settings" id="ambient-settings" style="display:none">
+          <div class="vol-row">
+            <span class="vol-lbl">灵敏度</span>
+            <div class="rng-wrap" style="flex:1;margin:0">
+              <div class="rng-track"><div class="rng-fill" id="ambient-sens-fill"></div></div>
+              <input type="range" class="rng" id="ambient-sens" min="10" max="100" value="50"/>
+            </div>
+            <span class="vol-val" id="ambient-sens-v">50</span>
+          </div>
+          <div class="vol-row">
+            <span class="vol-lbl">基准音量</span>
+            <div class="rng-wrap" style="flex:1;margin:0">
+              <div class="rng-track"><div class="rng-fill" id="ambient-base-fill"></div></div>
+              <input type="range" class="rng" id="ambient-base" min="20" max="100" value="70"/>
+            </div>
+            <span class="vol-val" id="ambient-base-v">70</span>
+          </div>
         </div>
       </div>
 
@@ -1434,6 +1566,17 @@ body.t-neon .practice-bar{
     </div>
   </div>
 
+  <div class="theme-picker-mask hide" id="theme-picker-mask">
+    <div class="theme-picker-sheet" id="theme-picker-sheet">
+      <div class="theme-picker-header">
+        <div class="theme-picker-title">选择主题</div>
+        <div class="theme-picker-subtitle">共 22 款精选主题</div>
+        <button class="theme-picker-close" id="theme-picker-close">✕</button>
+      </div>
+      <div class="theme-picker-grid" id="theme-picker-grid"></div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 </div>
 
@@ -1522,7 +1665,9 @@ var state={
   tap_times:[],tap_bpm:0,practice:null,practice_stage:0,practice_timer:null,
   pendulum_dir:1,particles_on:true,countdown:0,countdown_beats:0,
   bg_node:null,bg_gain:null,tuner_osc:null,tuner_gain:null,
-  ramp_current:0,ramp_timer:null,history:[],current_bpm_display:120
+  ramp_current:0,ramp_timer:null,history:[],current_bpm_display:120,
+  ambient_listening:false,ambient_analyser:null,ambient_microphone:null,ambient_stream:null,
+  ambient_level:0,ambient_sensitivity:50,ambient_base_volume:70,ambient_animation:null
 };
 
 function $(id){return document.getElementById(id)}
@@ -1792,6 +1937,40 @@ function render_themes(container,on_select){
   });
 }
 
+function render_theme_preview(){
+  var c=$('theme-preview-grid');if(!c)return;
+  c.innerHTML='';
+  for(var i=0;i<5;i++){
+    var t=THEMES[i];var d=document.createElement('div');d.className='theme-preview-dot';
+    d.style.background='linear-gradient(135deg,'+t.c1+','+t.c2+')';c.appendChild(d);
+  }
+}
+
+function render_theme_picker(){
+  var c=$('theme-picker-grid');if(!c)return;
+  c.innerHTML='';
+  THEMES.forEach(function(t){
+    var d=document.createElement('div');d.className='theme-item'+(CFG.theme===t.id?' selected':'');
+    d.innerHTML='<div class="theme-gradient" style="background:linear-gradient(135deg,'+t.c1+','+t.c2+')"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div class="theme-name">'+t.name+'</div><div class="theme-desc">'+t.id+'</div>';
+    d.style.setProperty('--tc1',t.c1);d.style.setProperty('--tc2',t.c2);
+    d.querySelector('.theme-gradient').style.setProperty('background','linear-gradient(135deg,'+t.c1+','+t.c2+')');
+    d.addEventListener('click',function(){
+      apply_theme(t.id);save_cfg();render_theme_preview();
+      qsa('.theme-item').forEach(function(item){item.classList.remove('selected');});
+      d.classList.add('selected');toast('已切换到'+t.name+'主题');
+    });c.appendChild(d);
+  });
+}
+
+function open_theme_picker(){
+  render_theme_picker();var m=$('theme-picker-mask');m.classList.remove('hide');m.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function close_theme_picker(){
+  var m=$('theme-picker-mask');m.classList.remove('show');m.classList.add('hide');
+  document.body.style.overflow='';
+}
+
 function apply_theme(id){
   document.body.className=document.body.className.replace(/t-\w+/g,'').trim();
   document.body.classList.add('t-'+id);CFG.theme=id;
@@ -1881,6 +2060,17 @@ function init_nav(){
     var cur=qs('.page.active').id;
     if(cur==='pg-tap'||cur==='pg-tuner')show_page('pg-home');else show_page('pg-settings');
   });
+  $('theme-open-btn').addEventListener('click',open_theme_picker);
+  $('theme-picker-close').addEventListener('click',close_theme_picker);
+  $('theme-picker-mask').addEventListener('click',function(e){
+    if(e.target===$('theme-picker-mask'))close_theme_picker();
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&$('theme-picker-mask').classList.contains('show'))close_theme_picker();
+  });
+  render_theme_preview();
+  render_presets();
+  render_favs();
 }
 
 function init_controls(){
@@ -1939,6 +2129,99 @@ function init_volumes(){
   ss('vol-beat',CFG.vol_beat,'vol-beat-fill','vol-beat-v',function(v){CFG.vol_beat=v;});
   ss('vol-sub',CFG.vol_sub,'vol-sub-fill','vol-sub-v',function(v){CFG.vol_sub=v;});
   ss('bg-vol',CFG.vol_bg,'bg-vol-fill','bg-vol-v',function(v){CFG.vol_bg=v;if(state.bg_gain)state.bg_gain.gain.value=v/100*0.3;});
+  
+  $('vol-preview-accent').addEventListener('click',function(){
+    init_audio();play_click(true,false);
+  });
+  $('vol-preview-normal').addEventListener('click',function(){
+    init_audio();play_click(false,false);
+  });
+}
+
+function init_ambient(){
+  var btn=$('ambient-toggle');
+  var settings=$('ambient-settings');
+  var level=$('ambient-level');
+  var fill=$('ambient-fill');
+  
+  function updateLevel(v){
+    level.textContent=v.toFixed(1)+' dB';
+    fill.style.width=Math.min(100,v)+'%';
+    var color;
+    if(v<20)color='#22c55e';
+    else if(v<50)color='#eab308';
+    else if(v<75)color='#f97316';
+    else color='#ef4444';
+    fill.style.background='linear-gradient(90deg,'+color+','+color+')';
+    level.style.color=color;
+  }
+  
+  function startListening(){
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      toast('当前浏览器不支持麦克风访问');return;
+    }
+    navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}).then(function(stream){
+      state.ambient_stream=stream;
+      var ctx=state.audio_ctx||new(window.AudioContext||window.webkitAudioContext)();
+      if(!state.audio_ctx)state.audio_ctx=ctx;
+      state.ambient_analyser=ctx.createAnalyser();
+      state.ambient_analyser.fftSize=512;
+      state.ambient_microphone=ctx.createMediaStreamSource(stream);
+      state.ambient_microphone.connect(state.ambient_analyser);
+      state.ambient_listening=true;
+      btn.classList.add('active');btn.querySelector('span').textContent='🎤 停止检测';
+      settings.style.display='';
+      
+      var dataArray=new Uint8Array(state.ambient_analyser.frequencyBinCount);
+      function measure(){
+        if(!state.ambient_listening)return;
+        state.ambient_analyser.getByteFrequencyData(dataArray);
+        var sum=0;for(var i=0;i<dataArray.length;i++)sum+=dataArray[i];
+        var avg=sum/dataArray.length;
+        var normalized=avg*1.5;
+        state.ambient_level=normalized;
+        updateLevel(normalized);
+        
+        var sens=state.ambient_sensitivity/50;
+        var adjustment=(normalized-30)*sens*0.5;
+        var targetVol=Math.min(100,Math.max(20,state.ambient_base_volume+adjustment));
+        var masterGain=ctx.createGain();
+        masterGain.gain.value=targetVol/100;
+        
+        state.ambient_animation=requestAnimationFrame(measure);
+      }
+      measure();
+    }).catch(function(err){
+      toast('无法访问麦克风: '+err.message);
+    });
+  }
+  
+  function stopListening(){
+    state.ambient_listening=false;
+    if(state.ambient_animation)cancelAnimationFrame(state.ambient_animation);
+    if(state.ambient_microphone){try{state.ambient_microphone.disconnect();}catch(e){}}
+    if(state.ambient_stream){state.ambient_stream.getTracks().forEach(function(t){t.stop();});}
+    state.ambient_stream=null;state.ambient_microphone=null;state.ambient_analyser=null;
+    btn.classList.remove('active');btn.querySelector('span').textContent='🎤 开启麦克风检测';
+    settings.style.display='none';
+    level.textContent='-- dB';fill.style.width='0%';
+  }
+  
+  btn.addEventListener('click',function(){
+    if(state.ambient_listening)stopListening();else startListening();
+  });
+  
+  var sensIn=$('ambient-sens'),sensFill=$('ambient-sens-fill'),sensVal=$('ambient-sens-v');
+  sensIn.value=state.ambient_sensitivity;sensFill.style.width=state.ambient_sensitivity+'%';sensVal.textContent=state.ambient_sensitivity;
+  sensIn.addEventListener('input',function(){
+    var v=parseInt(this.value);sensFill.style.width=v+'%';sensVal.textContent=v;state.ambient_sensitivity=v;
+  });
+  
+  var baseIn=$('ambient-base'),baseFill=$('ambient-base-fill'),baseVal=$('ambient-base-v');
+  baseIn.value=state.ambient_base_volume;baseFill.style.width=state.ambient_base_volume+'%';baseVal.textContent=state.ambient_base_volume;
+  baseIn.addEventListener('input',function(){
+    var v=parseInt(this.value);baseFill.style.width=v+'%';baseVal.textContent=v;state.ambient_base_volume=v;
+  });
 }
 
 function init_tap(){
@@ -2299,7 +2582,7 @@ function init(){
   render_beats();render_presets();render_favs();render_sigs();render_subs();render_sounds();render_history();
   init_nav();init_controls();init_toggles();init_volumes();init_tap();init_practice();
   init_tuner();init_custom_sound();init_bg_sound_ctrl();init_vis_style();init_data_mgmt();
-  init_particles();init_spectrum();init_keyboard();init_share_load();init_timer();
+  init_particles();init_spectrum();init_keyboard();init_share_load();init_timer();init_ambient();
   setTimeout(init_guide,800);
   document.addEventListener('visibilitychange',function(){
     if(document.hidden&&CFG.wake){set_wake_lock(false);}

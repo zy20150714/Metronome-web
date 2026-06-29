@@ -367,6 +367,7 @@ body.t-neon .play-btn.playing{
 .quick-item{padding:14px;border-radius:var(--r-md);border:1px solid var(--border);
   background:var(--surface);display:flex;align-items:center;gap:12px;transition:background var(--fast),border-color var(--fast);cursor:pointer;position:relative;overflow:hidden}
 .quick-item::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--primary),var(--secondary));opacity:0;transition:opacity var(--fast)}
+.quick-ic,.quick-n,.quick-d{position:relative;z-index:1}
 .quick-item:active::after{opacity:1}
 .quick-item:active .quick-ic,.quick-item:active .quick-n,.quick-item:active .quick-d{color:#fff;position:relative;z-index:1}
 .quick-ic{width:38px;height:38px;border-radius:11px;
@@ -381,6 +382,7 @@ body.t-neon .play-btn.playing{
 .preset-btn{padding:12px 6px;border-radius:var(--r-sm);border:1px solid var(--border);
   background:var(--surface-2);text-align:center;cursor:pointer;transition:background var(--fast),border-color var(--fast),box-shadow var(--fast);position:relative;overflow:hidden}
 .preset-btn::after{content:"";position:absolute;inset:0;background:rgba(var(--primary-rgb),.1);opacity:0;transition:opacity var(--fast)}
+.preset-n,.preset-l{position:relative;z-index:1}
 .preset-btn:active::after{opacity:1}
 .preset-btn.on{background:linear-gradient(135deg,var(--primary),var(--secondary));border-color:transparent;box-shadow:var(--shadow-primary)}
 body.t-rainbow .preset-btn.on{
@@ -528,7 +530,8 @@ body.t-neon .tap-btn{
   background:linear-gradient(135deg,rgba(var(--primary-rgb),.12),rgba(var(--secondary-rgb),.08));
   color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
 .practice-ic svg{width:21px;height:21px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.practice-info{flex:1;position:relative;z-index:1}
+.practice-info{flex:1;z-index:1}
+.practice-n,.practice-d{position:relative;z-index:1}
 .practice-n{font-weight:800;font-size:.92em}
 .practice-d{color:var(--text-sec);font-size:.75em;margin-top:3px}
 .practice-badge{font-size:.68em;padding:4px 10px;border-radius:999px;
@@ -593,6 +596,38 @@ body.t-neon .practice-bar{
 .guide-d{color:var(--text-sec);font-size:.85em;line-height:1.65;margin-bottom:20px;position:relative;z-index:1}
 .guide-themes-scroll{max-height:200px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
   margin-bottom:16px;position:relative;z-index:1;border-radius:12px}
+
+.menu-mask{position:fixed;inset:0;z-index:450;background:rgba(0,0,0,.5);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;transition:opacity .3s;pointer-events:none}
+.menu-mask.show{opacity:1;pointer-events:auto}
+.menu-mask.hide{opacity:0;pointer-events:none}
+.menu-sheet{background:var(--surface);width:100%;max-width:380px;
+  border-radius:20px 20px 0 0;padding:0 0 32px;
+  box-shadow:var(--shadow-xl);
+  transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.menu-mask.show .menu-sheet{transform:translateY(0)}
+.menu-header{padding:18px 20px 14px;display:flex;align-items:center;
+  justify-content:space-between;border-bottom:1px solid var(--border);margin-bottom:8px}
+.menu-title{font-size:1.05em;font-weight:900;color:var(--text)}
+.menu-close{width:32px;height:32px;border-radius:50%;border:0;background:var(--surface-2);
+  color:var(--text-sec);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:.9em;transition:all var(--fast)}
+.menu-close:active{transform:scale(.9)}
+.menu-list{padding:0 12px;max-height:70vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.menu-item{display:flex;align-items:center;gap:12px;padding:12px;
+  border-radius:12px;cursor:pointer;transition:background var(--fast)}
+.menu-item:active{background:var(--surface-2)}
+.menu-item.danger .menu-name,.menu-item.danger .menu-desc{color:#ef4444}
+.menu-ic{width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(var(--primary-rgb),.15),rgba(var(--secondary-rgb),.1));
+  color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.2em;flex-shrink:0}
+.menu-info{flex:1;min-width:0}
+.menu-name{font-size:.9em;font-weight:700;color:var(--text)}
+.menu-desc{font-size:.72em;color:var(--text-sec);margin-top:2px}
+.menu-arrow{color:var(--text-muted);font-size:1.2em;font-weight:300}
+.menu-divider{height:1px;background:var(--border);margin:6px 0}
 .guide-themes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:4px}
 .guide-theme-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;
   border-radius:12px;cursor:pointer;transition:all var(--fast);border:2px solid transparent;
@@ -724,7 +759,7 @@ body.t-neon .practice-bar{
 .about-list{margin-top:8px}
 .about-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all var(--fast)}
 .about-item:last-child{border-bottom:0}
-.about-item:active{background:var(--surface-2);margin:0 -14px;padding:14px}
+.about-item:active{background:var(--surface-2);border-radius:12px}
 .about-ic{width:36px;height:36px;border-radius:10px;
   background:linear-gradient(135deg,rgba(var(--primary-rgb),.12),rgba(var(--secondary-rgb),.08));
   color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -811,8 +846,12 @@ body.t-neon .practice-bar{
 .data-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 .data-btn{padding:10px;border-radius:10px;border:1px solid var(--border);
   background:var(--surface-2);font-size:.75em;font-weight:600;color:var(--text-sec);
-  cursor:pointer;transition:all var(--fast);text-align:center}
+  cursor:pointer;transition:all var(--fast);text-align:center;position:relative;overflow:hidden}
+.data-btn span{position:relative;z-index:1}
+.data-btn:active{transform:scale(.98)}
+.data-btn:active::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.08);border-radius:10px}
 .data-btn.pri{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border-color:transparent}
+.data-btn.pri:active::after{background:rgba(255,255,255,.15)}
 
 .badge-new{display:inline-block;padding:2px 6px;border-radius:999px;
   background:linear-gradient(135deg,var(--accent),var(--primary));color:#fff;
@@ -915,7 +954,8 @@ body.t-neon .practice-bar{
 .theme-picker-sheet{background:var(--surface);width:100%;max-width:480px;
   border-radius:28px 28px 0 0;padding:20px 16px 32px;
   box-shadow:var(--shadow-xl);
-  transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+  transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  max-height:90vh;overflow-y:auto}
 .theme-picker-mask.show .theme-picker-sheet{transform:translateY(0)}
 .theme-picker-header{text-align:center;margin-bottom:20px;position:relative}
 .theme-picker-title{font-size:1.3em;font-weight:900;color:var(--text);margin-bottom:4px}
@@ -958,6 +998,43 @@ body.t-neon .practice-bar{
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
     </button>
   </header>
+
+  <div class="menu-mask hide" id="menu-mask">
+    <div class="menu-sheet">
+      <div class="menu-header">
+        <div class="menu-title">快捷操作</div>
+        <button class="menu-close" id="menu-close">✕</button>
+      </div>
+      <div class="menu-list">
+        <div class="menu-item" id="menu-theme">
+          <div class="menu-ic">🎨</div>
+          <div class="menu-info"><div class="menu-name">主题颜色</div><div class="menu-desc">更换应用外观主题</div></div>
+          <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-item" id="menu-export">
+          <div class="menu-ic">📤</div>
+          <div class="menu-info"><div class="menu-name">导出设置</div><div class="menu-desc">将当前配置导出为文件</div></div>
+          <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-item" id="menu-import">
+          <div class="menu-ic">📥</div>
+          <div class="menu-info"><div class="menu-name">导入设置</div><div class="menu-desc">从文件加载配置</div></div>
+          <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-item" id="menu-share">
+          <div class="menu-ic">🔗</div>
+          <div class="menu-info"><div class="menu-name">分享配置</div><div class="menu-desc">生成分享链接</div></div>
+          <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-item" id="menu-reset">
+          <div class="menu-ic">🗑️</div>
+          <div class="menu-info"><div class="menu-name danger">重置数据</div><div class="menu-desc danger">清除所有数据并重启</div></div>
+          <div class="menu-arrow">›</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="scroll-wrap" id="scroll-wrap">
     <section class="page active" id="pg-home">
@@ -1534,10 +1611,10 @@ body.t-neon .practice-bar{
           <span class="card-t">数据管理</span>
         </div>
         <div class="data-actions">
-          <button class="data-btn pri" id="btn-export">导出设置</button>
-          <button class="data-btn" id="btn-import">导入设置</button>
-          <button class="data-btn" id="btn-reset">重置数据</button>
-          <button class="data-btn" id="btn-share">分享配置</button>
+          <button class="data-btn pri" id="btn-export"><span>导出设置</span></button>
+          <button class="data-btn" id="btn-import"><span>导入设置</span></button>
+          <button class="data-btn" id="btn-reset"><span>重置数据</span></button>
+          <button class="data-btn" id="btn-share"><span>分享配置</span></button>
         </div>
       </div>
 
@@ -2325,6 +2402,58 @@ function init_ambient(){
   });
 }
 
+function init_menu(){
+  var mask=$('menu-mask');
+  var menuBtn=$('btn-menu');
+  var closeBtn=$('menu-close');
+  
+  function openMenu(){
+    mask.classList.remove('hide');mask.classList.add('show');
+    document.body.style.overflow='hidden';
+  }
+  
+  function closeMenu(){
+    mask.classList.remove('show');mask.classList.add('hide');
+    document.body.style.overflow='';
+  }
+  
+  menuBtn.addEventListener('click',openMenu);
+  closeBtn.addEventListener('click',closeMenu);
+  mask.addEventListener('click',function(e){
+    if(e.target===mask)closeMenu();
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&mask.classList.contains('show'))closeMenu();
+  });
+  
+  $('menu-theme').addEventListener('click',function(){
+    closeMenu();show_page('pg-settings');setTimeout(function(){
+      open_theme_picker();
+    },200);
+  });
+  
+  $('menu-export').addEventListener('click',function(){
+    closeMenu();export_settings();
+  });
+  
+  $('menu-import').addEventListener('click',function(){
+    closeMenu();import_settings();
+  });
+  
+  $('menu-share').addEventListener('click',function(){
+    closeMenu();share_settings();
+  });
+  
+  $('menu-reset').addEventListener('click',function(){
+    closeMenu();
+    if(confirm('确定要重置所有数据吗？此操作不可撤销。')){
+      localStorage.removeItem(LS_KEY);localStorage.removeItem(STATS_KEY);localStorage.removeItem(HIST_KEY);
+      localStorage.removeItem('metro_v14_shown');
+      location.reload();
+    }
+  });
+}
+
 function init_tap(){
   var btn=$('tap-btn');
   function tap(){
@@ -2548,6 +2677,24 @@ function update_vis_style(){
   else{beats.style.opacity='1';sub.style.opacity='1';pend_wrap.style.display='flex';}
 }
 
+function export_settings(){
+  var data=JSON.stringify({cfg:CFG,stats:{beats:state.total_beats,bars:state.total_bars,time:state.total_time},history:state.history},null,2);
+  var blob=new Blob([data],{type:'application/json'}),url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='metro_v14_backup_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  URL.revokeObjectURL(url);toast('设置已导出');
+}
+
+function import_settings(){
+  $('file-input').click();
+}
+
+function share_settings(){
+  var data=btoa(JSON.stringify({b:CFG.bpm,ts:CFG.ts_beats,tv:CFG.ts_value,s:CFG.subdivision,so:CFG.sound,th:CFG.theme}));
+  var url=location.href.split('#')[0]+'#'+data;
+  if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){toast('配置链接已复制');});}
+  else{toast('链接已生成');console.log(url);}
+}
+
 function init_data_mgmt(){
   $('btn-export').addEventListener('click',function(){
     var data=JSON.stringify({cfg:CFG,stats:{beats:state.total_beats,bars:state.total_bars,time:state.total_time},history:state.history},null,2);
@@ -2648,12 +2795,13 @@ function init_guide(){
   if(localStorage.getItem('metro_v14_shown'))return;
   var mask=$('guide-mask'),step=0,agreed=false;
   var steps=[
-    {title:'欢迎使用节拍器 Pro',desc:'由AI辅助开发的专业级节拍器，为你提供精准稳定的节奏体验',icon:'🎵',show_themes:true,show_agree:false},
-    {title:'选择你的专属主题',desc:'22款精心设计的主题，上下滑动查看更多，点击选择你喜欢的',icon:'🎨',show_themes:true,show_agree:false},
-    {title:'核心功能都在这里',desc:'底部导航栏四个页面：首页是节拍控制，参数调节速度音色，练习有多种训练模式，设置个性化配置',icon:'🧭',show_themes:false,show_agree:false},
-    {title:'敲击测速 & 调音器',desc:'首页快捷操作里有「敲击测速」和「调音器」，不知道BPM？敲两下就知道了；乐器需要调音？一键生成参考音',icon:'🎯',show_themes:false,show_agree:false},
-    {title:'环境音量自动调节',desc:'在设置页面可以开启「环境音量自动调节」，根据环境噪音自动调整节拍器音量，嘈杂环境也能听清楚',icon:'🎤',show_themes:false,show_agree:false},
-    {title:'开始使用前',desc:'请先阅读并同意用户协议和隐私政策，然后我们就可以开始了',icon:'📋',show_themes:false,show_agree:true}
+    {title:'欢迎使用节拍器 Pro',desc:'由AI辅助开发的专业级节拍器，为你提供精准稳定的节奏体验。<br><br>点击下方「下一步」开始了解各项功能。',icon:'🎵',show_themes:false,show_agree:false},
+    {title:'🏠 首页 · 节拍控制中心',desc:'这里是节拍器的核心控制区域，你知道这些功能吗？<br><br>❓ <b>BPM速度</b>：上下滑动数字可调整速度（40-240），拖动滑块也行<br>❓ <b>节拍指示器</b>：显示当前拍号，点击可切换2/4、3/4、4/4等常用拍号<br>❓ <b>播放按钮</b>：中间大圆形按钮，点击播放/暂停节拍<br>❓ <b>快捷入口</b>：敲击测速（学习新曲子）、调音器（校准乐器）、练习模式（渐进训练）、计时器（控制时长）<br>❓ <b>速度预设</b>：Largo（慢）、Moderato（中）、Prestissimo（极快）等一键切换',icon:'🏠',show_themes:false,show_agree:false},
+    {title:'⚙️ 参数 · 精细调节',desc:'想自定义节拍器的音色和节奏？这些设置你知道吗？<br><br>❓ <b>音色选择</b>：点击声（清脆）、木鱼声（空灵）、鼓声（厚重）、电子音（现代）、金属声（尖锐）、自定义（自己调节频率波形）<br>❓ <b>音量控制</b>：重音拍（第一拍大声）、普通拍、细分拍可以分别调节，试听按钮可以预览效果<br>❓ <b>时间签名</b>：2-12拍可选，细分节奏型包括八分音符、三连音、四连音等<br>❓ <b>倒计时</b>：开启后播放前会有4拍或8拍倒计时提示，让你准备好',icon:'⚙️',show_themes:false,show_agree:false},
+    {title:'🎨 主题 · 22款外观',desc:'想让你的节拍器更好看？主题功能了解一下！<br><br>❓ <b>如何打开主题</b>：点击右上角「⋮」菜单，选择「主题颜色」<br>❓ <b>主题种类</b>：22种精选配色，包括樱花粉、琥珀橙、翡翠绿、天空蓝、紫色浪漫等<br>❓ <b>特殊主题</b>：彩虹主题会旋转、霓虹主题会发光、极光主题有动态效果<br>❓ <b>深色模式</b>：夜间使用开启深色模式，保护眼睛不疲劳<br>❓ <b>动画强度</b>：可以在设置中调节动画幅度或关闭动画',icon:'🎨',show_themes:true,show_agree:false},
+    {title:'🎤 绝技 · 环境音量自动调节',desc:'这个功能是你的秘密武器！<br><br>❓ <b>是什么</b>：根据环境噪音自动调节节拍器音量，嘈杂环境自动变大，安静环境自动变小<br>❓ <b>如何使用</b>：在「设置」页面开启麦克风权限和自动调节开关<br>❓ <b>灵敏度调节</b>：可以根据环境调整反应速度，灵敏度过高会过于敏感<br>❓ <b>基准音量</b>：设置一个基准音量，环境安静时的默认音量大小<br>❓ <b>隐私提示</b>：麦克风只分析音量，不录制不上传任何声音数据',icon:'🎤',show_themes:false,show_agree:false},
+    {title:'🎯 其他实用功能',desc:'还有一些贴心功能你知道吗？<br><br>❓ <b>⌨️ 键盘快捷键</b>：空格键播放/暂停，上下方向键慢调1 BPM，左右方向键快调5 BPM，按T/S/P分别跳转对应页面<br>❓ <b>🔗 分享配置</b>：生成包含当前设置的链接，一键分享给朋友<br>❓ <b>📊 练习统计</b>：记录累计节拍数、小节数、总练习时长，激励你坚持练习<br>❓ <b>📜 历史记录</b>：保存最近20条使用记录，方便回顾之前练习的设置<br>❓ <b>💾 数据备份</b>：支持导出JSON文件备份，换手机也不怕丢设置',icon:'🎯',show_themes:false,show_agree:false},
+    {title:'📋 开始使用前',desc:'请先阅读并同意用户协议和隐私政策。<br><br>❓ <b>隐私安全</b>：应用完全在本地运行，不会收集或上传任何个人信息<br>❓ <b>麦克风说明</b>：仅用于实时音量分析，不会被录制或上传<br>❓ <b>数据存储</b>：所有设置保存在你的设备本地',icon:'📋',show_themes:false,show_agree:true}
   ];
   function render_guide_themes(){
     var c=$('guide-themes');c.innerHTML='';
@@ -2669,24 +2817,24 @@ function init_guide(){
   }
   function update_icons(icon){
     var ic=$('guide-ic');
-    if(icon==='🎵'){ic.innerHTML='<svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';}
+    if(icon==='🏠'){ic.innerHTML='<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';}
+    else if(icon==='⚙️'){ic.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>';}
     else if(icon==='🎨'){ic.innerHTML='<svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/></svg>';}
-    else if(icon==='🧭'){ic.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>';}
-    else if(icon==='🎯'){ic.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';}
     else if(icon==='🎤'){ic.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>';}
+    else if(icon==='🎯'){ic.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';}
     else{ic.innerHTML='<svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';}
   }
   function rs(){
     var s=steps[step];
     $('guide-title').textContent=s.title;
-    $('guide-desc').textContent=s.desc;
+    $('guide-desc').innerHTML=s.desc;
     update_icons(s.icon);
     $('guide-themes-scroll').style.display=s.show_themes?'block':'none';
     $('guide-agree').style.display=s.show_agree?'block':'none';
     if(s.show_themes){render_guide_themes();}
     var dots=$('guide-dots');dots.innerHTML='';
     for(var i=0;i<steps.length;i++){var d=document.createElement('div');d.className='guide-dot'+(i===step?' on':'');dots.appendChild(d);}
-    $('guide-btn').textContent=step===steps.length-1?'开始使用':'下一步';
+    $('guide-btn').textContent=step===steps.length-1?'开始使用':'下一步 ('+(step+1)+'/'+steps.length+')';
     $('guide-skip').style.display=step===steps.length-1?'none':'block';
     update_agree_state();
   }
@@ -2758,7 +2906,7 @@ function init(){
   render_beats();render_presets();render_favs();render_sigs();render_subs();render_sounds();render_history();
   init_nav();init_controls();init_toggles();init_volumes();init_tap();init_practice();
   init_tuner();init_custom_sound();init_bg_sound_ctrl();init_vis_style();init_data_mgmt();
-  init_particles();init_spectrum();init_keyboard();init_share_load();init_timer();init_ambient();
+  init_particles();init_spectrum();init_keyboard();init_share_load();init_timer();init_ambient();init_menu();
   setTimeout(init_guide,800);
   document.addEventListener('visibilitychange',function(){
     if(document.hidden&&CFG.wake){set_wake_lock(false);}
